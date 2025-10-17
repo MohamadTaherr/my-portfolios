@@ -1,9 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { client } from '@/sanity/lib/client';
 
-// Scriptwriting portfolio - replace with your actual scripts
-const scripts = [
+interface Script {
+  _id: string;
+  title: string;
+  type: string;
+  client: string;
+  duration: string;
+  year: string;
+  description: string;
+  excerpt: string;
+  tags: string[];
+  wordCount: string;
+  featured: boolean;
+}
+
+// Placeholder data for fallback
+const placeholderScripts = [
   {
     id: 1,
     title: 'The Future is Now',
@@ -88,12 +103,42 @@ const scriptTypes = ['All', 'Commercial Script', 'Documentary Script', 'Social M
 
 export default function Scriptwriting() {
   const [activeType, setActiveType] = useState('All');
-  const [expandedScript, setExpandedScript] = useState<number | null>(null);
+  const [expandedScript, setExpandedScript] = useState<string | null>(null);
+  const [scripts, setScripts] = useState<Script[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchScripts = async () => {
+      try {
+        const query = '*[_type == "script"] | order(order asc, _createdAt desc)';
+        const data = await client.fetch(query);
+        setScripts(data);
+      } catch (error) {
+        console.error('Error fetching scripts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchScripts();
+  }, []);
 
   const filteredScripts =
     activeType === 'All'
       ? scripts
       : scripts.filter((script) => script.type === activeType);
+
+  if (loading) {
+    return (
+      <section id="scriptwriting" className="relative py-24 md:py-32 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-lg text-muted-foreground">Loading scripts...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="scriptwriting" className="relative py-24 md:py-32 bg-muted/30">
@@ -131,9 +176,14 @@ export default function Scriptwriting() {
 
           {/* Scripts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {filteredScripts.map((script) => (
+            {filteredScripts.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">No scripts found. Add some in Sanity Studio!</p>
+              </div>
+            ) : (
+              filteredScripts.map((script) => (
               <div
-                key={script.id}
+                key={script._id}
                 className="group relative rounded-2xl border border-border/50 bg-card backdrop-blur-sm overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
               >
                 {/* Gradient overlay on hover */}
@@ -178,7 +228,7 @@ export default function Scriptwriting() {
                   <div className="relative">
                     <div
                       className={`bg-muted/50 rounded-lg p-4 border border-border/50 font-mono text-sm leading-relaxed transition-all duration-300 ${
-                        expandedScript === script.id ? 'max-h-96' : 'max-h-32'
+                        expandedScript === script._id ? 'max-h-96' : 'max-h-32'
                       } overflow-hidden`}
                     >
                       <pre className="whitespace-pre-wrap text-muted-foreground">
@@ -187,17 +237,17 @@ export default function Scriptwriting() {
                     </div>
 
                     {/* Gradient fade for collapsed state */}
-                    {expandedScript !== script.id && (
+                    {expandedScript !== script._id && (
                       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-card to-transparent pointer-events-none" />
                     )}
                   </div>
 
                   {/* Expand/Collapse Button */}
                   <button
-                    onClick={() => setExpandedScript(expandedScript === script.id ? null : script.id)}
+                    onClick={() => setExpandedScript(expandedScript === script._id ? null : script._id)}
                     className="text-sm font-semibold text-primary hover:underline flex items-center gap-2"
                   >
-                    {expandedScript === script.id ? (
+                    {expandedScript === script._id ? (
                       <>
                         Show Less
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,7 +285,8 @@ export default function Scriptwriting() {
                 {/* Decorative corner accent */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-            ))}
+            ))
+            )}
           </div>
 
           {/* Writing Process Section */}
