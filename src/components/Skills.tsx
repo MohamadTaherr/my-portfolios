@@ -1,32 +1,32 @@
 const skillCategories = [
   {
-    title: 'Frontend',
+    title: 'Video Production',
     skills: [
-      { name: 'React', level: 90 },
-      { name: 'Next.js', level: 85 },
-      { name: 'TypeScript', level: 88 },
-      { name: 'Tailwind CSS', level: 92 },
-      { name: 'HTML/CSS', level: 95 },
+      { name: 'Adobe Premiere Pro', level: 95 },
+      { name: 'DaVinci Resolve', level: 90 },
+      { name: 'After Effects', level: 85 },
+      { name: 'Final Cut Pro', level: 88 },
+      { name: 'Color Grading', level: 90 },
     ],
   },
   {
-    title: 'Backend',
+    title: 'Scriptwriting',
     skills: [
-      { name: 'Node.js', level: 85 },
-      { name: 'Express', level: 80 },
-      { name: 'MongoDB', level: 75 },
-      { name: 'PostgreSQL', level: 70 },
-      { name: 'REST APIs', level: 88 },
+      { name: 'Commercial Scripts', level: 92 },
+      { name: 'Documentary Writing', level: 88 },
+      { name: 'Short Film Scripts', level: 85 },
+      { name: 'Social Media Content', level: 95 },
+      { name: 'Corporate Narratives', level: 90 },
     ],
   },
   {
-    title: 'Tools & Others',
+    title: 'Production & Tools',
     skills: [
-      { name: 'Git/GitHub', level: 90 },
-      { name: 'VS Code', level: 95 },
-      { name: 'Figma', level: 75 },
-      { name: 'Docker', level: 65 },
-      { name: 'Testing', level: 72 },
+      { name: 'Cinematography', level: 85 },
+      { name: 'Sound Design', level: 80 },
+      { name: 'Motion Graphics', level: 82 },
+      { name: 'Storyboarding', level: 88 },
+      { name: 'Project Management', level: 90 },
     ],
   },
 ];
@@ -41,7 +41,7 @@ export default function Skills() {
             Skills & <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Expertise</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Technologies and tools I work with
+            Professional skills in video production, scriptwriting, and creative content creation
           </p>
         </div>
 

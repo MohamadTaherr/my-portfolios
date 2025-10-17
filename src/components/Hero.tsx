@@ -1,64 +1,167 @@
+'use client';
+
+import { useState } from 'react';
+
 export default function Hero() {
+  const [useVideo] = useState(false); // Toggle this to switch between video and image
+
   return (
-    <section id="about" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-      <div className="flex flex-col items-center text-center space-y-8">
-        {/* Profile Image */}
-        <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-primary to-secondary p-1">
-          <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-            <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              YN
-            </span>
+    <section id="about" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Video or Image */}
+      <div className="absolute inset-0 z-0">
+        {useVideo ? (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute w-full h-full object-cover"
+          >
+            <source src="/videos/hero-bg.mp4" type="video/mp4" />
+            {/* Fallback to image if video doesn't load */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-secondary/20" />
+          </video>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-background to-blue-600/20">
+            {/* You can replace this with an actual background image */}
+            {/* <Image src="/images/hero-bg.jpg" alt="Hero background" fill className="object-cover" /> */}
+          </div>
+        )}
+
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20 max-w-7xl mx-auto">
+          {/* Photo - Left Side */}
+          <div className="w-full lg:w-5/12 flex justify-center">
+            <div className="relative group">
+              {/* Main Photo Container */}
+              <div className="relative w-72 h-72 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px]">
+                {/* Photo with border and shadow */}
+                <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl transition-all duration-500 group-hover:shadow-primary/30 group-hover:scale-[1.02]">
+                  {/* Gradient border effect */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary via-purple-500 to-secondary p-1">
+                    <div className="w-full h-full rounded-2xl overflow-hidden bg-background">
+                      {/* Placeholder - Replace with your actual photo */}
+                      <div className="w-full h-full bg-gradient-to-br from-primary/20 via-purple-500/20 to-secondary/20 flex items-center justify-center">
+                        <div className="text-center space-y-4 p-8">
+                          <div className="text-7xl md:text-8xl font-bold text-white/40">YN</div>
+                          <p className="text-white/50 text-sm md:text-base">
+                            Add your photo:<br />
+                            /public/images/profile.jpg
+                          </p>
+                        </div>
+                        {/* Uncomment when you add your photo:
+                        <Image
+                          src="/images/profile.jpg"
+                          alt="Your Name"
+                          fill
+                          className="object-cover"
+                          priority
+                        />
+                        */}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating decorative elements */}
+                <div className="absolute -top-8 -right-8 w-24 h-24 bg-primary/30 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute -bottom-8 -left-8 w-28 h-28 bg-secondary/30 rounded-full blur-3xl animate-pulse delay-1000" />
+              </div>
+            </div>
+          </div>
+
+          {/* Text Content - Right Side */}
+          <div className="w-full lg:w-7/12 space-y-8 text-center lg:text-left">
+            {/* Main Heading */}
+            <div className="space-y-4 animate-fade-in">
+              <div className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+                <p className="text-sm font-semibold text-primary">Welcome to my portfolio</p>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-tight">
+                Hi, I&apos;m{' '}
+                <span className="block mt-2 bg-gradient-to-r from-primary via-purple-500 to-secondary bg-clip-text text-transparent">
+                  Your Name
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl lg:text-3xl font-semibold text-muted-foreground">
+                Scriptwriter & Video Producer
+              </p>
+            </div>
+
+            {/* Short Bio */}
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground/90 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              I craft compelling stories and bring them to life through professional video production.
+              From concept to final cut, I create content that captivates audiences and delivers results.
+            </p>
+
+            {/* Stats/Highlights */}
+            <div className="flex flex-wrap gap-6 justify-center lg:justify-start pt-4">
+              <div className="text-center lg:text-left">
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">5+</div>
+                <p className="text-sm text-muted-foreground">Years Experience</p>
+              </div>
+              <div className="text-center lg:text-left">
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">50+</div>
+                <p className="text-sm text-muted-foreground">Projects Completed</p>
+              </div>
+              <div className="text-center lg:text-left">
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">30+</div>
+                <p className="text-sm text-muted-foreground">Happy Clients</p>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
+              <a
+                href="#video-production"
+                className="group relative rounded-full bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 font-semibold text-base transition-all hover:scale-105 hover:shadow-2xl hover:shadow-primary/50"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  View My Work
+                  <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+              </a>
+              <a
+                href="#contact"
+                className="rounded-full border-2 border-primary/50 backdrop-blur-sm bg-background/50 text-foreground px-8 py-4 font-semibold text-base transition-all hover:border-primary hover:bg-primary hover:text-white hover:scale-105"
+              >
+                Get In Touch
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Name & Title */}
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Hi, I&apos;m <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Your Name</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground">
-            Full Stack Developer & Designer
-          </p>
-        </div>
-
-        {/* Bio */}
-        <p className="max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed">
-          I&apos;m a passionate developer who loves building modern web applications.
-          With expertise in React, Next.js, and TypeScript, I create beautiful and
-          performant user experiences. Welcome to my portfolio!
-        </p>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 pt-4">
-          <a
-            href="#projects"
-            className="rounded-full bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 font-medium transition-transform hover:scale-105"
-          >
-            View My Work
+        {/* Scroll Indicator - Centered at bottom */}
+        <div className="pt-16 md:pt-24 animate-bounce flex justify-center">
+          <a href="#video-production" className="block">
+            <svg
+              className="w-8 h-8 text-muted-foreground hover:text-primary transition-colors"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
           </a>
-          <a
-            href="#contact"
-            className="rounded-full border-2 border-primary text-primary px-8 py-3 font-medium transition-all hover:bg-primary hover:text-white"
-          >
-            Get In Touch
-          </a>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="pt-12 animate-bounce">
-          <svg
-            className="w-6 h-6 text-muted-foreground"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
         </div>
       </div>
+
+      {/* Decorative elements */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/30 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/30 rounded-full blur-3xl animate-pulse delay-1000" />
     </section>
   );
 }
