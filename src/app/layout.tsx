@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display, Courier_Prime } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -14,16 +14,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
+
+const courierPrime = Courier_Prime({
+  variable: "--font-courier",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 export const metadata = {
-  title: "Portfolio | Your Name",
-  description: "Professional portfolio showcasing my projects and skills",
+  title: "Edmond Haddad | Award-Winning Scriptwriter & Creative Producer",
+  description: "Two decades of crafting compelling stories for Porsche, major films, and global brands. Professional scriptwriting and creative production services.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${courierPrime.variable} antialiased`}
       >
         <ThemeProvider>
           <Header />

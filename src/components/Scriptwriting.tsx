@@ -146,14 +146,14 @@ export default function Scriptwriting() {
         <div className="space-y-16">
           {/* Section Header */}
           <div className="text-center space-y-6 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold">
+            <h2 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-playfair)]">
               Scriptwriting{' '}
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Portfolio
               </span>
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground">
-              Crafting compelling narratives that engage audiences and deliver powerful messages
+              Two decades of crafting compelling narratives that engage audiences and deliver powerful messages for premium brands
             </p>
           </div>
 
@@ -227,11 +227,11 @@ export default function Scriptwriting() {
                   {/* Script Excerpt */}
                   <div className="relative">
                     <div
-                      className={`bg-muted/50 rounded-lg p-4 border border-border/50 font-mono text-sm leading-relaxed transition-all duration-300 ${
+                      className={`bg-muted/50 rounded-lg p-4 border border-border/50 font-[family-name:var(--font-courier)] text-sm leading-relaxed transition-all duration-300 ${
                         expandedScript === script._id ? 'max-h-96' : 'max-h-32'
                       } overflow-hidden`}
                     >
-                      <pre className="whitespace-pre-wrap text-muted-foreground">
+                      <pre className="whitespace-pre-wrap text-muted-foreground font-[family-name:var(--font-courier)]">
                         {script.excerpt}
                       </pre>
                     </div>
@@ -266,7 +266,7 @@ export default function Scriptwriting() {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 pt-4 border-t border-border/50">
-                    {script.tags.map((tag) => (
+                    {script.tags?.map((tag) => (
                       <span
                         key={tag}
                         className="px-3 py-1 text-xs font-medium rounded bg-muted text-muted-foreground"
@@ -291,8 +291,8 @@ export default function Scriptwriting() {
 
           {/* Writing Process Section */}
           <div className="mt-24 pt-16 border-t border-border/50">
-            <h3 className="text-3xl font-bold text-center mb-12">
-              My Writing <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Process</span>
+            <h3 className="text-3xl font-bold text-center mb-12 font-[family-name:var(--font-playfair)]">
+              My Writing <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Process</span>
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="text-center space-y-4">

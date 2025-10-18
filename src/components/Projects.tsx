@@ -71,14 +71,14 @@ export default function Projects() {
         <div className="space-y-16">
           {/* Section Header */}
           <div className="text-center space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold">
+            <h2 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-playfair)]">
               Video Production{' '}
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Portfolio
               </span>
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground">
-              From concept to final cut - creating professional videos that tell compelling stories
+              From concept to final cut - two decades of creating professional videos that tell compelling stories for global brands
             </p>
           </div>
 

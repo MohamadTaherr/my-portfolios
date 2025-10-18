@@ -1,9 +1,58 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { client } from '@/sanity/lib/client';
+import imageUrlBuilder from '@sanity/image-url';
+
+const builder = imageUrlBuilder(client);
+
+function urlFor(source: any) {
+  return builder.image(source);
+}
+
+interface SiteSettings {
+  name: string;
+  tagline: string;
+  bio: string;
+  profileImage?: any;
+  welcomeMessage: string;
+  yearsExperience: number;
+  projectsCompleted: number;
+  clientsServed: number;
+  industryAwards?: number;
+}
 
 export default function Hero() {
   const [useVideo] = useState(false); // Toggle this to switch between video and image
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const query = '*[_type == "siteSettings"][0]';
+        const data = await client.fetch(query);
+        setSettings(data);
+      } catch (error) {
+        console.error('Error fetching site settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  // Default fallback data
+  const displayData = settings || {
+    name: 'Edmond Haddad',
+    tagline: 'Award-Winning Scriptwriter & Creative Producer',
+    bio: 'Two decades of crafting compelling narratives for Porsche, major film productions, and global brands. From concept to final cut, I create stories that captivate audiences and drive results.',
+    welcomeMessage: 'Welcome to my portfolio',
+    yearsExperience: 20,
+    projectsCompleted: 200,
+    clientsServed: 100,
+  };
 
   return (
     <section id="about" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -50,22 +99,23 @@ export default function Hero() {
                     <div className="w-full h-full rounded-2xl overflow-hidden bg-background">
                       {/* Placeholder - Replace with your actual photo */}
                       <div className="w-full h-full bg-gradient-to-br from-primary/20 via-purple-500/20 to-secondary/20 flex items-center justify-center">
-                        <div className="text-center space-y-4 p-8">
-                          <div className="text-7xl md:text-8xl font-bold text-white/40">YN</div>
-                          <p className="text-white/50 text-sm md:text-base">
-                            Add your photo:<br />
-                            /public/images/profile.jpg
-                          </p>
-                        </div>
-                        {/* Uncomment when you add your photo:
-                        <Image
-                          src="/images/profile.jpg"
-                          alt="Your Name"
-                          fill
-                          className="object-cover"
-                          priority
-                        />
-                        */}
+                        {settings?.profileImage ? (
+                          <img
+                            src={urlFor(settings.profileImage).width(800).height(800).url()}
+                            alt={displayData.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-center space-y-4 p-8">
+                            <div className="text-7xl md:text-8xl font-bold text-white/40 font-[family-name:var(--font-playfair)]">
+                              {displayData.name.split(' ').map((n: string) => n[0]).join('')}
+                            </div>
+                            <p className="text-white/50 text-sm md:text-base">
+                              Upload profile photo in<br />
+                              Sanity Studio → Site Settings
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -83,38 +133,37 @@ export default function Hero() {
             {/* Main Heading */}
             <div className="space-y-4 animate-fade-in">
               <div className="inline-block px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
-                <p className="text-sm font-semibold text-primary">Welcome to my portfolio</p>
+                <p className="text-sm font-semibold text-primary">{displayData.welcomeMessage}</p>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-tight font-[family-name:var(--font-playfair)]">
                 Hi, I&apos;m{' '}
-                <span className="block mt-2 bg-gradient-to-r from-primary via-purple-500 to-secondary bg-clip-text text-transparent">
-                  Your Name
+                <span className="block mt-2 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                  {displayData.name}
                 </span>
               </h1>
               <p className="text-xl md:text-2xl lg:text-3xl font-semibold text-muted-foreground">
-                Scriptwriter & Video Producer
+                {displayData.tagline}
               </p>
             </div>
 
             {/* Short Bio */}
             <p className="text-base md:text-lg lg:text-xl text-muted-foreground/90 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              I craft compelling stories and bring them to life through professional video production.
-              From concept to final cut, I create content that captivates audiences and delivers results.
+              {displayData.bio}
             </p>
 
             {/* Stats/Highlights */}
             <div className="flex flex-wrap gap-6 justify-center lg:justify-start pt-4">
               <div className="text-center lg:text-left">
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">5+</div>
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-[family-name:var(--font-playfair)]">{displayData.yearsExperience}+</div>
                 <p className="text-sm text-muted-foreground">Years Experience</p>
               </div>
               <div className="text-center lg:text-left">
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">50+</div>
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-[family-name:var(--font-playfair)]">{displayData.projectsCompleted}+</div>
                 <p className="text-sm text-muted-foreground">Projects Completed</p>
               </div>
               <div className="text-center lg:text-left">
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">30+</div>
-                <p className="text-sm text-muted-foreground">Happy Clients</p>
+                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-[family-name:var(--font-playfair)]">{displayData.clientsServed}+</div>
+                <p className="text-sm text-muted-foreground">Premium Brands</p>
               </div>
             </div>
 
