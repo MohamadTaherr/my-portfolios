@@ -5,7 +5,15 @@
       "Bash(npm run build:*)",
       "Bash(tree:*)",
       "Bash(dir:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npx sanity:*)",
+      "Bash(test -f:*)",
+      "Bash(test:*)",
+      "Bash(robocopy:*)",
+      "Bash(xcopy:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm dev)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

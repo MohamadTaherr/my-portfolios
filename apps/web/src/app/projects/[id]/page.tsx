@@ -1,6 +1,13 @@
 import { notFound } from 'next/navigation';
-import { client, urlFor } from '@repo/sanity-client';
+import { client } from '@/sanity/lib/client';
+import imageUrlBuilder from '@sanity/image-url';
 import Link from 'next/link';
+
+const builder = imageUrlBuilder(client);
+
+function urlFor(source: any) {
+  return builder.image(source);
+}
 
 interface VideoProject {
   _id: string;

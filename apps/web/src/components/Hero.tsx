@@ -1,7 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { client, urlFor } from '@repo/sanity-client';
+import { client } from '@/sanity/lib/client';
+import imageUrlBuilder from '@sanity/image-url';
+
+const builder = imageUrlBuilder(client);
+
+function urlFor(source: any) {
+  return builder.image(source);
+}
 
 interface SiteSettings {
   name: string;

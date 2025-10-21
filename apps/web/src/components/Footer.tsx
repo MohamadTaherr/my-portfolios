@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { client } from '@repo/sanity-client';
+import { client } from '@/sanity/lib/client';
 
 interface SiteSettings {
   name?: string;

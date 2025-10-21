@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { client } from '@repo/sanity-client';
+import { client } from '@/sanity/lib/client';
 
 interface ContactInfo {
   email?: string;

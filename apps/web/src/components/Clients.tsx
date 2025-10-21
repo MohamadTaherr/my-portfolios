@@ -1,7 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { client as sanityClient, urlFor } from '@repo/sanity-client';
+import { client as sanityClient } from '@/sanity/lib/client';
+import imageUrlBuilder from '@sanity/image-url';
+
+const builder = imageUrlBuilder(sanityClient);
+
+function urlFor(source: any) {
+  return builder.image(source);
+}
 
 interface Client {
   _id: string;
