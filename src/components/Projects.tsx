@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { client } from '@/sanity/lib/client';
 import imageUrlBuilder from '@sanity/image-url';
+import Link from 'next/link';
 
 const builder = imageUrlBuilder(client);
 
@@ -190,7 +191,7 @@ export default function Projects() {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 pt-2">
-                    {project.tags.map((tag) => (
+                    {project.tags?.map((tag) => (
                       <span
                         key={tag}
                         className="px-2 py-1 text-xs font-medium rounded bg-muted text-muted-foreground"
@@ -200,13 +201,21 @@ export default function Projects() {
                     ))}
                   </div>
 
-                  {/* View Button */}
-                  <button
-                    onClick={() => setSelectedVideo(selectedVideo === project._id ? null : project._id)}
-                    className="w-full mt-4 py-3 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 text-primary font-semibold hover:from-primary hover:to-secondary hover:text-white transition-all"
-                  >
-                    {selectedVideo === project._id ? 'Close Video' : 'Watch Video'}
-                  </button>
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      onClick={() => setSelectedVideo(selectedVideo === project._id ? null : project._id)}
+                      className="flex-1 py-3 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 text-primary font-semibold hover:from-primary hover:to-secondary hover:text-white transition-all"
+                    >
+                      {selectedVideo === project._id ? 'Close' : 'Play'}
+                    </button>
+                    <Link
+                      href={`/projects/${project._id}`}
+                      className="flex-1 py-3 rounded-lg border border-border/50 text-foreground font-semibold hover:border-primary/50 hover:text-primary transition-all text-center"
+                    >
+                      Details
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))

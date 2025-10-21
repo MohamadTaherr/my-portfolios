@@ -1,6 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { client } from '@/sanity/lib/client';
+
+interface ContactInfo {
+  email?: string;
+  phone?: string;
+  location?: string;
+}
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -9,6 +16,21 @@ export default function Contact() {
     message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({});
+
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const query = '*[_type == "siteSettings"][0]{email, phone, location}';
+        const data = await client.fetch(query);
+        setContactInfo(data || {});
+      } catch (error) {
+        console.error('Error fetching contact info:', error);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -21,15 +43,31 @@ export default function Contact() {
     e.preventDefault();
     setStatus('loading');
 
-    // Simulate form submission
-    setTimeout(() => {
-      console.log('Form submitted:', formData);
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
 
-      // Reset status after 3 seconds
-      setTimeout(() => setStatus('idle'), 3000);
-    }, 1000);
+      // Reset status after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setStatus('error');
+
+      // Reset status after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    }
   };
 
   return (
@@ -55,7 +93,7 @@ export default function Contact() {
             </div>
             <div className="text-sm">
               <p className="font-medium">Email</p>
-              <p className="text-muted-foreground">your@email.com</p>
+              <p className="text-muted-foreground">{contactInfo.email || 'your@email.com'}</p>
             </div>
           </div>
 
@@ -67,7 +105,7 @@ export default function Contact() {
             </div>
             <div className="text-sm">
               <p className="font-medium">Phone</p>
-              <p className="text-muted-foreground">+1 (123) 456-7890</p>
+              <p className="text-muted-foreground">{contactInfo.phone || '+1 (123) 456-7890'}</p>
             </div>
           </div>
 
@@ -80,7 +118,7 @@ export default function Contact() {
             </div>
             <div className="text-sm">
               <p className="font-medium">Location</p>
-              <p className="text-muted-foreground">City, Country</p>
+              <p className="text-muted-foreground">{contactInfo.location || 'City, Country'}</p>
             </div>
           </div>
         </div>
@@ -144,8 +182,14 @@ export default function Contact() {
           </button>
 
           {status === 'success' && (
-            <p className="text-center text-sm text-accent">
+            <p className="text-center text-sm text-green-600 dark:text-green-400">
               Thanks for reaching out! I&apos;ll get back to you soon.
+            </p>
+          )}
+
+          {status === 'error' && (
+            <p className="text-center text-sm text-red-600 dark:text-red-400">
+              Something went wrong. Please try again or email me directly.
             </p>
           )}
         </form>
