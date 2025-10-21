@@ -13,7 +13,10 @@
       "Bash(xcopy:*)",
       "Bash(pnpm install:*)",
       "Bash(pnpm dev)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []

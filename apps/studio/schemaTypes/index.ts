@@ -4,6 +4,13 @@ import script from './script'
 import siteSettings from './siteSettings'
 import client from './client'
 
+export const schemaTypes: SchemaTypeDefinition[] = [
+  siteSettings,
+  videoProject,
+  script,
+  client,
+]
+
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [siteSettings, videoProject, script, client],
+  types: schemaTypes,
 }

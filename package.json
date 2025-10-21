@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo dev --filter=web --filter=studio",
+    "dev:web": "turbo dev --filter=web",
+    "dev:studio": "turbo dev --filter=studio",
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
