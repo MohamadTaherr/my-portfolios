@@ -45,8 +45,9 @@ async function getRelatedProjects(category: string, currentId: string): Promise<
   }
 }
 
-export default async function ProjectDetailPage({ params }: { params: { id: string } }) {
-  const project = await getProject(params.id);
+export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const project = await getProject(id);
 
   if (!project) {
     notFound();
