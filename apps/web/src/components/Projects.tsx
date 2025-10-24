@@ -25,12 +25,23 @@ interface VideoProject {
   featured: boolean;
 }
 
+interface VideoProjectWithUrls extends Omit<VideoProject, 'thumbnail'> {
+  thumbnailUrl?: string;
+}
+
 export default async function Projects() {
   // Fetch data on the server
   const query = '*[_type == "videoProject"] | order(order asc, _createdAt desc)';
   const videoProjects: VideoProject[] = await client.fetch(query, {}, {
     next: { revalidate: 10 } // Revalidate every 10 seconds
   });
+
+  // Generate image URLs on the server
+  const projectsWithUrls: VideoProjectWithUrls[] = videoProjects.map(project => ({
+    ...project,
+    thumbnailUrl: project.thumbnail ? urlFor(project.thumbnail).width(800).height(450).url() : undefined,
+    thumbnail: undefined as any, // Remove the raw thumbnail object
+  }));
 
   return (
     <section id="video-production" className="relative py-24 md:py-32">
@@ -50,10 +61,7 @@ export default async function Projects() {
           </div>
 
           {/* Client-side interactive component */}
-          <ProjectsClient
-            projects={videoProjects}
-            urlFor={urlFor}
-          />
+          <ProjectsClient projects={projectsWithUrls} />
         </div>
       </div>
 

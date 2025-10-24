@@ -13,18 +13,17 @@ interface VideoProject {
   year: string;
   tags: string[];
   videoUrl?: string;
-  thumbnail: any;
+  thumbnailUrl?: string;
   featured: boolean;
 }
 
 interface ProjectsClientProps {
   projects: VideoProject[];
-  urlFor: (source: any) => any;
 }
 
 const categories = ['All', 'Commercial', 'Documentary', 'Social Media', 'Event', 'Music Video'];
 
-export default function ProjectsClient({ projects, urlFor }: ProjectsClientProps) {
+export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 
@@ -83,9 +82,9 @@ export default function ProjectsClient({ projects, urlFor }: ProjectsClientProps
                     onClick={() => setSelectedVideo(project._id)}
                   >
                     {/* Thumbnail from Sanity */}
-                    {project.thumbnail ? (
+                    {project.thumbnailUrl ? (
                       <img
-                        src={urlFor(project.thumbnail).width(800).height(450).url()}
+                        src={project.thumbnailUrl}
                         alt={project.title}
                         className="absolute inset-0 w-full h-full object-cover"
                       />
