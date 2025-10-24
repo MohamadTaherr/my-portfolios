@@ -1,8 +1,8 @@
-'use client';
-
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import { client } from '@/sanity/lib/client';
+import FooterClient from './FooterClient';
+
+// Revalidate every 10 seconds (ISR) - updates content quickly
+export const revalidate = 10;
 
 interface SiteSettings {
   name?: string;
@@ -15,70 +15,12 @@ interface SiteSettings {
   };
 }
 
-export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  const [settings, setSettings] = useState<SiteSettings>({});
+export default async function Footer() {
+  // Fetch site settings from Sanity
+  const query = '*[_type == "siteSettings"][0]{name, socialLinks}';
+  const settings: SiteSettings = await client.fetch(query, {}, {
+    next: { revalidate: 10 } // Revalidate every 10 seconds
+  }) || {};
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const query = '*[_type == "siteSettings"][0]{name, socialLinks}';
-        const data = await client.fetch(query);
-        setSettings(data || {});
-      } catch (error) {
-        console.error('Error fetching site settings:', error);
-      }
-    };
-
-    fetchSettings();
-  }, []);
-
-  const socialLinks = [
-    settings.socialLinks?.linkedin && { href: settings.socialLinks.linkedin, label: 'LinkedIn' },
-    settings.socialLinks?.twitter && { href: settings.socialLinks.twitter, label: 'Twitter/X' },
-    settings.socialLinks?.instagram && { href: settings.socialLinks.instagram, label: 'Instagram' },
-    settings.socialLinks?.youtube && { href: settings.socialLinks.youtube, label: 'YouTube' },
-    settings.socialLinks?.vimeo && { href: settings.socialLinks.vimeo, label: 'Vimeo' },
-  ].filter(Boolean) as { href: string; label: string }[];
-
-  return (
-    <footer className="border-t border-border/40 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          {/* Copyright */}
-          <div className="text-sm text-muted-foreground">
-            &copy; {currentYear} {settings.name || 'Your Name'}. All rights reserved.
-          </div>
-
-          {/* Social Links */}
-          {socialLinks.length > 0 && (
-            <div className="flex items-center space-x-6">
-              {socialLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label={link.label}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* Quick Links */}
-          <div className="flex items-center space-x-4 text-sm">
-            <Link href="#about" className="text-muted-foreground hover:text-foreground transition-colors">
-              About
-            </Link>
-            <Link href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
-              Contact
-            </Link>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
+  return <FooterClient settings={settings} />;
 }
