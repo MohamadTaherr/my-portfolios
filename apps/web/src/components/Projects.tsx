@@ -8,8 +8,8 @@ function urlFor(source: any) {
   return builder.image(source);
 }
 
-// Revalidate every 60 seconds (ISR)
-export const revalidate = 60;
+// Revalidate every 10 seconds (ISR) - updates content quickly
+export const revalidate = 10;
 
 interface VideoProject {
   _id: string;
@@ -29,7 +29,7 @@ export default async function Projects() {
   // Fetch data on the server
   const query = '*[_type == "videoProject"] | order(order asc, _createdAt desc)';
   const videoProjects: VideoProject[] = await client.fetch(query, {}, {
-    next: { revalidate: 60 } // Revalidate every 60 seconds
+    next: { revalidate: 10 } // Revalidate every 10 seconds
   });
 
   return (
