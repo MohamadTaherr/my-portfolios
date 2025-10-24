@@ -23,7 +23,8 @@
       "Bash(git commit:*)",
       "Bash(rm:*)",
       "Bash(pnpm dev:studio:*)",
-      "Bash(pnpm dev:web:*)"
+      "Bash(pnpm dev:web:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": [],
     "ask": []

@@ -3,6 +3,9 @@ import { client } from '@/sanity/lib/client';
 import imageUrlBuilder from '@sanity/image-url';
 import Link from 'next/link';
 
+// Revalidate page every 10 seconds to fetch fresh content from Sanity
+export const revalidate = 10;
+
 const builder = imageUrlBuilder(client);
 
 function urlFor(source: any) {
@@ -26,7 +29,9 @@ interface VideoProject {
 async function getProject(id: string): Promise<VideoProject | null> {
   try {
     const query = `*[_type == "videoProject" && _id == $id][0]`;
-    const project = await client.fetch(query, { id });
+    const project = await client.fetch(query, { id }, {
+      next: { revalidate: 10 } // Revalidate every 10 seconds
+    });
     return project;
   } catch (error) {
     console.error('Error fetching project:', error);
@@ -37,7 +42,9 @@ async function getProject(id: string): Promise<VideoProject | null> {
 async function getRelatedProjects(category: string, currentId: string): Promise<VideoProject[]> {
   try {
     const query = `*[_type == "videoProject" && category == $category && _id != $currentId] | order(_createdAt desc)[0...3]`;
-    const projects = await client.fetch(query, { category, currentId });
+    const projects = await client.fetch(query, { category, currentId }, {
+      next: { revalidate: 10 } // Revalidate every 10 seconds
+    });
     return projects;
   } catch (error) {
     console.error('Error fetching related projects:', error);
