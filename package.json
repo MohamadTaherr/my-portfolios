@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "turbo dev --filter=web --filter=studio",
+    "dev": "turbo dev --filter=web",
     "dev:web": "turbo dev --filter=web",
     "dev:studio": "turbo dev --filter=studio",
+    "dev:all": "turbo dev --filter=web --filter=studio",
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",

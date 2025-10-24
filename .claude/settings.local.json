@@ -20,7 +20,10 @@
       "Bash(git add:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: convert to monorepo structure with pnpm workspaces and Turborepo\n\n- Moved all source code from root to apps/web\n- Configured pnpm workspaces for monorepo\n- Added Turborepo for task orchestration\n- Updated environment variables and configurations\n- Fixed gitignore for monorepo structure\n- Added Sanity Studio with proper schema exports\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(rm:*)",
+      "Bash(pnpm dev:studio:*)",
+      "Bash(pnpm dev:web:*)"
     ],
     "deny": [],
     "ask": []
