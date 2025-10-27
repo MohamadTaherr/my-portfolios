@@ -1,84 +1,105 @@
-const skillCategories = [
+const cinematicStats = [
   {
-    title: 'Video Production',
-    skills: [
-      { name: 'Adobe Premiere Pro', level: 95 },
-      { name: 'DaVinci Resolve', level: 90 },
-      { name: 'After Effects', level: 85 },
-      { name: 'Final Cut Pro', level: 88 },
-      { name: 'Color Grading', level: 90 },
-    ],
+    number: '20+',
+    label: 'Years in Industry',
+    icon: '🎬',
   },
   {
-    title: 'Scriptwriting',
-    skills: [
-      { name: 'Commercial Scripts', level: 92 },
-      { name: 'Documentary Writing', level: 88 },
-      { name: 'Short Film Scripts', level: 85 },
-      { name: 'Social Media Content', level: 95 },
-      { name: 'Corporate Narratives', level: 90 },
-    ],
+    number: '200+',
+    label: 'Scripts Produced',
+    icon: '✍️',
   },
   {
-    title: 'Production & Tools',
-    skills: [
-      { name: 'Cinematography', level: 85 },
-      { name: 'Sound Design', level: 80 },
-      { name: 'Motion Graphics', level: 82 },
-      { name: 'Storyboarding', level: 88 },
-      { name: 'Project Management', level: 90 },
-    ],
+    number: '10+',
+    label: 'Awards',
+    icon: '🏆',
   },
+  {
+    number: '100+',
+    label: 'Global Brands',
+    icon: '🌍',
+  },
+  {
+    number: '50+',
+    label: 'Documentaries',
+    icon: '📽️',
+  },
+  {
+    number: '1000+',
+    label: 'Hours of Content',
+    icon: '⏱️',
+  },
+];
+
+const expertise = [
+  'Scriptwriting',
+  'Video Production',
+  'Documentary Filmmaking',
+  'Commercial Direction',
+  'Color Grading',
+  'Sound Design',
+  'Post-Production',
+  'Creative Direction',
 ];
 
 export default function Skills() {
   return (
-    <section id="skills" className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-muted/30">
-      <div className="space-y-12">
+    <section id="skills" className="relative py-32 md:py-40 overflow-hidden bg-black">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-playfair)]">
-            Skills & <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Expertise</span>
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Two decades of mastering video production, scriptwriting, and creative content creation for premium brands
+        <div className="text-center mb-20 animate-fade-in">
+          <p className="text-gold/60 text-sm tracking-[0.3em] uppercase mb-4">
+            Expertise
           </p>
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] text-ivory">
+            By the Numbers
+          </h2>
         </div>
 
-        {/* Skills Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {skillCategories.map((category) => (
+        {/* Cinematic Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24 max-w-6xl mx-auto">
+          {cinematicStats.map((stat, index) => (
             <div
-              key={category.title}
-              className="space-y-6 rounded-lg border border-border/40 bg-background p-6"
+              key={stat.label}
+              className="glass p-8 text-center group cinematic-hover animate-fade-in-up"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Category Title */}
-              <h3 className="text-xl font-bold text-primary">{category.title}</h3>
-
-              {/* Skills List */}
-              <div className="space-y-4">
-                {category.skills.map((skill) => (
-                  <div key={skill.name} className="space-y-2">
-                    {/* Skill Name */}
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="font-medium">{skill.name}</span>
-                      <span className="text-muted-foreground">{skill.level}%</span>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000 ease-out"
-                        style={{ width: `${skill.level}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+              <div className="text-4xl mb-4 opacity-60 group-hover:opacity-100 transition-opacity">
+                {stat.icon}
+              </div>
+              <div className="text-5xl md:text-6xl font-[family-name:var(--font-playfair)] text-gold mb-3 animate-flicker">
+                {stat.number}
+              </div>
+              <div className="text-ivory/60 tracking-wider uppercase text-sm">
+                {stat.label}
               </div>
             </div>
           ))}
         </div>
+
+        {/* Expertise Tags */}
+        <div className="max-w-4xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-[family-name:var(--font-playfair)] text-ivory text-center mb-12">
+            Core Competencies
+          </h3>
+          <div className="flex flex-wrap justify-center gap-4">
+            {expertise.map((skill, index) => (
+              <div
+                key={skill}
+                className="px-6 py-3 border border-gold/30 text-ivory/80 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all duration-500 cursor-default animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <span className="tracking-wider text-sm">{skill}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Background decorations */}
+      <div className="absolute top-1/3 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/3 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
+      <div className="film-grain absolute inset-0 opacity-20 pointer-events-none" />
     </section>
   );
 }

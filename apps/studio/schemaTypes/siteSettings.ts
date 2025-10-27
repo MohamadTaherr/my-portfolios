@@ -34,7 +34,13 @@ export default defineType({
       options: {
         hotspot: true,
       },
-      description: 'Professional profile photo',
+      description: 'Professional profile photo (used for cinematic hero background)',
+    }),
+    defineField({
+      name: 'showreelUrl',
+      title: 'Showreel Video URL',
+      type: 'url',
+      description: 'URL to your showreel video (YouTube, Vimeo, or direct video link)',
     }),
     defineField({
       name: 'welcomeMessage',

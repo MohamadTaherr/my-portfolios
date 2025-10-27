@@ -44,19 +44,19 @@ export default async function Projects() {
   }));
 
   return (
-    <section id="video-production" className="relative py-24 md:py-32">
+    <section id="portfolio" className="relative py-32 md:py-40 overflow-hidden bg-black">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-16">
-          {/* Section Header */}
-          <div className="text-center space-y-4 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-playfair)]">
-              Video Production{' '}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Portfolio
-              </span>
+          {/* Section Header - Cinematic Style */}
+          <div className="text-center space-y-6 max-w-4xl mx-auto animate-fade-in">
+            <p className="text-gold/60 text-sm tracking-[0.3em] uppercase">
+              Selected Works
+            </p>
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] text-ivory leading-tight">
+              Portfolio
             </h2>
-            <p className="text-lg md:text-xl text-muted-foreground">
-              From concept to final cut - two decades of creating professional videos that tell compelling stories for global brands
+            <p className="text-xl text-ivory/60 max-w-2xl mx-auto leading-relaxed">
+              Two decades of visual storytelling — from intimate documentaries to global brand narratives
             </p>
           </div>
 
@@ -66,8 +66,9 @@ export default async function Projects() {
       </div>
 
       {/* Background decorations */}
-      <div className="absolute top-20 -right-40 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
+      <div className="film-grain absolute inset-0 opacity-20 pointer-events-none" />
     </section>
   );
 }

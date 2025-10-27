@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Playfair_Display, Courier_Prime } from "next/font/google";
+import { Inter, EB_Garamond, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -7,27 +7,30 @@ import StructuredData from "@/components/StructuredData";
 import { GoogleAnalytics } from "@/components/Analytics";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 
-const geistSans = Geist({
+// Clean sans-serif for body text
+const inter = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const playfair = Playfair_Display({
+// Elegant serif for headings (A24-style)
+const ebGaramond = EB_Garamond({
   variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const courierPrime = Courier_Prime({
+// Alternative cinematic serif
+const cormorant = Cormorant_Garamond({
   variable: "--font-courier",
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
+
+const geistMono = inter; // Use same for mono
 
 export const metadata = {
   title: "Edmond Haddad | Award-Winning Scriptwriter & Creative Producer",
@@ -105,7 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StructuredData />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${courierPrime.variable} antialiased`}
+        className={`${inter.variable} ${ebGaramond.variable} ${cormorant.variable} antialiased`}
       >
         <GoogleAnalytics />
         <ThemeProvider>

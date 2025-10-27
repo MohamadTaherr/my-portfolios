@@ -16,6 +16,7 @@ interface SiteSettingsRaw {
   tagline: string;
   bio: string;
   profileImage?: any;
+  showreelUrl?: string;
   welcomeMessage: string;
   yearsExperience: number;
   projectsCompleted: number;
@@ -28,6 +29,7 @@ interface SiteSettings {
   tagline: string;
   bio: string;
   profileImageUrl?: string;
+  showreelUrl?: string;
   welcomeMessage: string;
   yearsExperience: number;
   projectsCompleted: number;
@@ -59,6 +61,7 @@ export default async function Hero() {
     profileImageUrl: rawSettings.profileImage
       ? urlFor(rawSettings.profileImage).width(800).height(800).url()
       : undefined,
+    showreelUrl: rawSettings.showreelUrl,
   } : defaultSettings;
 
   return <HeroClient settings={settings} />;

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 
 interface VideoProject {
   _id: string;
@@ -21,11 +20,11 @@ interface ProjectsClientProps {
   projects: VideoProject[];
 }
 
-const categories = ['All', 'Commercial', 'Documentary', 'Social Media', 'Event', 'Music Video'];
+const categories = ['All', 'Commercial', 'Short Film', 'Documentary', 'Script'];
 
 export default function ProjectsClient({ projects }: ProjectsClientProps) {
   const [activeCategory, setActiveCategory] = useState('All');
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<VideoProject | null>(null);
 
   const filteredProjects =
     activeCategory === 'All'
@@ -34,16 +33,16 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
 
   return (
     <>
-      {/* Category Filter */}
-      <div className="flex flex-wrap justify-center gap-3">
+      {/* Cinematic Filter Tabs */}
+      <div className="flex flex-wrap justify-center gap-2 mb-16">
         {categories.map((category) => (
           <button
             key={category}
             onClick={() => setActiveCategory(category)}
-            className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+            className={`px-8 py-3 font-[family-name:var(--font-playfair)] text-sm tracking-wider uppercase transition-all duration-500 ${
               activeCategory === category
-                ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/30 scale-105'
-                : 'bg-card border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground'
+                ? 'text-gold border-b-2 border-gold'
+                : 'text-ivory/50 hover:text-ivory/80'
             }`}
           >
             {category}
@@ -51,131 +50,188 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
         ))}
       </div>
 
-      {/* Video Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Cinematic Project Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProjects.length === 0 ? (
-          <div className="col-span-full text-center py-12">
-            <p className="text-muted-foreground">
-              No video projects found in this category. Add some in Sanity Studio at http://localhost:3333
+          <div className="col-span-full text-center py-20">
+            <p className="text-ivory/40 text-lg">
+              No projects in this category yet.
             </p>
           </div>
         ) : (
-          filteredProjects.map((project) => (
+          filteredProjects.map((project, index) => (
             <div
               key={project._id}
-              className="group relative rounded-2xl border border-border/50 bg-card backdrop-blur-sm overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
+              className="group relative aspect-[16/10] overflow-hidden cursor-pointer cinematic-hover"
+              onClick={() => setSelectedProject(project)}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Video Thumbnail / Player */}
-              <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden">
-                {selectedVideo === project._id ? (
-                  <video
-                    controls
-                    autoPlay
-                    className="w-full h-full object-cover"
-                    src={project.videoUrl}
-                  >
-                    Your browser does not support the video tag.
-                  </video>
+              {/* Thumbnail */}
+              <div className="absolute inset-0">
+                {project.thumbnailUrl ? (
+                  <img
+                    src={project.thumbnailUrl}
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
                 ) : (
-                  <div
-                    className="relative w-full h-full cursor-pointer group/thumb"
-                    onClick={() => setSelectedVideo(project._id)}
-                  >
-                    {/* Thumbnail from Sanity */}
-                    {project.thumbnailUrl ? (
-                      <img
-                        src={project.thumbnailUrl}
-                        alt={project.title}
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center">
-                        <div className="text-6xl font-bold text-white/20">
-                          {project.title.charAt(0)}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Play button overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover/thumb:bg-black/50 transition-colors">
-                      <div className="w-20 h-20 rounded-full bg-white/90 group-hover/thumb:bg-white group-hover/thumb:scale-110 transition-all flex items-center justify-center shadow-2xl">
-                        <svg
-                          className="w-8 h-8 text-primary ml-1"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Duration badge */}
-                    <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-black/70 text-white text-sm font-semibold">
-                      {project.duration}
-                    </div>
-                  </div>
+                  <div className="w-full h-full bg-gradient-to-br from-muted to-secondary/20" />
                 )}
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
               </div>
 
-              {/* Content */}
-              <div className="relative p-6 space-y-4">
+              {/* Content Overlay */}
+              <div className="absolute inset-0 p-6 flex flex-col justify-end">
                 {/* Category & Year */}
-                <div className="flex items-center justify-between text-sm">
-                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-primary/10 text-primary border border-primary/20">
+                <div className="flex items-center justify-between mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <span className="text-gold text-xs tracking-widest uppercase">
                     {project.category}
                   </span>
-                  <span className="text-muted-foreground">{project.year}</span>
+                  <span className="text-ivory/60 text-xs">
+                    {project.year}
+                  </span>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-bold group-hover:text-primary transition-colors">
+                <h3 className="text-2xl font-[family-name:var(--font-playfair)] text-ivory mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                   {project.title}
                 </h3>
 
                 {/* Client */}
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-semibold">Client:</span> {project.client}
+                <p className="text-ivory/70 text-sm mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  {project.client}
                 </p>
 
-                {/* Description */}
-                <p className="text-sm text-muted-foreground/90 leading-relaxed">
-                  {project.description}
-                </p>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {project.tags?.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2 py-1 text-xs font-medium rounded bg-muted text-muted-foreground"
+                {/* Play Icon */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                  <div className="w-16 h-16 rounded-full border-2 border-gold flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-gold ml-1"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3 mt-4">
-                  <button
-                    onClick={() =>
-                      setSelectedVideo(selectedVideo === project._id ? null : project._id)
-                    }
-                    className="flex-1 py-3 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 text-primary font-semibold hover:from-primary hover:to-secondary hover:text-white transition-all"
-                  >
-                    {selectedVideo === project._id ? 'Close' : 'Play'}
-                  </button>
-                  <Link
-                    href={`/projects/${project._id}`}
-                    className="flex-1 py-3 rounded-lg border border-border/50 text-foreground font-semibold hover:border-primary/50 hover:text-primary transition-all text-center"
-                  >
-                    Details
-                  </Link>
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
                 </div>
               </div>
+
+              {/* Film grain overlay */}
+              <div className="film-grain absolute inset-0 opacity-30 pointer-events-none" />
             </div>
           ))
         )}
       </div>
+
+      {/* Fullscreen Modal */}
+      {selectedProject && (
+        <div
+          className="fixed inset-0 z-50 bg-black/98 flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setSelectedProject(null)}
+        >
+          <div
+            className="relative w-full max-w-7xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedProject(null)}
+              className="absolute -top-16 right-0 text-gold hover:text-ivory text-5xl transition-colors z-10"
+            >
+              ×
+            </button>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Video Player */}
+              <div className="lg:col-span-2">
+                <div className="relative aspect-video bg-black">
+                  {selectedProject.videoUrl ? (
+                    <video
+                      controls
+                      autoPlay
+                      className="w-full h-full"
+                      src={selectedProject.videoUrl}
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      {selectedProject.thumbnailUrl ? (
+                        <img
+                          src={selectedProject.thumbnailUrl}
+                          alt={selectedProject.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-center text-ivory/40">
+                          <svg className="w-20 h-20 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                          <p>Video preview coming soon</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Project Info */}
+              <div className="space-y-6 text-ivory">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gold text-xs tracking-widest uppercase">
+                      {selectedProject.category}
+                    </span>
+                    <span className="text-ivory/60 text-sm">
+                      {selectedProject.year}
+                    </span>
+                  </div>
+                  <h2 className="text-3xl font-[family-name:var(--font-playfair)] text-ivory mb-2">
+                    {selectedProject.title}
+                  </h2>
+                  <p className="text-gold/80 text-sm">
+                    {selectedProject.client}
+                  </p>
+                </div>
+
+                <div className="h-px bg-gold/20" />
+
+                <div>
+                  <p className="text-ivory/80 leading-relaxed">
+                    {selectedProject.description}
+                  </p>
+                </div>
+
+                {selectedProject.tags && selectedProject.tags.length > 0 && (
+                  <>
+                    <div className="h-px bg-gold/20" />
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1 text-xs border border-gold/30 text-ivory/70 tracking-wider"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <div className="pt-4">
+                  <div className="text-ivory/60 text-sm">
+                    <span className="text-gold">Duration:</span> {selectedProject.duration}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Film grain */}
+          <div className="film-grain absolute inset-0 opacity-20 pointer-events-none" />
+        </div>
+      )}
     </>
   );
 }

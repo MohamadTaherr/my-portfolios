@@ -30,7 +30,9 @@ export default defineType({
       options: {
         list: [
           { title: 'Commercial', value: 'Commercial' },
+          { title: 'Short Film', value: 'Short Film' },
           { title: 'Documentary', value: 'Documentary' },
+          { title: 'Script', value: 'Script' },
           { title: 'Social Media', value: 'Social Media' },
           { title: 'Event', value: 'Event' },
           { title: 'Music Video', value: 'Music Video' },
