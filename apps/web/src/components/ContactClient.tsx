@@ -67,13 +67,13 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
           {/* Section Header */}
           <div className="text-center mb-20 animate-fade-in">
             <p className="text-gold/60 text-sm tracking-[0.3em] uppercase mb-4">
-              Let's Connect
+              Let&apos;s Connect
             </p>
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] text-ivory mb-6">
               Start a Conversation
             </h2>
             <p className="text-xl text-ivory/60 max-w-2xl mx-auto">
-              Ready to bring your story to life? Let's discuss your next project.
+              Ready to bring your story to life? Let&apos;s discuss your next project.
             </p>
           </div>
 
@@ -141,7 +141,7 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
 
             {status === 'success' && (
               <p className="text-gold/80 text-center animate-fade-in">
-                Thank you for reaching out. I'll get back to you soon.
+                Thank you for reaching out. I&apos;ll get back to you soon.
               </p>
             )}
 
