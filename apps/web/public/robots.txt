@@ -6,5 +6,5 @@ Allow: /
 Disallow: /studio/
 Disallow: /api/
 
-# Sitemap location (update NEXT_PUBLIC_SITE_URL in your .env file)
-Sitemap: https://yourdomain.com/sitemap.xml
+# Sitemap location
+Sitemap: https://my-portfolios-web-8sqt.vercel.app/sitemap.xml
