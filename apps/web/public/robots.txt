@@ -7,4 +7,4 @@ Disallow: /studio/
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://my-portfolios-web-8sqt.vercel.app/sitemap.xml
+Sitemap: https://my-portfolios-web-pearl.vercel.app/sitemap.xml
