@@ -190,7 +190,7 @@ export default function Clients() {
                       {client.logo ? (
                         <img
                           src={urlFor(client.logo).width(200).height(200).url()}
-                          alt={client.name}
+                          alt={`${client.name} logo - Client of Edmond Haddad`}
                           className="w-full h-full object-contain"
                         />
                       ) : (

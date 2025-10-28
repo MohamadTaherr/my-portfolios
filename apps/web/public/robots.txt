@@ -2,10 +2,9 @@
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://yourdomain.com/sitemap.xml
-
-# Block access to admin/studio pages
-User-agent: *
+# Block access to admin/studio and API pages
 Disallow: /studio/
 Disallow: /api/
+
+# Sitemap location (update NEXT_PUBLIC_SITE_URL in your .env file)
+Sitemap: https://yourdomain.com/sitemap.xml

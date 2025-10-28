@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { client } from '@/sanity/lib/client';
 import imageUrlBuilder from '@sanity/image-url';
 import Link from 'next/link';
+import { Metadata } from 'next';
 
 // Revalidate page every 10 seconds to fetch fresh content from Sanity
 export const revalidate = 10;
@@ -37,6 +38,65 @@ async function getProject(id: string): Promise<VideoProject | null> {
     console.error('Error fetching project:', error);
     return null;
   }
+}
+
+// Generate dynamic metadata for each project page
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const project = await getProject(id);
+
+  if (!project) {
+    return {
+      title: 'Project Not Found | Edmond Haddad',
+      description: 'The requested project could not be found.',
+    };
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
+  const imageUrl = project.thumbnail
+    ? urlFor(project.thumbnail).width(1200).height(630).url()
+    : `${baseUrl}/og-image.jpg`;
+
+  return {
+    title: `${project.title} | ${project.client} | Edmond Haddad`,
+    description: project.description.substring(0, 160) + (project.description.length > 160 ? '...' : ''),
+    keywords: [
+      project.title,
+      project.client,
+      project.category,
+      ...project.tags,
+      'scriptwriting',
+      'video production',
+      'Edmond Haddad',
+    ],
+    authors: [{ name: 'Edmond Haddad' }],
+    openGraph: {
+      title: `${project.title} | ${project.client}`,
+      description: project.description,
+      url: `${baseUrl}/projects/${id}`,
+      siteName: 'Edmond Haddad Portfolio',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} - ${project.client}`,
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${project.title} | ${project.client}`,
+      description: project.description.substring(0, 200),
+      images: [imageUrl],
+      creator: '@yourtwitterhandle',
+    },
+    alternates: {
+      canonical: `/projects/${id}`,
+    },
+  };
 }
 
 async function getRelatedProjects(category: string, currentId: string): Promise<VideoProject[]> {
@@ -112,7 +172,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             ) : project.thumbnail ? (
               <img
                 src={urlFor(project.thumbnail).width(1200).height(675).url()}
-                alt={project.title}
+                alt={`${project.title} - ${project.category} video project for ${project.client} (${project.year})`}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -166,7 +226,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                       {related.thumbnail ? (
                         <img
                           src={urlFor(related.thumbnail).width(400).height(225).url()}
-                          alt={related.title}
+                          alt={`${related.title} - ${related.category} project for ${related.client}`}
                           className="w-full h-full object-cover"
                         />
                       ) : (

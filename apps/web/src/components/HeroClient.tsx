@@ -31,7 +31,7 @@ export default function HeroClient({ settings }: HeroClientProps) {
             <div className="w-full h-full relative">
               <img
                 src={settings.profileImageUrl}
-                alt={settings.name}
+                alt={`${settings.name} - Award-winning scriptwriter and creative producer`}
                 className="w-full h-full object-cover animate-camera-pan"
               />
               {/* Dark overlay for text readability */}

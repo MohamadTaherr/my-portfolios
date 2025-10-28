@@ -71,7 +71,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                 {project.thumbnailUrl ? (
                   <img
                     src={project.thumbnailUrl}
-                    alt={project.title}
+                    alt={`${project.title} - ${project.category} project for ${project.client}`}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
                 ) : (
@@ -160,7 +160,7 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
                       {selectedProject.thumbnailUrl ? (
                         <img
                           src={selectedProject.thumbnailUrl}
-                          alt={selectedProject.title}
+                          alt={`${selectedProject.title} - ${selectedProject.category} project for ${selectedProject.client}`}
                           className="w-full h-full object-cover"
                         />
                       ) : (
