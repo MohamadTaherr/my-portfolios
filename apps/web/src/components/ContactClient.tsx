@@ -1,22 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ContactInfo {
   email?: string;
   phone?: string;
   location?: string;
+  socialLinks?: {
+    linkedin?: string;
+    vimeo?: string;
+    instagram?: string;
+  };
+}
+
+interface PageContent {
+  contactTitle?: string;
+  contactSubtitle?: string;
+  contactDescription?: string;
 }
 
 interface ContactClientProps {
   contactInfo: ContactInfo;
 }
-
-const socialLinks = [
-  { name: 'LinkedIn', icon: 'in', url: '#' },
-  { name: 'Vimeo', icon: 'Vi', url: '#' },
-  { name: 'Instagram', icon: 'Ig', url: '#' },
-];
 
 export default function ContactClient({ contactInfo }: ContactClientProps) {
   const [formData, setFormData] = useState({
@@ -25,6 +30,14 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
     message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [pageContent, setPageContent] = useState<PageContent | null>(null);
+
+  useEffect(() => {
+    fetch('/api/page-content')
+      .then(res => res.json())
+      .then((data: PageContent) => setPageContent(data))
+      .catch(err => console.error('Error fetching page content:', err));
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -60,6 +73,16 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
     }
   };
 
+  const contactTitle = pageContent?.contactTitle || 'Start a Conversation';
+  const contactSubtitle = pageContent?.contactSubtitle || "Let's Connect";
+  const contactDescription = pageContent?.contactDescription || "Ready to bring your story to life? Let's discuss your next project.";
+
+  const socialLinks = [
+    contactInfo.socialLinks?.linkedin && { name: 'LinkedIn', icon: 'in', url: contactInfo.socialLinks.linkedin },
+    contactInfo.socialLinks?.vimeo && { name: 'Vimeo', icon: 'Vi', url: contactInfo.socialLinks.vimeo },
+    contactInfo.socialLinks?.instagram && { name: 'Instagram', icon: 'Ig', url: contactInfo.socialLinks.instagram },
+  ].filter(Boolean) as { name: string; icon: string; url: string }[];
+
   return (
     <section id="contact" className="relative py-32 md:py-40 overflow-hidden bg-black">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,13 +90,13 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
           {/* Section Header */}
           <div className="text-center mb-20 animate-fade-in">
             <p className="text-gold/60 text-sm tracking-[0.3em] uppercase mb-4">
-              Let&apos;s Connect
+              {contactSubtitle}
             </p>
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] text-ivory mb-6">
-              Start a Conversation
+              {contactTitle}
             </h2>
             <p className="text-xl text-ivory/60 max-w-2xl mx-auto">
-              Ready to bring your story to life? Let&apos;s discuss your next project.
+              {contactDescription}
             </p>
           </div>
 
@@ -158,7 +181,7 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
               {contactInfo.email && (
                 <div className="space-y-2">
                   <p className="text-gold/60 text-xs tracking-widest uppercase">Email</p>
-                  <a href={`mailto:${contactInfo.email}`} className="text-ivory/80 hover:text-gold transition-colors">
+                  <a href={\`mailto:\${contactInfo.email}\`} className="text-ivory/80 hover:text-gold transition-colors">
                     {contactInfo.email}
                   </a>
                 </div>
@@ -166,7 +189,7 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
               {contactInfo.phone && (
                 <div className="space-y-2">
                   <p className="text-gold/60 text-xs tracking-widest uppercase">Phone</p>
-                  <a href={`tel:${contactInfo.phone}`} className="text-ivory/80 hover:text-gold transition-colors">
+                  <a href={\`tel:\${contactInfo.phone}\`} className="text-ivory/80 hover:text-gold transition-colors">
                     {contactInfo.phone}
                   </a>
                 </div>
@@ -179,21 +202,25 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
               )}
             </div>
 
-            <div className="h-px bg-gold/20" />
-
-            {/* Social Links */}
-            <div className="flex justify-center gap-6">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  className="w-12 h-12 border border-gold/30 flex items-center justify-center text-gold/80 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all duration-500"
-                  aria-label={social.name}
-                >
-                  <span className="text-xs font-bold">{social.icon}</span>
-                </a>
-              ))}
-            </div>
+            {socialLinks.length > 0 && (
+              <>
+                <div className="h-px bg-gold/20" />
+                <div className="flex justify-center gap-6">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.name}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 border border-gold/30 flex items-center justify-center text-gold/80 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all duration-500"
+                      aria-label={social.name}
+                    >
+                      <span className="text-xs font-bold">{social.icon}</span>
+                    </a>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

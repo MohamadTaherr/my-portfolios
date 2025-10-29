@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@portabletext/react": "^4.0.3",
     "@repo/sanity-client": "workspace:*",
     "@sanity/client": "^7.12.0",
     "@sanity/image-url": "^1.2.0",

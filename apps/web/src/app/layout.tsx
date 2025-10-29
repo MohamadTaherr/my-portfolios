@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import StructuredData from "@/components/StructuredData";
 import { GoogleAnalytics } from "@/components/Analytics";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
+import { client } from '@/sanity/lib/client';
+import { Metadata } from 'next';
 
 // Clean sans-serif for body text
 const inter = Inter({
@@ -32,74 +34,116 @@ const cormorant = Cormorant_Garamond({
 
 const geistMono = inter; // Use same for mono
 
-export const metadata = {
-  title: "Edmond Haddad | Award-Winning Scriptwriter & Creative Producer",
-  description: "Two decades of crafting compelling stories for Porsche, major films, and global brands. Professional scriptwriting and creative production services.",
-  keywords: [
+// Fetch SEO data from Sanity
+async function getSEOData() {
+  try {
+    const query = \`*[_type == "pageContent"][0]{
+      seoTitle,
+      seoDescription,
+      seoKeywords
+    }\`;
+
+    const data = await client.fetch(query, {}, { next: { revalidate: 3600 } });
+    return data;
+  } catch (error) {
+    console.error('Error fetching SEO data:', error);
+    return null;
+  }
+}
+
+async function getSiteSettings() {
+  try {
+    const query = \`*[_type == "siteSettings"][0]{ name }\`;
+    const data = await client.fetch(query, {}, { next: { revalidate: 3600 } });
+    return data;
+  } catch (error) {
+    console.error('Error fetching site settings:', error);
+    return null;
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [seoData, siteSettings] = await Promise.all([
+    getSEOData(),
+    getSiteSettings()
+  ]);
+
+  const siteName = siteSettings?.name || "Edmond Haddad";
+  const title = seoData?.seoTitle || \`\${siteName} | Award-Winning Scriptwriter & Creative Producer\`;
+  const description = seoData?.seoDescription || "Two decades of crafting compelling stories for Porsche, major films, and global brands. Professional scriptwriting and creative production services.";
+  const keywords = seoData?.seoKeywords || [
     "scriptwriter",
     "creative producer",
     "video production",
     "commercial director",
     "documentary filmmaker",
     "content creator",
-    "Edmond Haddad",
+    siteName,
     "professional scriptwriting",
     "video editing",
     "brand storytelling",
-  ],
-  authors: [{ name: "Edmond Haddad" }],
-  creator: "Edmond Haddad",
-  publisher: "Edmond Haddad",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'),
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: "Edmond Haddad | Award-Winning Scriptwriter & Creative Producer",
-    description: "Two decades of crafting compelling stories for Porsche, major films, and global brands. Professional scriptwriting and creative production services.",
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com',
-    siteName: "Edmond Haddad Portfolio",
-    locale: 'en_US',
-    type: 'website',
-    images: [
-      {
-        url: '/og-image.jpg', // You'll need to create this image
-        width: 1200,
-        height: 630,
-        alt: 'Edmond Haddad - Scriptwriter & Creative Producer',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: "Edmond Haddad | Award-Winning Scriptwriter & Creative Producer",
-    description: "Two decades of crafting compelling stories for Porsche, major films, and global brands.",
-    creator: '@yourtwitterhandle', // Replace with actual Twitter handle
-    images: ['/og-image.jpg'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+  ];
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
+
+  return {
+    title,
+    description,
+    keywords,
+    authors: [{ name: siteName }],
+    creator: siteName,
+    publisher: siteName,
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    metadataBase: new URL(siteUrl),
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title,
+      description,
+      url: siteUrl,
+      siteName: \`\${siteName} Portfolio\`,
+      locale: 'en_US',
+      type: 'website',
+      images: [
+        {
+          url: '/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: \`\${siteName} - Scriptwriter & Creative Producer\`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      creator: '@yourtwitterhandle',
+      images: ['/og-image.jpg'],
+    },
+    robots: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
-  },
-  verification: {
-    // Add these once you verify with search engines
-    // google: 'your-google-verification-code',
-    // yandex: 'your-yandex-verification-code',
-    // bing: 'your-bing-verification-code',
-  },
-};
+    verification: {
+      // Add these once you verify with search engines
+      // google: 'your-google-verification-code',
+      // yandex: 'your-yandex-verification-code',
+      // bing: 'your-bing-verification-code',
+    },
+  };
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -108,7 +152,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StructuredData />
       </head>
       <body
-        className={`${inter.variable} ${ebGaramond.variable} ${cormorant.variable} antialiased`}
+        className={\`\${inter.variable} \${ebGaramond.variable} \${cormorant.variable} antialiased\`}
       >
         <GoogleAnalytics />
         <ThemeProvider>

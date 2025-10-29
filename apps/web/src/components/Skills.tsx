@@ -1,58 +1,108 @@
-const cinematicStats = [
-  {
-    number: '20+',
-    label: 'Years in Industry',
-    icon: '🎬',
-  },
-  {
-    number: '200+',
-    label: 'Scripts Produced',
-    icon: '✍️',
-  },
-  {
-    number: '10+',
-    label: 'Awards',
-    icon: '🏆',
-  },
-  {
-    number: '100+',
-    label: 'Global Brands',
-    icon: '🌍',
-  },
-  {
-    number: '50+',
-    label: 'Documentaries',
-    icon: '📽️',
-  },
-  {
-    number: '1000+',
-    label: 'Hours of Content',
-    icon: '⏱️',
-  },
-];
+import { client } from '@/sanity/lib/client';
 
-const expertise = [
-  'Scriptwriting',
-  'Video Production',
-  'Documentary Filmmaking',
-  'Commercial Direction',
-  'Color Grading',
-  'Sound Design',
-  'Post-Production',
-  'Creative Direction',
-];
+interface Stat {
+  number: string;
+  label: string;
+  icon: string;
+  order: number;
+}
 
-export default function Skills() {
+interface SkillsData {
+  stats: Stat[];
+  competencies: string[];
+  _id: string;
+}
+
+interface PageContentData {
+  skillsTitle?: string;
+  skillsSubtitle?: string;
+}
+
+async function getSkillsData(): Promise<SkillsData | null> {
+  try {
+    const query = \`*[_type == "skillsSection"][0]{
+      _id,
+      stats[]{ number, label, icon, order } | order(order asc),
+      competencies
+    }\`;
+
+    const data = await client.fetch<SkillsData>(query, {}, {
+      next: { revalidate: 60 }
+    });
+
+    return data;
+  } catch (error) {
+    console.error('Error fetching skills data:', error);
+    return null;
+  }
+}
+
+async function getPageContent(): Promise<PageContentData | null> {
+  try {
+    const query = \`*[_type == "pageContent"][0]{
+      skillsTitle,
+      skillsSubtitle
+    }\`;
+
+    const data = await client.fetch<PageContentData>(query, {}, {
+      next: { revalidate: 60 }
+    });
+
+    return data;
+  } catch (error) {
+    console.error('Error fetching page content:', error);
+    return null;
+  }
+}
+
+export default async function Skills() {
+  const [skillsData, pageContent] = await Promise.all([
+    getSkillsData(),
+    getPageContent()
+  ]);
+
+  // Fallback data if Sanity data is not available
+  const defaultStats = [
+    { number: '20+', label: 'Years in Industry', icon: '🎬', order: 0 },
+    { number: '200+', label: 'Scripts Produced', icon: '✍️', order: 1 },
+    { number: '10+', label: 'Awards', icon: '🏆', order: 2 },
+    { number: '100+', label: 'Global Brands', icon: '🌍', order: 3 },
+    { number: '50+', label: 'Documentaries', icon: '📽️', order: 4 },
+    { number: '1000+', label: 'Hours of Content', icon: '⏱️', order: 5 },
+  ];
+
+  const defaultCompetencies = [
+    'Scriptwriting',
+    'Video Production',
+    'Documentary Filmmaking',
+    'Commercial Direction',
+    'Color Grading',
+    'Sound Design',
+    'Post-Production',
+    'Creative Direction',
+  ];
+
+  const cinematicStats = skillsData?.stats && skillsData.stats.length > 0
+    ? skillsData.stats
+    : defaultStats;
+
+  const expertise = skillsData?.competencies && skillsData.competencies.length > 0
+    ? skillsData.competencies
+    : defaultCompetencies;
+
+  const skillsTitle = pageContent?.skillsTitle || 'By the Numbers';
+  const skillsSubtitle = pageContent?.skillsSubtitle || 'Expertise';
+
   return (
     <section id="skills" className="relative py-32 md:py-40 overflow-hidden bg-black">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-20 animate-fade-in">
           <p className="text-gold/60 text-sm tracking-[0.3em] uppercase mb-4">
-            Expertise
+            {skillsSubtitle}
           </p>
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] text-ivory">
-            By the Numbers
+            {skillsTitle}
           </h2>
         </div>
 
@@ -62,7 +112,7 @@ export default function Skills() {
             <div
               key={stat.label}
               className="glass p-8 text-center group cinematic-hover animate-fade-in-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              style={{ animationDelay: \`\${index * 0.1}s\` }}
             >
               <div className="text-4xl mb-4 opacity-60 group-hover:opacity-100 transition-opacity">
                 {stat.icon}
@@ -87,7 +137,7 @@ export default function Skills() {
               <div
                 key={skill}
                 className="px-6 py-3 border border-gold/30 text-ivory/80 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all duration-500 cursor-default animate-fade-in"
-                style={{ animationDelay: `${index * 0.05}s` }}
+                style={{ animationDelay: \`\${index * 0.05}s\` }}
               >
                 <span className="tracking-wider text-sm">{skill}</span>
               </div>

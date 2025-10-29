@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface SiteSettings {
   name?: string;
@@ -13,12 +14,47 @@ interface SiteSettings {
   };
 }
 
+interface FooterSettings {
+  footerNavigation?: Array<{
+    label: string;
+    href: string;
+    order: number;
+  }>;
+  copyrightText?: string;
+  tagline?: string;
+  showSocialLinks?: boolean;
+}
+
 interface FooterClientProps {
   settings: SiteSettings;
 }
 
 export default function FooterClient({ settings }: FooterClientProps) {
   const currentYear = new Date().getFullYear();
+  const [footerSettings, setFooterSettings] = useState<FooterSettings | null>(null);
+
+  useEffect(() => {
+    fetch('/api/footer')
+      .then(res => res.json())
+      .then((data: FooterSettings) => setFooterSettings(data))
+      .catch(err => console.error('Error fetching footer settings:', err));
+  }, []);
+
+  const defaultNavItems = [
+    { href: '#hero', label: 'Home', order: 0 },
+    { href: '#about', label: 'About', order: 1 },
+    { href: '#portfolio', label: 'Portfolio', order: 2 },
+    { href: '#skills', label: 'Expertise', order: 3 },
+    { href: '#contact', label: 'Contact', order: 4 },
+  ];
+
+  const navItems = footerSettings?.footerNavigation && footerSettings.footerNavigation.length > 0
+    ? footerSettings.footerNavigation.sort((a, b) => a.order - b.order)
+    : defaultNavItems;
+
+  const copyrightText = footerSettings?.copyrightText || 'All rights reserved';
+  const tagline = footerSettings?.tagline || 'Crafted with cinematic precision';
+  const showSocialLinks = footerSettings?.showSocialLinks !== false;
 
   const socialLinks = [
     settings.socialLinks?.linkedin && { href: settings.socialLinks.linkedin, label: 'LinkedIn', icon: 'in' },
@@ -39,25 +75,19 @@ export default function FooterClient({ settings }: FooterClientProps) {
 
           {/* Navigation Links */}
           <div className="flex flex-wrap justify-center gap-8 text-sm">
-            <Link href="#hero" className="text-ivory/60 hover:text-gold transition-colors tracking-wider uppercase">
-              Home
-            </Link>
-            <Link href="#about" className="text-ivory/60 hover:text-gold transition-colors tracking-wider uppercase">
-              About
-            </Link>
-            <Link href="#portfolio" className="text-ivory/60 hover:text-gold transition-colors tracking-wider uppercase">
-              Portfolio
-            </Link>
-            <Link href="#skills" className="text-ivory/60 hover:text-gold transition-colors tracking-wider uppercase">
-              Expertise
-            </Link>
-            <Link href="#contact" className="text-ivory/60 hover:text-gold transition-colors tracking-wider uppercase">
-              Contact
-            </Link>
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-ivory/60 hover:text-gold transition-colors tracking-wider uppercase"
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
 
           {/* Social Links */}
-          {socialLinks.length > 0 && (
+          {showSocialLinks && socialLinks.length > 0 && (
             <div className="flex items-center gap-4">
               {socialLinks.map((link) => (
                 <a
@@ -79,8 +109,8 @@ export default function FooterClient({ settings }: FooterClientProps) {
 
           {/* Copyright */}
           <div className="text-ivory/40 text-sm text-center">
-            <p>&copy; {currentYear} {settings.name || 'Edmond Haddad'}. All rights reserved.</p>
-            <p className="mt-2 text-xs">Crafted with cinematic precision</p>
+            <p>&copy; {currentYear} {settings.name || 'Edmond Haddad'}. {copyrightText}</p>
+            <p className="mt-2 text-xs">{tagline}</p>
           </div>
         </div>
       </div>

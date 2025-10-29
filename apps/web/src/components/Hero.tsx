@@ -8,8 +8,7 @@ function urlFor(source: any) {
   return builder.image(source);
 }
 
-// Revalidate every 10 seconds (ISR) - updates content quickly
-export const revalidate = 10;
+export const revalidate = 60;
 
 interface SiteSettingsRaw {
   name: string;
@@ -37,25 +36,47 @@ interface SiteSettings {
   industryAwards?: number;
 }
 
-export default async function Hero() {
-  // Fetch site settings from Sanity
-  const query = '*[_type == "siteSettings"][0]';
-  const rawSettings: SiteSettingsRaw | null = await client.fetch(query, {}, {
-    next: { revalidate: 10 } // Revalidate every 10 seconds
-  });
+interface PageContent {
+  heroHeadline?: string;
+  heroSubheadline?: string;
+}
 
-  // Default fallback data
+async function getSiteSettings(): Promise<SiteSettingsRaw | null> {
+  try {
+    const query = \`*[_type == "siteSettings"][0]\`;
+    return await client.fetch(query, {}, { next: { revalidate: 60 } });
+  } catch (error) {
+    console.error('Error fetching site settings:', error);
+    return null;
+  }
+}
+
+async function getPageContent(): Promise<PageContent | null> {
+  try {
+    const query = \`*[_type == "pageContent"][0]{ heroHeadline, heroSubheadline }\`;
+    return await client.fetch(query, {}, { next: { revalidate: 60 } });
+  } catch (error) {
+    console.error('Error fetching page content:', error);
+    return null;
+  }
+}
+
+export default async function Hero() {
+  const [rawSettings, pageContent] = await Promise.all([
+    getSiteSettings(),
+    getPageContent()
+  ]);
+
   const defaultSettings: SiteSettings = {
     name: 'Edmond Haddad',
     tagline: 'Award-Winning Scriptwriter & Creative Producer',
-    bio: 'Two decades of crafting compelling narratives for Porsche, major film productions, and global brands. From concept to final cut, I create stories that captivate audiences and drive results.',
+    bio: 'Two decades of crafting compelling narratives for Porsche, major film productions, and global brands.',
     welcomeMessage: 'Welcome to my portfolio',
     yearsExperience: 20,
     projectsCompleted: 200,
     clientsServed: 100,
   };
 
-  // Prepare settings with pre-generated image URL
   const settings: SiteSettings = rawSettings ? {
     ...rawSettings,
     profileImageUrl: rawSettings.profileImage
@@ -64,5 +85,5 @@ export default async function Hero() {
     showreelUrl: rawSettings.showreelUrl,
   } : defaultSettings;
 
-  return <HeroClient settings={settings} />;
+  return <HeroClient settings={settings} pageContent={pageContent || undefined} />;
 }

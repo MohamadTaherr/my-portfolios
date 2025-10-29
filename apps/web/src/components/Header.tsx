@@ -1,20 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+
+interface NavItem {
+  label: string;
+  href: string;
+  order: number;
+}
+
+interface NavigationSettings {
+  mainNavigation: NavItem[];
+  logoText?: string;
+}
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [navItems, setNavItems] = useState<NavItem[]>([
+    { href: '#hero', label: 'Home', order: 0 },
+    { href: '#about', label: 'About', order: 1 },
+    { href: '#portfolio', label: 'Portfolio', order: 2 },
+    { href: '#skills', label: 'Expertise', order: 3 },
+    { href: '#contact', label: 'Contact', order: 4 },
+  ]);
+  const [logoText, setLogoText] = useState('EH');
+
+  useEffect(() => {
+    // Fetch navigation settings from API
+    fetch('/api/navigation')
+      .then(res => res.json())
+      .then((data: NavigationSettings) => {
+        if (data.mainNavigation && data.mainNavigation.length > 0) {
+          setNavItems(data.mainNavigation.sort((a, b) => a.order - b.order));
+        }
+        if (data.logoText) {
+          setLogoText(data.logoText);
+        }
+      })
+      .catch(err => console.error('Error fetching navigation:', err));
+  }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  const navItems = [
-    { href: '#hero', label: 'Home' },
-    { href: '#about', label: 'About' },
-    { href: '#portfolio', label: 'Portfolio' },
-    { href: '#skills', label: 'Expertise' },
-    { href: '#contact', label: 'Contact' },
-  ];
 
   return (
     <header className="fixed top-0 z-50 w-full bg-black/80 backdrop-blur-md border-b border-gold/10">
@@ -23,7 +49,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <span className="text-2xl font-[family-name:var(--font-playfair)] text-gold tracking-wider">
-              EH
+              {logoText}
             </span>
           </Link>
 

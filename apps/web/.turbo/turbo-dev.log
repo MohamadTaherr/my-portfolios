@@ -17,3 +17,14 @@
  GET /favicon.ico?favicon.0b3bf435.ico 200 in 1253ms
  GET / 200 in 1247ms
  GET / 200 in 1108ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 726ms
+ GET / 200 in 1137ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 655ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 509ms
+ GET / 200 in 911ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 496ms
+ GET / 200 in 1878ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 818ms
+ GET / 200 in 1215ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 827ms
+ GET / 200 in 1137ms
