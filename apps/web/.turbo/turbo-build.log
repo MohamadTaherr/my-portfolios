@@ -1,0 +1,109 @@
+
+> web@0.1.0 build C:\Users\user\Desktop\my-portfolios\apps\web
+> next build
+
+   ▲ Next.js 15.5.6
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./src/app/api/footer/route.ts
+Error:   [31mx[0m Expected unicode escape
+   ,-[[36;1;4mC:\Users\user\Desktop\my-portfolios\apps\web\src\app\api\footer\route.ts[0m:6:1]
+ [2m3[0m | 
+ [2m4[0m | export async function GET() {
+ [2m5[0m |   try {
+ [2m6[0m |     const query = \`*[_type == "footerSettings"][0]{
+   : [35;1m                  ^[0m
+ [2m7[0m |       footerNavigation[]{ label, href, order } | order(order asc),
+ [2m8[0m |       copyrightText,
+ [2m9[0m |       tagline,
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/api/footer/route.ts
+
+./src/app/api/navigation/route.ts
+Error:   [31mx[0m Expected unicode escape
+   ,-[[36;1;4mC:\Users\user\Desktop\my-portfolios\apps\web\src\app\api\navigation\route.ts[0m:6:1]
+ [2m3[0m | 
+ [2m4[0m | export async function GET() {
+ [2m5[0m |   try {
+ [2m6[0m |     const query = \`*[_type == "navigationSettings"][0]{
+   : [35;1m                  ^[0m
+ [2m7[0m |       mainNavigation[]{ label, href, order } | order(order asc),
+ [2m8[0m |       logoText
+ [2m9[0m |     }\`;
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/api/navigation/route.ts
+
+./src/app/api/page-content/route.ts
+Error:   [31mx[0m Expected unicode escape
+   ,-[[36;1;4mC:\Users\user\Desktop\my-portfolios\apps\web\src\app\api\page-content\route.ts[0m:6:1]
+ [2m3[0m | 
+ [2m4[0m | export async function GET() {
+ [2m5[0m |   try {
+ [2m6[0m |     const query = \`*[_type == "pageContent"][0]{
+   : [35;1m                  ^[0m
+ [2m7[0m |       contactTitle,
+ [2m8[0m |       contactSubtitle,
+ [2m9[0m |       contactDescription
+   `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/api/page-content/route.ts
+
+./src/app/layout.tsx
+Error:   [31mx[0m Expected unicode escape
+    ,-[[36;1;4mC:\Users\user\Desktop\my-portfolios\apps\web\src\app\layout.tsx[0m:40:1]
+ [2m37[0m | // Fetch SEO data from Sanity
+ [2m38[0m | async function getSEOData() {
+ [2m39[0m |   try {
+ [2m40[0m |     const query = \`*[_type == "pageContent"][0]{
+    : [35;1m                  ^[0m
+ [2m41[0m |       seoTitle,
+ [2m42[0m |       seoDescription,
+ [2m43[0m |       seoKeywords
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/app/layout.tsx
+
+./src/components/About.tsx
+Error:   [31mx[0m Expected unicode escape
+    ,-[[36;1;4mC:\Users\user\Desktop\my-portfolios\apps\web\src\components\About.tsx[0m:31:1]
+ [2m28[0m | 
+ [2m29[0m | async function getSiteSettings(): Promise<SiteSettings | null> {
+ [2m30[0m |   try {
+ [2m31[0m |     const query = \`*[_type == "siteSettings"][0]{name, bio, yearsExperience, projectsCompleted, industryAwards}\`;
+    : [35;1m                  ^[0m
+ [2m32[0m |     return await client.fetch(query, {}, { next: { revalidate: 60 } });
+ [2m33[0m |   } catch (error) {
+ [2m34[0m |     console.error('Error fetching site settings:', error);
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/About.tsx
+./src/app/page.tsx
+
+
+> Build failed because of webpack errors
+ ELIFECYCLE  Command failed with exit code 1.

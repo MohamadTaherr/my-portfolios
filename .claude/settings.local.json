@@ -29,7 +29,9 @@
       "Bash(tasklist:*)",
       "Bash(bash:*)",
       "Bash(pnpm add:*)",
-      "Bash(pnpm --filter web add:*)"
+      "Bash(pnpm --filter web add:*)",
+      "Bash(pnpm sanity deploy:*)",
+      "Bash(powershell -Command \"(Get-Content ProjectsClient.tsx) -replace \"\"const categories = \\[''All'', ''Commercial'', ''Short Film'', ''Documentary'', ''Script''\\];\"\", \"\"// Categories dynamically generated from projects\"\" | Set-Content ProjectsClient_temp.tsx\")"
     ],
     "deny": [],
     "ask": []
