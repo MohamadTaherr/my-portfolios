@@ -8,6 +8,8 @@ import { skillsSection } from './skillsSection'
 import { navigationSettings } from './navigationSettings'
 import { footerSettings } from './footerSettings'
 import { aboutSection } from './aboutSection'
+import { projectCategory } from './projectCategory'
+import { scriptType } from './scriptType'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Site-wide settings (singleton documents)
@@ -15,6 +17,8 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   pageContent,
   navigationSettings,
   footerSettings,
+  projectCategory,
+  scriptType,
 
   // Section-specific content
   aboutSection,

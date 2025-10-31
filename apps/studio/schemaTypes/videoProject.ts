@@ -27,16 +27,36 @@ export default defineType({
       name: 'category',
       title: 'Category',
       type: 'string',
+      description: 'Select a category. To add/edit categories, go to "Project Categories" in the sidebar.',
       options: {
-        list: [
-          { title: 'Commercial', value: 'Commercial' },
-          { title: 'Short Film', value: 'Short Film' },
-          { title: 'Documentary', value: 'Documentary' },
-          { title: 'Script', value: 'Script' },
-          { title: 'Social Media', value: 'Social Media' },
-          { title: 'Event', value: 'Event' },
-          { title: 'Music Video', value: 'Music Video' },
-        ],
+        list: async (parent, context) => {
+          const { getClient } = context;
+          const client = getClient({ apiVersion: '2025-10-21' });
+
+          try {
+            // Fetch categories from the projectCategory singleton
+            const result = await client.fetch(
+              `*[_type == "projectCategory"][0].categories[] | order(order asc) {title, value}`
+            );
+
+            if (result && result.length > 0) {
+              return result;
+            }
+          } catch (error) {
+            console.error('Error fetching categories:', error);
+          }
+
+          // Fallback to default categories if fetch fails or no categories exist
+          return [
+            { title: 'Commercial', value: 'Commercial' },
+            { title: 'Short Film', value: 'Short Film' },
+            { title: 'Documentary', value: 'Documentary' },
+            { title: 'Script', value: 'Script' },
+            { title: 'Social Media', value: 'Social Media' },
+            { title: 'Event', value: 'Event' },
+            { title: 'Music Video', value: 'Music Video' },
+          ];
+        },
       },
       validation: (Rule) => Rule.required(),
     }),
