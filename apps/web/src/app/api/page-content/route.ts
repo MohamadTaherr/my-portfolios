@@ -3,11 +3,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const query = \`*[_type == "pageContent"][0]{
+    const query = `*[_type == "pageContent"][0]{
       contactTitle,
       contactSubtitle,
       contactDescription
-    }\`;
+    }`;
 
     const data = await client.fetch(query, {}, {
       next: { revalidate: 60 }

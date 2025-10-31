@@ -3,12 +3,12 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const query = \`*[_type == "footerSettings"][0]{
+    const query = `*[_type == "footerSettings"][0]{
       footerNavigation[]{ label, href, order } | order(order asc),
       copyrightText,
       tagline,
       showSocialLinks
-    }\`;
+    }`;
 
     const data = await client.fetch(query, {}, {
       next: { revalidate: 60 }

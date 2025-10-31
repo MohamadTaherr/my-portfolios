@@ -37,11 +37,11 @@ const geistMono = inter; // Use same for mono
 // Fetch SEO data from Sanity
 async function getSEOData() {
   try {
-    const query = \`*[_type == "pageContent"][0]{
+    const query = `*[_type == "pageContent"][0]{
       seoTitle,
       seoDescription,
       seoKeywords
-    }\`;
+    }`;
 
     const data = await client.fetch(query, {}, { next: { revalidate: 3600 } });
     return data;
@@ -53,7 +53,7 @@ async function getSEOData() {
 
 async function getSiteSettings() {
   try {
-    const query = \`*[_type == "siteSettings"][0]{ name }\`;
+    const query = `*[_type == "siteSettings"][0]{ name }`;
     const data = await client.fetch(query, {}, { next: { revalidate: 3600 } });
     return data;
   } catch (error) {
@@ -69,7 +69,7 @@ export async function generateMetadata(): Promise<Metadata> {
   ]);
 
   const siteName = siteSettings?.name || "Edmond Haddad";
-  const title = seoData?.seoTitle || \`\${siteName} | Award-Winning Scriptwriter & Creative Producer\`;
+  const title = seoData?.seoTitle || `${siteName} | Award-Winning Scriptwriter & Creative Producer`;
   const description = seoData?.seoDescription || "Two decades of crafting compelling stories for Porsche, major films, and global brands. Professional scriptwriting and creative production services.";
   const keywords = seoData?.seoKeywords || [
     "scriptwriter",
@@ -106,7 +106,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       url: siteUrl,
-      siteName: \`\${siteName} Portfolio\`,
+      siteName: `${siteName} Portfolio`,
       locale: 'en_US',
       type: 'website',
       images: [
@@ -114,7 +114,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: '/og-image.jpg',
           width: 1200,
           height: 630,
-          alt: \`\${siteName} - Scriptwriter & Creative Producer\`,
+          alt: `${siteName} - Scriptwriter & Creative Producer`,
         },
       ],
     },
@@ -152,7 +152,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StructuredData />
       </head>
       <body
-        className={\`\${inter.variable} \${ebGaramond.variable} \${cormorant.variable} antialiased\`}
+        className={`${inter.variable} ${ebGaramond.variable} ${cormorant.variable} antialiased`}
       >
         <GoogleAnalytics />
         <ThemeProvider>

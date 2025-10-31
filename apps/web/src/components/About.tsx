@@ -28,7 +28,7 @@ interface PageContent {
 
 async function getSiteSettings(): Promise<SiteSettings | null> {
   try {
-    const query = \`*[_type == "siteSettings"][0]{name, bio, yearsExperience, projectsCompleted, industryAwards}\`;
+    const query = `*[_type == "siteSettings"][0]{name, bio, yearsExperience, projectsCompleted, industryAwards}`;
     return await client.fetch(query, {}, { next: { revalidate: 60 } });
   } catch (error) {
     console.error('Error fetching site settings:', error);
@@ -38,11 +38,11 @@ async function getSiteSettings(): Promise<SiteSettings | null> {
 
 async function getAboutSection(): Promise<AboutSection | null> {
   try {
-    const query = \`*[_type == "aboutSection"][0]{
+    const query = `*[_type == "aboutSection"][0]{
       bodyParagraphs,
       featuredBrands[]{ name, description, order } | order(order asc),
       signingName
-    }\`;
+    }`;
     return await client.fetch(query, {}, { next: { revalidate: 60 } });
   } catch (error) {
     console.error('Error fetching about section:', error);
@@ -52,7 +52,7 @@ async function getAboutSection(): Promise<AboutSection | null> {
 
 async function getPageContent(): Promise<PageContent | null> {
   try {
-    const query = \`*[_type == "pageContent"][0]{ aboutTitle, aboutSubtitle }\`;
+    const query = `*[_type == "pageContent"][0]{ aboutTitle, aboutSubtitle }`;
     return await client.fetch(query, {}, { next: { revalidate: 60 } });
   } catch (error) {
     console.error('Error fetching page content:', error);

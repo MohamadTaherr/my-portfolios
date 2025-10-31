@@ -31,7 +31,11 @@
       "Bash(pnpm add:*)",
       "Bash(pnpm --filter web add:*)",
       "Bash(pnpm sanity deploy:*)",
-      "Bash(powershell -Command \"(Get-Content ProjectsClient.tsx) -replace \"\"const categories = \\[''All'', ''Commercial'', ''Short Film'', ''Documentary'', ''Script''\\];\"\", \"\"// Categories dynamically generated from projects\"\" | Set-Content ProjectsClient_temp.tsx\")"
+      "Bash(powershell -Command \"(Get-Content ProjectsClient.tsx) -replace \"\"const categories = \\[''All'', ''Commercial'', ''Short Film'', ''Documentary'', ''Script''\\];\"\", \"\"// Categories dynamically generated from projects\"\" | Set-Content ProjectsClient_temp.tsx\")",
+      "Bash(xargs grep:*)",
+      "Bash(git checkout:*)",
+      "Bash(grep:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

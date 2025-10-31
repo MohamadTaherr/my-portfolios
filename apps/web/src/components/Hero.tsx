@@ -43,7 +43,7 @@ interface PageContent {
 
 async function getSiteSettings(): Promise<SiteSettingsRaw | null> {
   try {
-    const query = \`*[_type == "siteSettings"][0]\`;
+    const query = `*[_type == "siteSettings"][0]`;
     return await client.fetch(query, {}, { next: { revalidate: 60 } });
   } catch (error) {
     console.error('Error fetching site settings:', error);
@@ -53,7 +53,7 @@ async function getSiteSettings(): Promise<SiteSettingsRaw | null> {
 
 async function getPageContent(): Promise<PageContent | null> {
   try {
-    const query = \`*[_type == "pageContent"][0]{ heroHeadline, heroSubheadline }\`;
+    const query = `*[_type == "pageContent"][0]{ heroHeadline, heroSubheadline }`;
     return await client.fetch(query, {}, { next: { revalidate: 60 } });
   } catch (error) {
     console.error('Error fetching page content:', error);

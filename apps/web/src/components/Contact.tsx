@@ -15,12 +15,12 @@ interface ContactInfo {
 }
 
 export default async function Contact() {
-  const query = \`*[_type == "siteSettings"][0]{
+  const query = `*[_type == "siteSettings"][0]{
     email,
     phone,
     location,
     socialLinks
-  }\`;
+  }`;
 
   const contactInfo: ContactInfo | null = await client.fetch(query, {}, {
     next: { revalidate: 60 }
