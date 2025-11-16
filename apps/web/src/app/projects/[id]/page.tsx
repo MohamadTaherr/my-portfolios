@@ -3,6 +3,7 @@ import { client } from '@/sanity/lib/client';
 import imageUrlBuilder from '@sanity/image-url';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import VideoPlayer from '@/components/VideoPlayer';
 
 // Revalidate page every 10 seconds to fetch fresh content from Sanity
 export const revalidate = 10;
@@ -161,14 +162,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           {/* Video Player */}
           <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl overflow-hidden shadow-2xl">
             {project.videoUrl ? (
-              <video
-                controls
-                className="w-full h-full object-cover"
-                poster={project.thumbnail ? urlFor(project.thumbnail).width(1200).height(675).url() : undefined}
-              >
-                <source src={project.videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              <VideoPlayer
+                url={project.videoUrl}
+                title={`${project.title} - ${project.client}`}
+                controls={true}
+                posterImage={project.thumbnail ? urlFor(project.thumbnail).width(1200).height(675).url() : undefined}
+              />
             ) : project.thumbnail ? (
               <img
                 src={urlFor(project.thumbnail).width(1200).height(675).url()}

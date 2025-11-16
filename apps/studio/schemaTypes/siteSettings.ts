@@ -40,7 +40,7 @@ export default defineType({
       name: 'showreelUrl',
       title: 'Showreel Video URL',
       type: 'url',
-      description: 'URL to your showreel video (YouTube, Vimeo, or direct video link)',
+      description: 'Supports Vimeo, YouTube, or direct video file URLs. Examples: vimeo.com/123456789, youtube.com/watch?v=xxxxx',
     }),
     defineField({
       name: 'welcomeMessage',

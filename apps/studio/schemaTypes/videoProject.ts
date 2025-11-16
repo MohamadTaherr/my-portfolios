@@ -86,7 +86,7 @@ export default defineType({
       name: 'videoUrl',
       title: 'Video URL',
       type: 'url',
-      description: 'URL to the video file or embed link',
+      description: 'Supports Vimeo, YouTube, or direct video file URLs (MP4, WebM). Examples: vimeo.com/123456789, youtube.com/watch?v=xxxxx, or https://your-cdn.com/video.mp4',
     }),
     defineField({
       name: 'thumbnail',

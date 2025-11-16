@@ -181,7 +181,7 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
               {contactInfo.email && (
                 <div className="space-y-2">
                   <p className="text-gold/60 text-xs tracking-widest uppercase">Email</p>
-                  <a href={\`mailto:\${contactInfo.email}\`} className="text-ivory/80 hover:text-gold transition-colors">
+                  <a href={`mailto:${contactInfo.email}`} className="text-ivory/80 hover:text-gold transition-colors">
                     {contactInfo.email}
                   </a>
                 </div>
@@ -189,7 +189,7 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
               {contactInfo.phone && (
                 <div className="space-y-2">
                   <p className="text-gold/60 text-xs tracking-widest uppercase">Phone</p>
-                  <a href={\`tel:\${contactInfo.phone}\`} className="text-ivory/80 hover:text-gold transition-colors">
+                  <a href={`tel:${contactInfo.phone}`} className="text-ivory/80 hover:text-gold transition-colors">
                     {contactInfo.phone}
                   </a>
                 </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import VideoPlayer from './VideoPlayer';
 
 interface VideoProject {
   _id: string;
@@ -81,7 +82,32 @@ export default function ProjectsClient({ projects, categories }: ProjectsClientP
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <div className="relative aspect-video bg-black">
-                  {selectedProject.videoUrl ? (<video controls autoPlay className="w-full h-full" src={selectedProject.videoUrl}>Your browser does not support the video tag.</video>) : (<div className="w-full h-full flex items-center justify-center">{selectedProject.thumbnailUrl ? <img src={selectedProject.thumbnailUrl} alt={(selectedProject.title + ' - ' + selectedProject.category + ' project for ' + selectedProject.client)} className="w-full h-full object-cover" /> : <div className="text-center text-ivory/40"><svg className="w-20 h-20 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg><p>Video preview coming soon</p></div>}</div>)}
+                  {selectedProject.videoUrl ? (
+                    <VideoPlayer
+                      url={selectedProject.videoUrl}
+                      title={`${selectedProject.title} - ${selectedProject.client}`}
+                      autoPlay={true}
+                      controls={true}
+                      posterImage={selectedProject.thumbnailUrl}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      {selectedProject.thumbnailUrl ? (
+                        <img
+                          src={selectedProject.thumbnailUrl}
+                          alt={`${selectedProject.title} - ${selectedProject.category} project for ${selectedProject.client}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-center text-ivory/40">
+                          <svg className="w-20 h-20 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                          <p>Video preview coming soon</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="space-y-6 text-ivory">

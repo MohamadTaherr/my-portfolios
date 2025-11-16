@@ -1,105 +1,53 @@
 
-> web@0.1.0 build C:\Users\user\Desktop\my-portfolios\apps\web
+> web@0.1.0 build C:\Users\User\Desktop\development\my-portfolios\apps\web
 > next build
 
    ▲ Next.js 15.5.6
    - Environments: .env.local
 
    Creating an optimized production build ...
-Failed to compile.
+ ✓ Compiled successfully in 3.9s
+   Linting and checking validity of types ...
 
-./src/components/ContactClient.tsx
-Error:   [31mx[0m Unterminated template
-     ,-[[36;1;4mC:\Users\user\Desktop\my-portfolios\apps\web\src\components\ContactClient.tsx[0m:184:1]
- [2m181[0m |                   {contactInfo.email && (
- [2m182[0m |                     <div className="space-y-2">
- [2m183[0m |                       <p className="text-gold/60 text-xs tracking-widest uppercase">Email</p>
- [2m184[0m | [35;1m,[0m[35;1m-[0m[35;1m>[0m                   <a href={\`mailto:\${contactInfo.email}\`} className="text-ivory/80 hover:text-gold transition-colors">
- [2m185[0m | [35;1m|[0m                       {contactInfo.email}
- [2m186[0m | [35;1m|[0m                     </a>
- [2m187[0m | [35;1m|[0m                   </div>
- [2m188[0m | [35;1m|[0m                 )}
- [2m189[0m | [35;1m|[0m                 {contactInfo.phone && (
- [2m190[0m | [35;1m|[0m                   <div className="space-y-2">
- [2m191[0m | [35;1m|[0m                     <p className="text-gold/60 text-xs tracking-widest uppercase">Phone</p>
- [2m192[0m | [35;1m|[0m                     <a href={\`tel:\${contactInfo.phone}\`} className="text-ivory/80 hover:text-gold transition-colors">
- [2m193[0m | [35;1m|[0m                       {contactInfo.phone}
- [2m194[0m | [35;1m|[0m                     </a>
- [2m195[0m | [35;1m|[0m                   </div>
- [2m196[0m | [35;1m|[0m                 )}
- [2m197[0m | [35;1m|[0m                 {contactInfo.location && (
- [2m198[0m | [35;1m|[0m                   <div className="space-y-2">
- [2m199[0m | [35;1m|[0m                     <p className="text-gold/60 text-xs tracking-widest uppercase">Location</p>
- [2m200[0m | [35;1m|[0m                     <p className="text-ivory/80">{contactInfo.location}</p>
- [2m201[0m | [35;1m|[0m                   </div>
- [2m202[0m | [35;1m|[0m                 )}
- [2m203[0m | [35;1m|[0m               </div>
- [2m204[0m | [35;1m|[0m   
- [2m205[0m | [35;1m|[0m               {socialLinks.length > 0 && (
- [2m206[0m | [35;1m|[0m                 <>
- [2m207[0m | [35;1m|[0m                   <div className="h-px bg-gold/20" />
- [2m208[0m | [35;1m|[0m                   <div className="flex justify-center gap-6">
- [2m209[0m | [35;1m|[0m                     {socialLinks.map((social) => (
- [2m210[0m | [35;1m|[0m                       <a
- [2m211[0m | [35;1m|[0m                         key={social.name}
- [2m212[0m | [35;1m|[0m                         href={social.url}
- [2m213[0m | [35;1m|[0m                         target="_blank"
- [2m214[0m | [35;1m|[0m                         rel="noopener noreferrer"
- [2m215[0m | [35;1m|[0m                         className="w-12 h-12 border border-gold/30 flex items-center justify-center text-gold/80 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all duration-500"
- [2m216[0m | [35;1m|[0m                         aria-label={social.name}
- [2m217[0m | [35;1m|[0m                       >
- [2m218[0m | [35;1m|[0m                         <span className="text-xs font-bold">{social.icon}</span>
- [2m219[0m | [35;1m|[0m                       </a>
- [2m220[0m | [35;1m|[0m                     ))}
- [2m221[0m | [35;1m|[0m                   </div>
- [2m222[0m | [35;1m|[0m                 </>
- [2m223[0m | [35;1m|[0m               )}
- [2m224[0m | [35;1m|[0m             </div>
- [2m225[0m | [35;1m|[0m           </div>
- [2m226[0m | [35;1m|[0m         </div>
- [2m227[0m | [35;1m|[0m   
- [2m228[0m | [35;1m|[0m         {/* Background decorations */}
- [2m229[0m | [35;1m|[0m         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
- [2m230[0m | [35;1m|[0m         <div className="film-grain absolute inset-0 opacity-20 pointer-events-none" />
- [2m231[0m | [35;1m|[0m       </section>
- [2m232[0m | [35;1m|[0m     );
- [2m233[0m | [35;1m`[0m[35;1m-[0m[35;1m>[0m }
-     `----
-  [31mx[0m Unexpected eof
-     ,-[[36;1;4mC:\Users\user\Desktop\my-portfolios\apps\web\src\components\ContactClient.tsx[0m:233:3]
- [2m231[0m |     </section>
- [2m232[0m |   );
- [2m233[0m | }
-     `----
+./src/app/projects/[id]/page.tsx
+172:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+226:25  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
 
-Caused by:
-    Syntax Error
+./src/components/Clients.tsx
+191:25  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
 
-Import trace for requested module:
-./src/components/ContactClient.tsx
-./src/components/Contact.tsx
-./src/app/page.tsx
+./src/components/ProjectsClient.tsx
+57:41  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+96:25  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
 
-./src/components/Skills.tsx
-Error:   [31mx[0m Expected unicode escape
-    ,-[[36;1;4mC:\Users\user\Desktop\my-portfolios\apps\web\src\components\Skills.tsx[0m:23:1]
- [2m20[0m | 
- [2m21[0m | async function getSkillsData(): Promise<SkillsData | null> {
- [2m22[0m |   try {
- [2m23[0m |     const query = \`*[_type == "skillsSection"][0]{
-    : [35;1m                  ^[0m
- [2m24[0m |       _id,
- [2m25[0m |       stats[]{ number, label, icon, order } | order(order asc),
- [2m25[0m |       competencies
-    `----
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+ ⚠ Using edge runtime on a page currently disables static generation for that page
+   Generating static pages (0/11) ...
+   Generating static pages (2/11) 
+   Generating static pages (5/11) 
+   Generating static pages (8/11) 
+ ✓ Generating static pages (11/11)
+   Finalizing page optimization ...
+   Collecting build traces ...
 
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/components/Skills.tsx
-./src/app/page.tsx
+Route (app)                                 Size  First Load JS  Revalidate  Expire
+┌ ○ /                                    10.1 kB         112 kB         10s      1y
+├ ○ /_not-found                            989 B         103 kB         10s      1y
+├ ƒ /api/contact                           140 B         102 kB
+├ ƒ /api/footer                            140 B         102 kB
+├ ƒ /api/navigation                        140 B         102 kB
+├ ƒ /api/page-content                      140 B         102 kB
+├ ƒ /api/revalidate                        140 B         102 kB
+├ ƒ /opengraph-image                       140 B         102 kB
+├ ƒ /projects/[id]                         918 B         106 kB
+└ ○ /sitemap.xml                           140 B         102 kB          1h      1y
++ First Load JS shared by all             102 kB
+  ├ chunks/2f0d0d64-a9339aa7b810b2b1.js  54.2 kB
+  ├ chunks/347-3f9324a4628a9949.js       45.7 kB
+  └ other shared chunks (total)          1.94 kB
 
 
-> Build failed because of webpack errors
- ELIFECYCLE  Command failed with exit code 1.
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

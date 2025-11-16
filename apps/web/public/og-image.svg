@@ -1,0 +1,79 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#000000"/>
+
+  <!-- Gradient Overlay -->
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#ffd700;stop-opacity:0.05" />
+    </linearGradient>
+
+    <radialGradient id="vignette" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.6" />
+    </radialGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Gradient Background -->
+  <rect width="1200" height="630" fill="url(#goldGradient)"/>
+
+  <!-- Decorative Lines -->
+  <line x1="0" y1="100" x2="1200" y2="100" stroke="#d4af37" stroke-width="2" opacity="0.3"/>
+  <line x1="0" y1="530" x2="1200" y2="530" stroke="#d4af37" stroke-width="2" opacity="0.3"/>
+
+  <!-- Main Title -->
+  <text x="600" y="240" font-family="Georgia, serif" font-size="72" font-weight="700" fill="#f5f5dc" text-anchor="middle" filter="url(#glow)">
+    Edmond Haddad
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="300" font-family="Arial, sans-serif" font-size="32" fill="#d4af37" text-anchor="middle" letter-spacing="2">
+    Award-Winning Scriptwriter
+  </text>
+
+  <text x="600" y="345" font-family="Arial, sans-serif" font-size="32" fill="#d4af37" text-anchor="middle" letter-spacing="2">
+    &amp; Creative Producer
+  </text>
+
+  <!-- Tagline -->
+  <text x="600" y="420" font-family="Georgia, serif" font-size="28" font-style="italic" fill="#f5f5dc" text-anchor="middle" opacity="0.8">
+    Crafting Stories That Move People
+  </text>
+
+  <!-- Decorative Elements -->
+  <circle cx="250" cy="315" r="4" fill="#d4af37" opacity="0.6"/>
+  <circle cx="950" cy="315" r="4" fill="#d4af37" opacity="0.6"/>
+
+  <!-- Film reel icon elements -->
+  <g transform="translate(200, 480)">
+    <rect x="0" y="0" width="60" height="40" rx="4" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.4"/>
+    <circle cx="15" cy="20" r="3" fill="#d4af37" opacity="0.4"/>
+    <circle cx="45" cy="20" r="3" fill="#d4af37" opacity="0.4"/>
+  </g>
+
+  <g transform="translate(940, 480)">
+    <rect x="0" y="0" width="60" height="40" rx="4" fill="none" stroke="#d4af37" stroke-width="2" opacity="0.4"/>
+    <circle cx="15" cy="20" r="3" fill="#d4af37" opacity="0.4"/>
+    <circle cx="45" cy="20" r="3" fill="#d4af37" opacity="0.4"/>
+  </g>
+
+  <!-- Vignette Overlay -->
+  <rect width="1200" height="630" fill="url(#vignette)"/>
+
+  <!-- Film grain texture -->
+  <filter id="noise">
+    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" />
+    <feColorMatrix type="saturate" values="0"/>
+    <feBlend mode="multiply" in="SourceGraphic"/>
+  </filter>
+  <rect width="1200" height="630" fill="white" opacity="0.02" filter="url(#noise)"/>
+</svg>

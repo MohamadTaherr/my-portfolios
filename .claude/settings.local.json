@@ -35,7 +35,9 @@
       "Bash(xargs grep:*)",
       "Bash(git checkout:*)",
       "Bash(grep:*)",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(/dev/null)",
+      "Bash(pnpm turbo build:*)"
     ],
     "deny": [],
     "ask": []

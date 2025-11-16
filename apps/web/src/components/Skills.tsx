@@ -20,11 +20,11 @@ interface PageContentData {
 
 async function getSkillsData(): Promise<SkillsData | null> {
   try {
-    const query = \`*[_type == "skillsSection"][0]{
+    const query = `*[_type == "skillsSection"][0]{
       _id,
       stats[]{ number, label, icon, order } | order(order asc),
       competencies
-    }\`;
+    }`;
 
     const data = await client.fetch<SkillsData>(query, {}, {
       next: { revalidate: 60 }
@@ -39,10 +39,10 @@ async function getSkillsData(): Promise<SkillsData | null> {
 
 async function getPageContent(): Promise<PageContentData | null> {
   try {
-    const query = \`*[_type == "pageContent"][0]{
+    const query = `*[_type == "pageContent"][0]{
       skillsTitle,
       skillsSubtitle
-    }\`;
+    }`;
 
     const data = await client.fetch<PageContentData>(query, {}, {
       next: { revalidate: 60 }
@@ -112,7 +112,7 @@ export default async function Skills() {
             <div
               key={stat.label}
               className="glass p-8 text-center group cinematic-hover animate-fade-in-up"
-              style={{ animationDelay: \`\${index * 0.1}s\` }}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="text-4xl mb-4 opacity-60 group-hover:opacity-100 transition-opacity">
                 {stat.icon}
@@ -137,7 +137,7 @@ export default async function Skills() {
               <div
                 key={skill}
                 className="px-6 py-3 border border-gold/30 text-ivory/80 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all duration-500 cursor-default animate-fade-in"
-                style={{ animationDelay: \`\${index * 0.05}s\` }}
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <span className="tracking-wider text-sm">{skill}</span>
               </div>

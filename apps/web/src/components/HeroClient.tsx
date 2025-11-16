@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import VideoPlayer from './VideoPlayer';
 
 interface SiteSettings {
   name: string;
@@ -150,11 +151,11 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
               ×
             </button>
             <div className="w-full max-w-6xl aspect-video px-4" onClick={(e) => e.stopPropagation()}>
-              <iframe
-                src={settings.showreelUrl}
-                className="w-full h-full"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
+              <VideoPlayer
+                url={settings.showreelUrl}
+                title={`${settings.name} - Showreel`}
+                autoPlay={true}
+                controls={true}
               />
             </div>
           </div>
