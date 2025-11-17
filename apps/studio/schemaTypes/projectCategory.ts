@@ -13,6 +13,7 @@ export const projectCategory = defineType({
       title: 'Video Project Categories',
       type: 'array',
       description: 'Manage the categories available for video projects. These will appear as options when creating video projects.',
+      initialValue: [],
       of: [
         {
           type: 'object',
@@ -54,8 +55,8 @@ export const projectCategory = defineType({
             },
             prepare({ title, description, order }) {
               return {
-                title: title,
-                subtitle: `Order: ${order} ${description ? `| ${description}` : ''}`,
+                title: title || 'Untitled Category',
+                subtitle: `Order: ${order ?? 0}${description ? ` | ${description}` : ''}`,
               };
             },
           },

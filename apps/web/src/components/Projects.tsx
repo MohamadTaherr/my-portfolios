@@ -50,26 +50,30 @@ export default async function Projects() {
   }));
 
   return (
-    <section id="portfolio" className="relative py-32 md:py-40 overflow-hidden bg-black">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="portfolio" className="relative py-32 md:py-40 overflow-hidden">
+      <div className="absolute inset-0 section-light" />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="space-y-16">
-          <div className="text-center space-y-6 max-w-4xl mx-auto animate-fade-in">
-            <p className="text-gold/60 text-sm tracking-[0.3em] uppercase">
+          <div className="text-center space-y-6 max-w-4xl mx-auto animate-fade-in-up">
+            <p className="text-primary text-sm tracking-[0.3em] uppercase font-semibold">
               Selected Works
             </p>
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] text-ivory leading-tight">
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] gradient-text leading-tight font-bold">
               Portfolio
             </h2>
-            <p className="text-xl text-ivory/60 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-foreground-muted max-w-2xl mx-auto leading-relaxed">
               Two decades of visual storytelling — from intimate documentaries to global brand narratives
             </p>
           </div>
           <ProjectsClient projects={projectsWithUrls} categories={categoryList} />
         </div>
       </div>
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-      <div className="film-grain absolute inset-0 opacity-20 pointer-events-none" />
+
+      {/* Modern floating orbs */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-float" style={{animationDelay: '1s'}} />
+      <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float" style={{animationDelay: '2s'}} />
     </section>
   );
 }

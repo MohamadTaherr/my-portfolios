@@ -9,7 +9,7 @@ export const revalidate = 10;
 
 export default function Home() {
   return (
-    <div className="flex flex-col bg-black">
+    <div className="flex flex-col">
       <Hero />
       <About />
       <Projects />

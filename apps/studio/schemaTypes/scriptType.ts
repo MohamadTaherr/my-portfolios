@@ -13,6 +13,7 @@ export const scriptType = defineType({
       title: 'Script Type Options',
       type: 'array',
       description: 'Manage the script types available. These will appear as options when creating scripts.',
+      initialValue: [],
       of: [
         {
           type: 'object',
@@ -54,8 +55,8 @@ export const scriptType = defineType({
             },
             prepare({ title, description, order }) {
               return {
-                title: title,
-                subtitle: `Order: ${order} ${description ? `| ${description}` : ''}`,
+                title: title || 'Untitled Type',
+                subtitle: `Order: ${order ?? 0}${description ? ` | ${description}` : ''}`,
               };
             },
           },
