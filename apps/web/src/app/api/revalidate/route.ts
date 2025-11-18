@@ -1,6 +1,18 @@
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
+// CORS headers for Sanity Studio
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://edmond-portfolio.sanity.studio',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+// Handle preflight requests
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function POST(request: NextRequest) {
   console.log('🔔 Revalidation endpoint called');
 
@@ -26,7 +38,7 @@ export async function POST(request: NextRequest) {
           received: token ? 'Token provided' : 'No token',
           expected: expectedToken ? 'Token configured' : 'No token configured'
         },
-        { status: 401 }
+        { status: 401, headers: corsHeaders }
       );
     }
 
@@ -62,7 +74,7 @@ export async function POST(request: NextRequest) {
       type: _type,
       paths: pathsRevalidated,
       message: 'Cache cleared successfully'
-    });
+    }, { headers: corsHeaders });
   } catch (error) {
     console.error('❌ Error revalidating:', error);
     return NextResponse.json(
@@ -71,7 +83,7 @@ export async function POST(request: NextRequest) {
         message: 'Error revalidating',
         error: error instanceof Error ? error.message : 'Unknown error'
       },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
