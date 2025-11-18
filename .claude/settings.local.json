@@ -38,7 +38,8 @@
       "Bash(node -e:*)",
       "Bash(/dev/null)",
       "Bash(pnpm turbo build:*)",
-      "Bash(pnpm --filter web dev:*)"
+      "Bash(pnpm --filter web dev:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
