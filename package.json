@@ -2,6 +2,7 @@
   "name": "my-portfolios",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "turbo dev --filter=web",
     "dev:web": "turbo dev --filter=web",
@@ -10,7 +11,14 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
-    "clean": "turbo clean && rm -rf node_modules"
+    "clean": "turbo clean && rm -rf node_modules",
+    "sanity:seed": "node seed-sanity-data.js",
+    "sanity:cleanup": "node cleanup-old-data.js",
+    "sanity:deploy": "pnpm --filter studio exec sanity deploy"
+  },
+  "dependencies": {
+    "@sanity/client": "^6.24.1",
+    "dotenv": "^16.4.7"
   },
   "devDependencies": {
     "turbo": "^2.3.3"
