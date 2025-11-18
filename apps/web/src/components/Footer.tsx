@@ -1,4 +1,4 @@
-import { client } from '@/sanity/lib/client';
+import { fetchAPI } from '@/lib/api';
 import FooterClient from './FooterClient';
 
 // Revalidate every 10 seconds (ISR) - updates content quickly
@@ -16,11 +16,15 @@ interface SiteSettings {
 }
 
 export default async function Footer() {
-  // Fetch site settings from Sanity
-  const query = '*[_type == "siteSettings"][0]{name, socialLinks}';
-  const settings: SiteSettings = await client.fetch(query, {}, {
-    next: { revalidate: 10 } // Revalidate every 10 seconds
-  }) || {};
+  const [footer, siteSettings] = await Promise.all([
+    fetchAPI('/footer').catch(() => null),
+    fetchAPI('/site-settings').catch(() => null)
+  ]);
+
+  const settings: SiteSettings = {
+    name: footer?.name || siteSettings?.name,
+    socialLinks: footer?.socialLinks || siteSettings?.socialLinks,
+  };
 
   return <FooterClient settings={settings} />;
 }

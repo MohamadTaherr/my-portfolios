@@ -1,6 +1,9 @@
-import { client } from '@/sanity/lib/client';
+import { fetchAPI } from '@/lib/api';
+
+export const revalidate = 60;
 
 interface Stat {
+  id: string;
   number: string;
   label: string;
   icon: string;
@@ -10,65 +13,27 @@ interface Stat {
 interface SkillsData {
   stats: Stat[];
   competencies: string[];
-  _id: string;
 }
 
-interface PageContentData {
+interface PageContent {
   skillsTitle?: string;
   skillsSubtitle?: string;
 }
 
-async function getSkillsData(): Promise<SkillsData | null> {
-  try {
-    const query = `*[_type == "skillsSection"][0]{
-      _id,
-      stats[]{ number, label, icon, order } | order(order asc),
-      competencies
-    }`;
-
-    const data = await client.fetch<SkillsData>(query, {}, {
-      next: { revalidate: 60 }
-    });
-
-    return data;
-  } catch (error) {
-    console.error('Error fetching skills data:', error);
-    return null;
-  }
-}
-
-async function getPageContent(): Promise<PageContentData | null> {
-  try {
-    const query = `*[_type == "pageContent"][0]{
-      skillsTitle,
-      skillsSubtitle
-    }`;
-
-    const data = await client.fetch<PageContentData>(query, {}, {
-      next: { revalidate: 60 }
-    });
-
-    return data;
-  } catch (error) {
-    console.error('Error fetching page content:', error);
-    return null;
-  }
-}
-
 export default async function Skills() {
   const [skillsData, pageContent] = await Promise.all([
-    getSkillsData(),
-    getPageContent()
+    fetchAPI('/skills').catch(() => null),
+    fetchAPI('/page-content').catch(() => null)
   ]);
 
-  // Fallback data if Sanity data is not available
-  const defaultStats = [
-    { number: '20+', label: 'Years in Industry', icon: '🎬', order: 0 },
-    { number: '200+', label: 'Scripts Produced', icon: '✍️', order: 1 },
-    { number: '10+', label: 'Awards', icon: '🏆', order: 2 },
-    { number: '100+', label: 'Global Brands', icon: '🌍', order: 3 },
-    { number: '50+', label: 'Documentaries', icon: '📽️', order: 4 },
-    { number: '1000+', label: 'Hours of Content', icon: '⏱️', order: 5 },
+  // Fallback data if database data is not available
+  const defaultStats: Stat[] = [
+    { id: '1', number: '20+', label: 'Years in Industry', icon: '🎬', order: 0 },
+    { id: '2', number: '200+', label: 'Scripts Produced', icon: '✍️', order: 1 },
+    { id: '3', number: '10+', label: 'Awards', icon: '🏆', order: 2 },
+    { id: '4', number: '100+', label: 'Global Brands', icon: '🌍', order: 3 },
+    { id: '5', number: '50+', label: 'Documentaries', icon: '📽️', order: 4 },
+    { id: '6', number: '1000+', label: 'Hours of Content', icon: '⏱️', order: 5 },
   ];
 
   const defaultCompetencies = [
@@ -82,11 +47,11 @@ export default async function Skills() {
     'Creative Direction',
   ];
 
-  const cinematicStats = skillsData?.stats && skillsData.stats.length > 0
+  const cinematicStats = (skillsData?.stats && Array.isArray(skillsData.stats) && skillsData.stats.length > 0)
     ? skillsData.stats
     : defaultStats;
 
-  const expertise = skillsData?.competencies && skillsData.competencies.length > 0
+  const expertise = (skillsData?.competencies && Array.isArray(skillsData.competencies) && skillsData.competencies.length > 0)
     ? skillsData.competencies
     : defaultCompetencies;
 
@@ -110,7 +75,7 @@ export default async function Skills() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24 max-w-6xl mx-auto">
           {cinematicStats.map((stat, index) => (
             <div
-              key={stat.label}
+              key={stat.id || index}
               className="glass p-8 text-center group cinematic-hover animate-fade-in-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >

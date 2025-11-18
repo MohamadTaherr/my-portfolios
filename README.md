@@ -1,125 +1,168 @@
-# Portfolio Website
+# Portfolio Website Monorepo
 
-A modern, responsive portfolio website built with Next.js, TypeScript, and Tailwind CSS.
+A modern portfolio website with a monorepo structure:
+- **Frontend** (Next.js) - Deploys on Vercel
+- **Backend** (Express + Prisma) - Deploys on Render
 
-## Features
-
-- **Responsive Design**: Fully responsive layout that works on all devices (mobile, tablet, desktop)
-- **Dark Mode**: Toggle between light and dark themes with persistent preference storage
-- **TypeScript**: Fully typed for better development experience and fewer bugs
-- **Modern UI**: Clean, modern design with smooth animations and transitions
-- **Sections**:
-  - Hero/About section with introduction
-  - Projects showcase with tags and links
-  - Skills section with visual progress indicators
-  - Contact form with validation
-
-## Tech Stack
-
-- **Framework**: Next.js 15.5.6 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS 4
-- **Fonts**: Geist Sans & Geist Mono
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ installed
-- npm or yarn package manager
-
-### Installation
-
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Run the development server:
-
-```bash
-npm run dev
-```
-
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## Available Scripts
-
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-
-## Project Structure
+## Structure
 
 ```
 my-portfolios/
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx       # Root layout with providers
-│   │   ├── page.tsx         # Home page
-│   │   └── globals.css      # Global styles
-│   ├── components/
-│   │   ├── Header.tsx       # Navigation header
-│   │   ├── Footer.tsx       # Footer component
-│   │   ├── Hero.tsx         # Hero/About section
-│   │   ├── Projects.tsx     # Projects showcase
-│   │   ├── Skills.tsx       # Skills section
-│   │   ├── Contact.tsx      # Contact form
-│   │   ├── ThemeProvider.tsx # Theme context provider
-│   │   └── ThemeToggle.tsx  # Dark mode toggle
-│   ├── lib/                 # Utility functions
-│   └── types/               # TypeScript types
-├── public/                  # Static assets
-└── package.json
+├── apps/
+│   ├── web/          # Next.js frontend (Vercel)
+│   └── backend/      # Express API (Render)
+├── packages/         # Shared packages (if needed)
+└── package.json      # Root workspace config
 ```
 
-## Customization
+## Tech Stack
 
-### Update Personal Information
+- **Frontend**: Next.js 15, React 19, Tailwind CSS
+- **Backend**: Express, Prisma, PostgreSQL
+- **Package Manager**: pnpm
+- **Monorepo**: Turborepo
 
-1. **Hero Section** (`src/components/Hero.tsx`):
-   - Change name, title, and bio
-   - Update profile initials or add profile image
+## Setup
 
-2. **Projects** (`src/components/Projects.tsx`):
-   - Update the `projects` array with your own projects
-   - Add project descriptions, tags, and links
+### 1. Install Dependencies
 
-3. **Skills** (`src/components/Skills.tsx`):
-   - Modify the `skillCategories` array with your skills
-   - Adjust skill levels (0-100)
+```bash
+pnpm install
+```
 
-4. **Contact Info** (`src/components/Contact.tsx`):
-   - Update email, phone, and location
-   - Implement actual form submission logic
+### 2. Backend Setup
 
-5. **Footer** (`src/components/Footer.tsx`):
-   - Add your social media links
-   - Update copyright information
+```bash
+cd apps/backend
 
-### Color Scheme
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add:
+# - DATABASE_URL (PostgreSQL connection string)
+# - ADMIN_PASSWORD (for admin panel)
+# - FRONTEND_URL (your Vercel frontend URL)
 
-Edit `src/app/globals.css` to change colors:
+# Generate Prisma Client
+pnpm db:generate
 
-```css
-:root {
-  --primary: #3b82f6;    /* Blue */
-  --secondary: #8b5cf6;  /* Purple */
-  --accent: #10b981;     /* Green */
-}
+# Push schema to database
+pnpm db:push
+```
+
+### 3. Frontend Setup
+
+```bash
+cd apps/web
+
+# Set up environment variables
+# In Vercel dashboard, add:
+# - NEXT_PUBLIC_API_URL (your Render backend URL)
+# - NEXT_PUBLIC_SITE_URL (your Vercel frontend URL)
+```
+
+## Development
+
+### Run Both Frontend and Backend
+
+```bash
+# From root
+pnpm dev
+```
+
+### Run Separately
+
+```bash
+# Backend (port 10000)
+cd apps/backend
+pnpm dev
+
+# Frontend (port 3000)
+cd apps/web
+pnpm dev
 ```
 
 ## Deployment
 
-### Deploy to Vercel
+### Backend (Render)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new).
+1. Connect your GitHub repository to Render
+2. Render will auto-detect `apps/backend/render.yaml`
+3. Set environment variables in Render dashboard:
+   - `DATABASE_URL` (from Render PostgreSQL)
+   - `ADMIN_PASSWORD`
+   - `FRONTEND_URL` (your Vercel URL)
+   - `PORT` (10000)
 
-1. Push your code to GitHub
-2. Import the repository on Vercel
-3. Vercel will automatically detect Next.js and deploy
+### Frontend (Vercel)
 
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Connect your GitHub repository to Vercel
+2. Set root directory to `apps/web`
+3. Set environment variables:
+   - `NEXT_PUBLIC_API_URL` (your Render backend URL)
+   - `NEXT_PUBLIC_SITE_URL` (your Vercel frontend URL)
 
+## Environment Variables
+
+### Backend (.env)
+```env
+DATABASE_URL="postgresql://..."
+ADMIN_PASSWORD="your-secure-password"
+FRONTEND_URL="https://your-frontend.vercel.app"
+PORT=10000
+NODE_ENV=production
+```
+
+### Frontend (Vercel)
+```env
+NEXT_PUBLIC_API_URL="https://your-backend.onrender.com"
+NEXT_PUBLIC_SITE_URL="https://your-frontend.vercel.app"
+```
+
+## API Endpoints
+
+### Public Endpoints
+- `GET /api/site-settings` - Get site settings
+- `GET /api/page-content` - Get page content
+- `GET /api/projects` - Get all projects
+- `GET /api/projects/:id` - Get single project
+- `GET /api/clients` - Get all clients
+- `GET /api/skills` - Get skills data
+- `GET /api/about` - Get about section
+- `GET /api/navigation` - Get navigation
+- `GET /api/footer` - Get footer
+
+### Admin Endpoints (require authentication)
+- `POST /api/admin/login` - Login
+- `GET /api/admin/verify` - Verify session
+- `PUT /api/admin/site-settings` - Update site settings
+- `POST /api/admin/projects` - Create project
+- `PUT /api/admin/projects/:id` - Update project
+- `DELETE /api/admin/projects/:id` - Delete project
+- Similar for clients, skills, about, etc.
+
+## Database Management
+
+```bash
+cd apps/backend
+
+# View data in Prisma Studio
+pnpm db:studio
+
+# Create migration
+pnpm db:migrate
+
+# Push schema changes (dev only)
+pnpm db:push
+```
+
+## Admin Panel
+
+Access the admin panel at `/admin` (to be built) to manage:
+- Site settings
+- Projects/Portfolio items
+- Clients
+- Page content
+- Skills
+- About section
+- Navigation
+- Footer

@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SiteSettings {
+  id        Int      @id @default(autoincrement())
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model PageContent {
+  id        Int      @id @default(autoincrement())
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(500)
+  description String?  @db.Text
+  client      String?  @db.VarChar(255)
+  category    String?  @db.VarChar(100)
+  duration    String?  @db.VarChar(50)
+  year        String?  @db.VarChar(10)
+  tags        String[]
+  videoUrl    String?  @db.Text @map("video_url")
+  thumbnailUrl String? @db.Text @map("thumbnail_url")
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([featured])
+  @@map("projects")
+}
+
+model Client {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(255)
+  logoUrl     String?  @db.Text @map("logo_url")
+  project     String?  @db.VarChar(500)
+  category    String?  @db.VarChar(100)
+  description String?  @db.Text
+  testimonial String?  @db.Text
+  clientName  String?  @db.VarChar(255) @map("client_name")
+  year        String?  @db.VarChar(10)
+  rating      Int      @default(5)
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([featured])
+  @@map("clients")
+}
+
+model Skills {
+  id        Int      @id @default(autoincrement())
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model About {
+  id        Int      @id @default(autoincrement())
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model Navigation {
+  id        Int      @id @default(autoincrement())
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model Footer {
+  id        Int      @id @default(autoincrement())
+  data      Json     @default("{}")
+  updatedAt DateTime @updatedAt @default(now())
+}
+

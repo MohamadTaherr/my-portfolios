@@ -1,52 +1,49 @@
-import { client } from '@/sanity/lib/client';
-import imageUrlBuilder from '@sanity/image-url';
+import { fetchAPI } from '@/lib/api';
 import ProjectsClient from './ProjectsClient';
-
-const builder = imageUrlBuilder(client);
-
-function urlFor(source: any) {
-  return builder.image(source);
-}
 
 export const revalidate = 10;
 
 interface VideoProject {
-  _id: string;
+  id: string;
   title: string;
-  description: string;
-  client: string;
-  category: string;
-  duration: string;
-  year: string;
+  description: string | null;
+  client: string | null;
+  category: string | null;
+  duration: string | null;
+  year: string | null;
   tags: string[];
-  videoUrl?: string;
-  thumbnail: any;
+  videoUrl: string | null;
+  thumbnailUrl: string | null;
   featured: boolean;
 }
 
-interface VideoProjectWithUrls extends Omit<VideoProject, 'thumbnail'> {
-  thumbnailUrl?: string;
-}
-
 export default async function Projects() {
-  const projectsQuery = '*[_type == "videoProject"] | order(order asc, _createdAt desc)';
-  const videoProjects: VideoProject[] = await client.fetch(projectsQuery, {}, {
-    next: { revalidate: 10 }
-  });
+  const videoProjects: VideoProject[] = await fetchAPI('/projects').catch(() => []);
 
-  const categoriesQuery = '*[_type == "projectCategory"][0].categories[] | order(order asc) {title, value}';
-  const availableCategories = await client.fetch(categoriesQuery, {}, {
-    next: { revalidate: 10 }
+  // Extract unique categories from projects
+  const categorySet = new Set<string>();
+  videoProjects.forEach(project => {
+    if (project.category) {
+      categorySet.add(project.category);
+    }
   });
-
-  const categoryList = availableCategories && availableCategories.length > 0
-    ? availableCategories.map((cat: any) => cat.value)
+  
+  const categoryList = categorySet.size > 0
+    ? Array.from(categorySet).sort()
     : ['Commercial', 'Short Film', 'Documentary', 'Social Media', 'Event', 'Music Video'];
 
-  const projectsWithUrls: VideoProjectWithUrls[] = videoProjects.map(project => ({
-    ...project,
-    thumbnailUrl: project.thumbnail ? urlFor(project.thumbnail).width(800).height(450).url() : undefined,
-    thumbnail: undefined as any,
+  const projectsWithUrls: VideoProject[] = videoProjects.map(project => ({
+    id: project.id,
+    title: project.title,
+    description: project.description,
+    client: project.client,
+    category: project.category,
+    duration: project.duration,
+    year: project.year,
+    tags: project.tags || [],
+    videoUrl: project.videoUrl,
+    thumbnailUrl: project.thumbnailUrl,
+    featured: project.featured,
   }));
 
   return (

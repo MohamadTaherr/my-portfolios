@@ -5,23 +5,18 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
       "env": [
-        "NEXT_PUBLIC_SANITY_PROJECT_ID",
-        "NEXT_PUBLIC_SANITY_DATASET",
-        "NEXT_PUBLIC_SANITY_API_VERSION",
+        "NEXT_PUBLIC_API_URL",
         "NEXT_PUBLIC_SITE_URL",
         "NEXT_PUBLIC_GA_MEASUREMENT_ID",
         "RESEND_API_KEY",
-        "CONTACT_EMAIL",
-        "SANITY_REVALIDATE_SECRET"
+        "CONTACT_EMAIL"
       ]
     },
     "dev": {
       "cache": false,
       "persistent": true,
       "env": [
-        "NEXT_PUBLIC_SANITY_PROJECT_ID",
-        "NEXT_PUBLIC_SANITY_DATASET",
-        "NEXT_PUBLIC_SANITY_API_VERSION",
+        "NEXT_PUBLIC_API_URL",
         "NEXT_PUBLIC_SITE_URL",
         "RESEND_API_KEY",
         "CONTACT_EMAIL"

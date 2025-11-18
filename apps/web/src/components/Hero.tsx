@@ -1,27 +1,7 @@
-import { client } from '@/sanity/lib/client';
-import imageUrlBuilder from '@sanity/image-url';
+import { fetchAPI } from '@/lib/api';
 import HeroClient from './HeroClient';
 
-const builder = imageUrlBuilder(client);
-
-function urlFor(source: any) {
-  return builder.image(source);
-}
-
 export const revalidate = 60;
-
-interface SiteSettingsRaw {
-  name: string;
-  tagline: string;
-  bio: string;
-  profileImage?: any;
-  showreelUrl?: string;
-  welcomeMessage: string;
-  yearsExperience: number;
-  projectsCompleted: number;
-  clientsServed: number;
-  industryAwards?: number;
-}
 
 interface SiteSettings {
   name: string;
@@ -41,30 +21,10 @@ interface PageContent {
   heroSubheadline?: string;
 }
 
-async function getSiteSettings(): Promise<SiteSettingsRaw | null> {
-  try {
-    const query = `*[_type == "siteSettings"][0]`;
-    return await client.fetch(query, {}, { next: { revalidate: 60 } });
-  } catch (error) {
-    console.error('Error fetching site settings:', error);
-    return null;
-  }
-}
-
-async function getPageContent(): Promise<PageContent | null> {
-  try {
-    const query = `*[_type == "pageContent"][0]{ heroHeadline, heroSubheadline }`;
-    return await client.fetch(query, {}, { next: { revalidate: 60 } });
-  } catch (error) {
-    console.error('Error fetching page content:', error);
-    return null;
-  }
-}
-
 export default async function Hero() {
   const [rawSettings, pageContent] = await Promise.all([
-    getSiteSettings(),
-    getPageContent()
+    fetchAPI('/site-settings').catch(() => null),
+    fetchAPI('/page-content').catch(() => null)
   ]);
 
   const defaultSettings: SiteSettings = {
@@ -78,11 +38,16 @@ export default async function Hero() {
   };
 
   const settings: SiteSettings = rawSettings ? {
-    ...rawSettings,
-    profileImageUrl: rawSettings.profileImage
-      ? urlFor(rawSettings.profileImage).width(800).height(800).url()
-      : undefined,
-    showreelUrl: rawSettings.showreelUrl,
+    name: rawSettings.name || defaultSettings.name,
+    tagline: rawSettings.tagline || defaultSettings.tagline,
+    bio: rawSettings.bio || defaultSettings.bio,
+    profileImageUrl: rawSettings.profileImageUrl || undefined,
+    showreelUrl: rawSettings.showreelUrl || undefined,
+    welcomeMessage: rawSettings.welcomeMessage || defaultSettings.welcomeMessage,
+    yearsExperience: rawSettings.yearsExperience || defaultSettings.yearsExperience,
+    projectsCompleted: rawSettings.projectsCompleted || defaultSettings.projectsCompleted,
+    clientsServed: rawSettings.clientsServed || defaultSettings.clientsServed,
+    industryAwards: rawSettings.industryAwards,
   } : defaultSettings;
 
   return <HeroClient settings={settings} pageContent={pageContent || undefined} />;

@@ -1,124 +1,122 @@
 # Portfolio Website
 
-A modern, responsive portfolio website built with Next.js, TypeScript, and Tailwind CSS.
-
-## Features
-
-- **Responsive Design**: Fully responsive layout that works on all devices (mobile, tablet, desktop)
-- **Dark Mode**: Toggle between light and dark themes with persistent preference storage
-- **TypeScript**: Fully typed for better development experience and fewer bugs
-- **Modern UI**: Clean, modern design with smooth animations and transitions
-- **Sections**:
-  - Hero/About section with introduction
-  - Projects showcase with tags and links
-  - Skills section with visual progress indicators
-  - Contact form with validation
+A modern portfolio website built with Next.js, Prisma, and PostgreSQL.
 
 ## Tech Stack
 
-- **Framework**: Next.js 15.5.6 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS 4
-- **Fonts**: Geist Sans & Geist Mono
+- **Framework**: Next.js 15
+- **Database**: PostgreSQL (via Prisma ORM)
+- **Styling**: Tailwind CSS
+- **Package Manager**: pnpm
 
-## Getting Started
+## Setup
 
-### Prerequisites
-
-- Node.js 18+ installed
-- npm or yarn package manager
-
-### Installation
-
-1. Install dependencies:
+### 1. Install Dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
-2. Run the development server:
+### 2. Database Setup
+
+1. Create a PostgreSQL database (locally or on Render)
+2. Set your `DATABASE_URL` in `.env`:
+
+```env
+DATABASE_URL="postgresql://user:password@host:5432/database?schema=public"
+```
+
+3. Generate Prisma Client and push schema:
 
 ```bash
-npm run dev
+pnpm db:generate
+pnpm db:push
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
+Or for production migrations:
 
-## Available Scripts
+```bash
+pnpm db:migrate
+```
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
+### 3. Environment Variables
+
+Copy `.env.example` to `.env` and fill in:
+
+- `DATABASE_URL` - Your PostgreSQL connection string
+- `ADMIN_PASSWORD` - Password for admin panel access
+- `NEXT_PUBLIC_SITE_URL` - Your site URL
+- `RESEND_API_KEY` - For contact form (optional)
+
+### 4. Run Development Server
+
+```bash
+pnpm dev
+```
+
+## Admin Panel
+
+Access the admin panel at `/admin` to manage:
+- Site settings
+- Projects/Portfolio items
+- Clients
+- Page content
+- Skills
+- About section
+- Navigation
+- Footer
+
+## Deployment on Render
+
+### 1. Create PostgreSQL Database
+
+1. Go to Render Dashboard
+2. Create a new PostgreSQL database
+3. Copy the Internal Database URL
+
+### 2. Deploy Web Service
+
+1. Connect your GitHub repository
+2. Set build command: `pnpm install && pnpm db:generate && pnpm build`
+3. Set start command: `pnpm start`
+4. Add environment variables:
+   - `DATABASE_URL` - Your Render PostgreSQL Internal Database URL
+   - `ADMIN_PASSWORD` - Your admin password
+   - `NEXT_PUBLIC_SITE_URL` - Your production URL
+   - `NODE_ENV` - `production`
+
+### 3. Run Migrations
+
+After first deployment, run migrations:
+
+```bash
+pnpm db:migrate
+```
+
+Or use Render's shell to run:
+```bash
+pnpm prisma migrate deploy
+```
+
+## Database Management
+
+- View data: `pnpm db:studio` (opens Prisma Studio)
+- Create migration: `pnpm db:migrate`
+- Push schema changes: `pnpm db:push`
 
 ## Project Structure
 
 ```
-my-portfolios/
+apps/web/
+├── prisma/
+│   └── schema.prisma      # Database schema
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx       # Root layout with providers
-│   │   ├── page.tsx         # Home page
-│   │   └── globals.css      # Global styles
-│   ├── components/
-│   │   ├── Header.tsx       # Navigation header
-│   │   ├── Footer.tsx       # Footer component
-│   │   ├── Hero.tsx         # Hero/About section
-│   │   ├── Projects.tsx     # Projects showcase
-│   │   ├── Skills.tsx       # Skills section
-│   │   ├── Contact.tsx      # Contact form
-│   │   ├── ThemeProvider.tsx # Theme context provider
-│   │   └── ThemeToggle.tsx  # Dark mode toggle
-│   ├── lib/                 # Utility functions
-│   └── types/               # TypeScript types
-├── public/                  # Static assets
-└── package.json
+│   │   ├── api/
+│   │   │   └── admin/     # Admin API routes
+│   │   └── admin/         # Admin panel UI
+│   ├── components/        # React components
+│   └── lib/
+│       ├── db.ts         # Prisma database client
+│       └── auth.ts       # Authentication utilities
 ```
-
-## Customization
-
-### Update Personal Information
-
-1. **Hero Section** (`src/components/Hero.tsx`):
-   - Change name, title, and bio
-   - Update profile initials or add profile image
-
-2. **Projects** (`src/components/Projects.tsx`):
-   - Update the `projects` array with your own projects
-   - Add project descriptions, tags, and links
-
-3. **Skills** (`src/components/Skills.tsx`):
-   - Modify the `skillCategories` array with your skills
-   - Adjust skill levels (0-100)
-
-4. **Contact Info** (`src/components/Contact.tsx`):
-   - Update email, phone, and location
-   - Implement actual form submission logic
-
-5. **Footer** (`src/components/Footer.tsx`):
-   - Add your social media links
-   - Update copyright information
-
-### Color Scheme
-
-Edit `src/app/globals.css` to change colors:
-
-```css
-:root {
-  --primary: #3b82f6;    /* Blue */
-  --secondary: #8b5cf6;  /* Purple */
-  --accent: #10b981;     /* Green */
-}
-```
-
-## Deployment
-
-### Deploy to Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new).
-
-1. Push your code to GitHub
-2. Import the repository on Vercel
-3. Vercel will automatically detect Next.js and deploy
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

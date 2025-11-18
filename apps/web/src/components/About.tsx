@@ -1,5 +1,4 @@
-import { client } from '@/sanity/lib/client';
-import { PortableText } from '@portabletext/react';
+import { fetchAPI } from '@/lib/api';
 
 export const revalidate = 60;
 
@@ -12,12 +11,8 @@ interface SiteSettings {
 }
 
 interface AboutSection {
-  bodyParagraphs?: any[];
-  featuredBrands?: Array<{
-    name: string;
-    description?: string;
-    order: number;
-  }>;
+  bodyParagraphs?: string[];
+  featuredBrands?: string[];
   signingName?: string;
 }
 
@@ -26,45 +21,11 @@ interface PageContent {
   aboutSubtitle?: string;
 }
 
-async function getSiteSettings(): Promise<SiteSettings | null> {
-  try {
-    const query = `*[_type == "siteSettings"][0]{name, bio, yearsExperience, projectsCompleted, industryAwards}`;
-    return await client.fetch(query, {}, { next: { revalidate: 60 } });
-  } catch (error) {
-    console.error('Error fetching site settings:', error);
-    return null;
-  }
-}
-
-async function getAboutSection(): Promise<AboutSection | null> {
-  try {
-    const query = `*[_type == "aboutSection"][0]{
-      bodyParagraphs,
-      featuredBrands[]{ name, description, order } | order(order asc),
-      signingName
-    }`;
-    return await client.fetch(query, {}, { next: { revalidate: 60 } });
-  } catch (error) {
-    console.error('Error fetching about section:', error);
-    return null;
-  }
-}
-
-async function getPageContent(): Promise<PageContent | null> {
-  try {
-    const query = `*[_type == "pageContent"][0]{ aboutTitle, aboutSubtitle }`;
-    return await client.fetch(query, {}, { next: { revalidate: 60 } });
-  } catch (error) {
-    console.error('Error fetching page content:', error);
-    return null;
-  }
-}
-
 export default async function About() {
   const [settings, aboutSection, pageContent] = await Promise.all([
-    getSiteSettings(),
-    getAboutSection(),
-    getPageContent()
+    fetchAPI('/site-settings').catch(() => null),
+    fetchAPI('/about').catch(() => null),
+    fetchAPI('/page-content').catch(() => null)
   ]);
 
   const defaultSettings: SiteSettings = {
@@ -75,13 +36,20 @@ export default async function About() {
     industryAwards: 10,
   };
 
-  const data = settings || defaultSettings;
+  const data = settings ? {
+    name: settings.name || defaultSettings.name,
+    bio: settings.bio || defaultSettings.bio,
+    yearsExperience: settings.yearsExperience || defaultSettings.yearsExperience,
+    projectsCompleted: settings.projectsCompleted || defaultSettings.projectsCompleted,
+    industryAwards: settings.industryAwards || defaultSettings.industryAwards,
+  } : defaultSettings;
+
   const aboutTitle = pageContent?.aboutTitle || 'Behind the Camera';
   const aboutSubtitle = pageContent?.aboutSubtitle || 'The Story';
 
   const defaultBrands = ['Porsche', 'Major Film Productions', 'Global Brands'];
   const featuredBrands = aboutSection?.featuredBrands && aboutSection.featuredBrands.length > 0
-    ? aboutSection.featuredBrands.map(b => b.name)
+    ? aboutSection.featuredBrands
     : defaultBrands;
 
   return (
@@ -105,7 +73,11 @@ export default async function About() {
               <div className="space-y-6 text-ivory/90 text-lg leading-relaxed">
                 {aboutSection?.bodyParagraphs && aboutSection.bodyParagraphs.length > 0 ? (
                   <div className="portable-text">
-                    <PortableText value={aboutSection.bodyParagraphs} />
+                    {aboutSection.bodyParagraphs.map((para, idx) => (
+                      <p key={idx} className={idx === 0 ? "first-letter:text-6xl first-letter:font-[family-name:var(--font-playfair)] first-letter:text-gold first-letter:float-left first-letter:mr-3 first-letter:leading-none" : ""}>
+                        {para}
+                      </p>
+                    ))}
                   </div>
                 ) : (
                   <>

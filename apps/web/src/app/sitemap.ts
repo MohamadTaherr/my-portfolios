@@ -1,21 +1,17 @@
 import { MetadataRoute } from 'next';
-import { client } from '@/sanity/lib/client';
-
-interface VideoProject {
-  _id: string;
-  _updatedAt: string;
-}
+import { fetchAPI } from '@/lib/api';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
 
-  // Fetch all projects from Sanity for dynamic sitemap entries
-  let projects: VideoProject[] = [];
+  // Fetch all projects from database for dynamic sitemap entries
+  let projects: Array<{ id: string; updatedAt: Date }> = [];
   try {
-    const query = '*[_type == "videoProject"]{_id, _updatedAt}';
-    projects = await client.fetch(query, {}, {
-      next: { revalidate: 3600 } // Revalidate every hour
-    });
+    const allProjects = await fetchAPI('/projects');
+    projects = allProjects.map((p: any) => ({
+      id: p.id,
+      updatedAt: p.updatedAt || p.createdAt || new Date(),
+    }));
   } catch (error) {
     console.error('Error fetching projects for sitemap:', error);
   }
@@ -56,8 +52,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic project pages
   const projectPages: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${baseUrl}/projects/${project._id}`,
-    lastModified: new Date(project._updatedAt),
+    url: `${baseUrl}/projects/${project.id}`,
+    lastModified: project.updatedAt instanceof Date ? project.updatedAt : new Date(project.updatedAt),
     changeFrequency: 'monthly',
     priority: 0.8,
   }));

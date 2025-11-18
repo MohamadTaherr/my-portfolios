@@ -4,20 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "turbo dev --filter=web",
+    "dev": "turbo dev --filter=web --filter=backend",
     "dev:web": "turbo dev --filter=web",
-    "dev:studio": "turbo dev --filter=studio",
-    "dev:all": "turbo dev --filter=web --filter=studio",
+    "dev:backend": "turbo dev --filter=backend",
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
-    "clean": "turbo clean && rm -rf node_modules",
-    "sanity:seed": "node seed-sanity-data.js",
-    "sanity:cleanup": "node cleanup-old-data.js",
-    "sanity:deploy": "pnpm --filter studio exec sanity deploy"
+    "clean": "turbo clean && rm -rf node_modules"
   },
   "dependencies": {
-    "@sanity/client": "^6.24.1",
     "dotenv": "^16.4.7"
   },
   "devDependencies": {

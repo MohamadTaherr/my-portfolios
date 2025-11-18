@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import StructuredData from "@/components/StructuredData";
 import { GoogleAnalytics } from "@/components/Analytics";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
-import { client } from '@/sanity/lib/client';
+import { fetchAPI } from '@/lib/api';
 import { Metadata } from 'next';
 
 // Clean sans-serif for body text
@@ -32,19 +32,15 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const geistMono = inter; // Use same for mono
-
-// Fetch SEO data from Sanity
+// Fetch SEO data from database
 async function getSEOData() {
   try {
-    const query = `*[_type == "pageContent"][0]{
-      seoTitle,
-      seoDescription,
-      seoKeywords
-    }`;
-
-    const data = await client.fetch(query, {}, { next: { revalidate: 3600 } });
-    return data;
+    const pageContent = await fetchAPI('/page-content');
+    return {
+      seoTitle: pageContent.seoTitle,
+      seoDescription: pageContent.seoDescription,
+      seoKeywords: pageContent.seoKeywords || [],
+    };
   } catch (error) {
     console.error('Error fetching SEO data:', error);
     return null;
@@ -53,9 +49,8 @@ async function getSEOData() {
 
 async function getSiteSettings() {
   try {
-    const query = `*[_type == "siteSettings"][0]{ name }`;
-    const data = await client.fetch(query, {}, { next: { revalidate: 3600 } });
-    return data;
+    const settings = await fetchAPI('/site-settings');
+    return { name: settings.name };
   } catch (error) {
     console.error('Error fetching site settings:', error);
     return null;

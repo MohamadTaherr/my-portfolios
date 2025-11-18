@@ -1,40 +1,29 @@
 import { notFound } from 'next/navigation';
-import { client } from '@/sanity/lib/client';
-import imageUrlBuilder from '@sanity/image-url';
+import { fetchAPI } from '@/lib/api';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import VideoPlayer from '@/components/VideoPlayer';
 
-// Revalidate page every 10 seconds to fetch fresh content from Sanity
+// Revalidate page every 10 seconds
 export const revalidate = 10;
 
-const builder = imageUrlBuilder(client);
-
-function urlFor(source: any) {
-  return builder.image(source);
-}
-
 interface VideoProject {
-  _id: string;
+  id: string;
   title: string;
-  description: string;
-  client: string;
-  category: string;
-  duration: string;
-  year: string;
+  description: string | null;
+  client: string | null;
+  category: string | null;
+  duration: string | null;
+  year: string | null;
   tags: string[];
-  videoUrl?: string;
-  thumbnail: any;
+  videoUrl: string | null;
+  thumbnailUrl: string | null;
   featured: boolean;
 }
 
 async function getProject(id: string): Promise<VideoProject | null> {
   try {
-    const query = `*[_type == "videoProject" && _id == $id][0]`;
-    const project = await client.fetch(query, { id }, {
-      next: { revalidate: 10 } // Revalidate every 10 seconds
-    });
-    return project;
+    return await fetchAPI(`/projects/${id}`);
   } catch (error) {
     console.error('Error fetching project:', error);
     return null;
@@ -54,26 +43,26 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
-  const imageUrl = project.thumbnail
-    ? urlFor(project.thumbnail).width(1200).height(630).url()
+  const imageUrl = project.thumbnailUrl
+    ? project.thumbnailUrl
     : `${baseUrl}/og-image.jpg`;
 
   return {
-    title: `${project.title} | ${project.client} | Edmond Haddad`,
-    description: project.description.substring(0, 160) + (project.description.length > 160 ? '...' : ''),
+    title: `${project.title} | ${project.client || 'Portfolio'} | Edmond Haddad`,
+    description: (project.description || '').substring(0, 160) + ((project.description || '').length > 160 ? '...' : ''),
     keywords: [
       project.title,
-      project.client,
-      project.category,
-      ...project.tags,
+      project.client || '',
+      project.category || '',
+      ...(project.tags || []),
       'scriptwriting',
       'video production',
       'Edmond Haddad',
     ],
     authors: [{ name: 'Edmond Haddad' }],
     openGraph: {
-      title: `${project.title} | ${project.client}`,
-      description: project.description,
+      title: `${project.title} | ${project.client || 'Portfolio'}`,
+      description: project.description || '',
       url: `${baseUrl}/projects/${id}`,
       siteName: 'Edmond Haddad Portfolio',
       images: [
@@ -81,7 +70,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${project.title} - ${project.client}`,
+          alt: `${project.title} - ${project.client || 'Portfolio'}`,
         },
       ],
       locale: 'en_US',
@@ -89,8 +78,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${project.title} | ${project.client}`,
-      description: project.description.substring(0, 200),
+      title: `${project.title} | ${project.client || 'Portfolio'}`,
+      description: (project.description || '').substring(0, 200),
       images: [imageUrl],
       creator: '@yourtwitterhandle',
     },
@@ -100,13 +89,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-async function getRelatedProjects(category: string, currentId: string): Promise<VideoProject[]> {
+async function getRelatedProjects(category: string | null, currentId: string): Promise<VideoProject[]> {
   try {
-    const query = `*[_type == "videoProject" && category == $category && _id != $currentId] | order(_createdAt desc)[0...3]`;
-    const projects = await client.fetch(query, { category, currentId }, {
-      next: { revalidate: 10 } // Revalidate every 10 seconds
-    });
-    return projects;
+    if (!category) return [];
+    const allProjects = await fetchAPI('/projects');
+    return allProjects
+      .filter((p: VideoProject) => p.category === category && p.id !== currentId)
+      .slice(0, 3);
   } catch (error) {
     console.error('Error fetching related projects:', error);
     return [];
@@ -121,14 +110,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     notFound();
   }
 
-  const relatedProjects = await getRelatedProjects(project.category, project._id);
+  const relatedProjects = await getRelatedProjects(project.category, project.id);
 
   return (
     <div className="min-h-screen py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <Link
-          href="/#video-production"
+          href="/#portfolio"
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8"
         >
           <svg className="w-5 h-5 mr-2" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -142,21 +131,33 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           {/* Title & Meta */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="px-4 py-1.5 text-sm font-semibold rounded-full bg-primary/10 text-primary border border-primary/20">
-                {project.category}
-              </span>
-              <span className="text-muted-foreground">{project.year}</span>
-              <span className="text-muted-foreground">•</span>
-              <span className="text-muted-foreground">{project.duration}</span>
+              {project.category && (
+                <span className="px-4 py-1.5 text-sm font-semibold rounded-full bg-primary/10 text-primary border border-primary/20">
+                  {project.category}
+                </span>
+              )}
+              {project.year && (
+                <>
+                  <span className="text-muted-foreground">{project.year}</span>
+                  {project.duration && (
+                    <>
+                      <span className="text-muted-foreground">•</span>
+                      <span className="text-muted-foreground">{project.duration}</span>
+                    </>
+                  )}
+                </>
+              )}
             </div>
 
             <h1 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-playfair)]">
               {project.title}
             </h1>
 
-            <p className="text-lg text-muted-foreground">
-              <span className="font-semibold text-foreground">Client:</span> {project.client}
-            </p>
+            {project.client && (
+              <p className="text-lg text-muted-foreground">
+                <span className="font-semibold text-foreground">Client:</span> {project.client}
+              </p>
+            )}
           </div>
 
           {/* Video Player */}
@@ -164,14 +165,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {project.videoUrl ? (
               <VideoPlayer
                 url={project.videoUrl}
-                title={`${project.title} - ${project.client}`}
+                title={`${project.title} - ${project.client || 'Portfolio'}`}
                 controls={true}
-                posterImage={project.thumbnail ? urlFor(project.thumbnail).width(1200).height(675).url() : undefined}
+                posterImage={project.thumbnailUrl || undefined}
               />
-            ) : project.thumbnail ? (
+            ) : project.thumbnailUrl ? (
               <img
-                src={urlFor(project.thumbnail).width(1200).height(675).url()}
-                alt={`${project.title} - ${project.category} video project for ${project.client} (${project.year})`}
+                src={project.thumbnailUrl}
+                alt={`${project.title} - ${project.category || 'Portfolio'} video project${project.client ? ` for ${project.client}` : ''}${project.year ? ` (${project.year})` : ''}`}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -184,12 +185,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
 
           {/* Description */}
-          <div className="prose prose-lg dark:prose-invert max-w-none">
-            <h2 className="text-2xl font-bold mb-4">About This Project</h2>
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-              {project.description}
-            </p>
-          </div>
+          {project.description && (
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+              <h2 className="text-2xl font-bold mb-4">About This Project</h2>
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                {project.description}
+              </p>
+            </div>
+          )}
 
           {/* Tags */}
           {project.tags && project.tags.length > 0 && (
@@ -217,15 +220,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedProjects.map((related) => (
                   <Link
-                    key={related._id}
-                    href={`/projects/${related._id}`}
+                    key={related.id}
+                    href={`/projects/${related.id}`}
                     className="group block rounded-xl border border-border/50 bg-card overflow-hidden transition-all hover:border-primary/50 hover:shadow-xl hover:-translate-y-1"
                   >
                     <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-secondary/20">
-                      {related.thumbnail ? (
+                      {related.thumbnailUrl ? (
                         <img
-                          src={urlFor(related.thumbnail).width(400).height(225).url()}
-                          alt={`${related.title} - ${related.category} project for ${related.client}`}
+                          src={related.thumbnailUrl}
+                          alt={`${related.title} - ${related.category || 'Portfolio'} project${related.client ? ` for ${related.client}` : ''}`}
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -241,7 +244,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                       <h3 className="font-semibold group-hover:text-primary transition-colors line-clamp-2">
                         {related.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground">{related.client}</p>
+                      {related.client && (
+                        <p className="text-sm text-muted-foreground">{related.client}</p>
+                      )}
                     </div>
                   </Link>
                 ))}

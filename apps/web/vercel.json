@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd ../.. && pnpm install && cd apps/web && pnpm build",
+  "devCommand": "cd ../.. && pnpm install && cd apps/web && pnpm dev",
+  "installCommand": "cd ../.. && pnpm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@backend_url"
+  }
+}
+
