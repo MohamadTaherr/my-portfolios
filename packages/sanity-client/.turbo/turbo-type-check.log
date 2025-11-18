@@ -1,0 +1,4 @@
+
+> @repo/sanity-client@0.1.0 type-check C:\Users\User\Desktop\development\my-portfolios\packages\sanity-client
+> tsc --noEmit
+

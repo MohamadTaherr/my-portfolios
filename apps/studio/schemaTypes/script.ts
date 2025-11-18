@@ -17,33 +17,16 @@ export default defineType({
       type: 'string',
       description: 'Select a type. To add/edit script types, go to "Script Types" in the sidebar.',
       options: {
-        list: async (parent, context) => {
-          const { getClient } = context;
-          const client = getClient({ apiVersion: '2025-10-21' });
-
-          try {
-            // Fetch script types from the scriptType singleton
-            const result = await client.fetch(
-              `*[_type == "scriptType"][0].types[] | order(order asc) {title, value}`
-            );
-
-            if (result && result.length > 0) {
-              return result;
-            }
-          } catch (error) {
-            console.error('Error fetching script types:', error);
-          }
-
-          // Fallback to default types if fetch fails or no types exist
-          return [
-            { title: 'Commercial Script', value: 'Commercial Script' },
-            { title: 'Documentary Script', value: 'Documentary Script' },
-            { title: 'Social Media Scripts', value: 'Social Media Scripts' },
-            { title: 'Short Film Script', value: 'Short Film Script' },
-            { title: 'Corporate Script', value: 'Corporate Script' },
-            { title: 'E-Learning Script', value: 'E-Learning Script' },
-          ];
-        },
+        list: [
+          { title: 'Commercial Script', value: 'commercial' },
+          { title: 'Documentary Script', value: 'documentary' },
+          { title: 'Social Media Scripts', value: 'social-media' },
+          { title: 'Short Film Script', value: 'short-film' },
+          { title: 'Corporate Script', value: 'corporate' },
+          { title: 'E-Learning Script', value: 'e-learning' },
+          { title: 'Theater Script', value: 'theater' },
+          { title: 'Podcast Script', value: 'podcast' },
+        ],
       },
       validation: (Rule) => Rule.required(),
     }),

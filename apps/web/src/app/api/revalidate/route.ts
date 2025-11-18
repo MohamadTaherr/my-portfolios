@@ -2,48 +2,75 @@ import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
+  console.log('🔔 Revalidation endpoint called');
+
   try {
     const body = await request.json();
+    console.log('📦 Request body:', JSON.stringify(body, null, 2));
 
-    // Verify the request is from Sanity (optional but recommended)
+    // Verify the request is from Sanity
     const token = request.headers.get('authorization');
-    if (token !== `Bearer ${process.env.SANITY_REVALIDATE_SECRET}`) {
+    const expectedToken = `Bearer ${process.env.SANITY_REVALIDATE_SECRET}`;
+
+    console.log('🔐 Token check:', {
+      hasToken: !!token,
+      hasExpectedToken: !!expectedToken,
+      match: token === expectedToken
+    });
+
+    if (token !== expectedToken) {
+      console.error('❌ Invalid revalidation token');
       return NextResponse.json(
-        { message: 'Invalid token' },
+        {
+          message: 'Invalid token',
+          received: token ? 'Token provided' : 'No token',
+          expected: expectedToken ? 'Token configured' : 'No token configured'
+        },
         { status: 401 }
       );
     }
 
-    // Get the document type from the webhook payload
-    const { _type } = body;
+    const { _type, slug } = body;
+    console.log(`✅ Valid request for type: ${_type}`);
 
-    // Revalidate relevant paths based on content type
-    if (_type === 'siteSettings') {
-      revalidatePath('/');
-    } else if (_type === 'videoProject') {
-      revalidatePath('/');
-      // Revalidate individual project pages
-      if (body._id) {
-        revalidatePath(`/projects/${body._id}`);
+    // Simple approach: revalidate the homepage for ALL content changes
+    // This ensures your site always updates
+    revalidatePath('/', 'layout');
+    console.log('🔄 Revalidated: / (layout)');
+
+    // Also revalidate specific pages if they exist
+    const pathsRevalidated = ['/'];
+
+    if (slug?.current) {
+      // For portfolio work and posts with slugs
+      if (_type === 'portfolioWork') {
+        revalidatePath(`/work/${slug.current}`);
+        pathsRevalidated.push(`/work/${slug.current}`);
+      } else if (_type === 'post') {
+        revalidatePath('/blog');
+        revalidatePath(`/blog/${slug.current}`);
+        pathsRevalidated.push('/blog', `/blog/${slug.current}`);
       }
-    } else if (_type === 'script') {
-      revalidatePath('/');
-    } else if (_type === 'client') {
-      revalidatePath('/');
-    } else {
-      // Revalidate everything if we don't know the type
-      revalidatePath('/');
     }
 
+    console.log('✅ Revalidation complete. Paths:', pathsRevalidated);
+
     return NextResponse.json({
+      success: true,
       revalidated: true,
       now: Date.now(),
       type: _type,
+      paths: pathsRevalidated,
+      message: 'Cache cleared successfully'
     });
   } catch (error) {
-    console.error('Error revalidating:', error);
+    console.error('❌ Error revalidating:', error);
     return NextResponse.json(
-      { message: 'Error revalidating' },
+      {
+        success: false,
+        message: 'Error revalidating',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

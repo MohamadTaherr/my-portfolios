@@ -5,8 +5,6 @@ export const scriptType = defineType({
   title: 'Script Types',
   type: 'document',
   icon: () => '📝',
-  // Make this a singleton - only one document
-  __experimental_singleton: true,
   fields: [
     defineField({
       name: 'types',

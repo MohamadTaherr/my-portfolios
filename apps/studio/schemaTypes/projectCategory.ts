@@ -5,8 +5,6 @@ export const projectCategory = defineType({
   title: 'Project Categories',
   type: 'document',
   icon: () => '🎬',
-  // Make this a singleton - only one document
-  __experimental_singleton: true,
   fields: [
     defineField({
       name: 'categories',

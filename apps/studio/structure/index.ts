@@ -4,20 +4,32 @@ export const structure = (S: StructureBuilder) =>
   S.list()
     .title('Creative Studio')
     .items([
-      // MAIN CREATIVE WORK
+      // MAIN PORTFOLIO - Quick Access
       S.listItem()
-        .title('✨ My Work')
+        .title('✨ All Portfolio Work')
         .icon(() => '✨')
         .child(
+          S.documentTypeList('portfolioWork')
+            .title('All Portfolio Work')
+            .defaultOrdering([{ field: 'featured', direction: 'desc' }, { field: 'order', direction: 'asc' }])
+        ),
+
+      S.divider(),
+
+      // FILTER BY TYPE
+      S.listItem()
+        .title('📁 Browse by Type')
+        .icon(() => '📁')
+        .child(
           S.list()
-            .title('Creative Portfolio')
+            .title('Filter by Work Type')
             .items([
               S.listItem()
-                .title('All Portfolio Work')
-                .icon(() => '🎨')
+                .title('⭐ Featured Work')
                 .child(
                   S.documentTypeList('portfolioWork')
-                    .title('All Work')
+                    .title('Featured Work')
+                    .filter('_type == "portfolioWork" && featured == true')
                     .defaultOrdering([{ field: 'order', direction: 'asc' }])
                 ),
               S.divider(),
@@ -54,36 +66,19 @@ export const structure = (S: StructureBuilder) =>
                     .defaultOrdering([{ field: 'order', direction: 'asc' }])
                 ),
               S.listItem()
-                .title('📰 Articles & Posts')
+                .title('📸 Photography')
                 .child(
                   S.documentTypeList('portfolioWork')
-                    .title('Articles')
-                    .filter('_type == "portfolioWork" && workType == "article"')
-                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
-                ),
-              S.listItem()
-                .title('📸 Photography & Visuals')
-                .child(
-                  S.documentTypeList('portfolioWork')
-                    .title('Photography')
+                    .title('Photography & Visuals')
                     .filter('_type == "portfolioWork" && workType == "photography"')
                     .defaultOrdering([{ field: 'order', direction: 'asc' }])
                 ),
               S.listItem()
-                .title('🎨 Creative Campaigns')
+                .title('🎨 Campaigns')
                 .child(
                   S.documentTypeList('portfolioWork')
-                    .title('Campaigns')
+                    .title('Creative Campaigns')
                     .filter('_type == "portfolioWork" && workType == "campaign"')
-                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
-                ),
-              S.divider(),
-              S.listItem()
-                .title('⭐ Featured Work')
-                .child(
-                  S.documentTypeList('portfolioWork')
-                    .title('Featured')
-                    .filter('_type == "portfolioWork" && featured == true')
                     .defaultOrdering([{ field: 'order', direction: 'asc' }])
                 ),
             ])
@@ -93,7 +88,7 @@ export const structure = (S: StructureBuilder) =>
 
       // BLOG & ARTICLES
       S.listItem()
-        .title('✍️ Blog & Writing')
+        .title('✍️ Blog Posts')
         .icon(() => '✍️')
         .child(
           S.documentTypeList('post')
@@ -103,56 +98,16 @@ export const structure = (S: StructureBuilder) =>
 
       S.divider(),
 
-      // LEGACY CONTENT (for migration)
+      // PROFILE & ABOUT
       S.listItem()
-        .title('📦 Legacy Content')
-        .icon(() => '📦')
-        .child(
-          S.list()
-            .title('Legacy Content (For Migration)')
-            .items([
-              S.listItem()
-                .title('Old Video Projects')
-                .icon(() => '🎬')
-                .child(
-                  S.documentTypeList('videoProject')
-                    .title('Video Projects (Legacy)')
-                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
-                ),
-              S.listItem()
-                .title('Old Scripts')
-                .icon(() => '📝')
-                .child(
-                  S.documentTypeList('script')
-                    .title('Scripts (Legacy)')
-                ),
-            ])
-        ),
-
-      S.divider(),
-
-      // CLIENTS & COLLABORATORS
-      S.listItem()
-        .title('🤝 Clients & Collaborators')
-        .icon(() => '🤝')
-        .child(
-          S.documentTypeList('client')
-            .title('Clients')
-            .defaultOrdering([{ field: 'order', direction: 'asc' }])
-        ),
-
-      S.divider(),
-
-      // ABOUT & PROFILE
-      S.listItem()
-        .title('👤 About Me')
+        .title('👤 Profile & About')
         .icon(() => '👤')
         .child(
           S.list()
             .title('Profile & Bio')
             .items([
               S.listItem()
-                .title('About Section')
+                .title('About Me')
                 .icon(() => '👤')
                 .child(
                   S.document()
@@ -167,29 +122,33 @@ export const structure = (S: StructureBuilder) =>
                     .schemaType('skillsSection')
                     .documentId('skillsSection')
                 ),
-              S.listItem()
-                .title('Page Copy & Text')
-                .icon(() => '📝')
-                .child(
-                  S.document()
-                    .schemaType('pageContent')
-                    .documentId('pageContent')
-                ),
             ])
+        ),
+
+      S.divider(),
+
+      // CLIENTS
+      S.listItem()
+        .title('🤝 Clients')
+        .icon(() => '🤝')
+        .child(
+          S.documentTypeList('client')
+            .title('Clients & Collaborators')
+            .defaultOrdering([{ field: 'order', direction: 'asc' }])
         ),
 
       S.divider(),
 
       // SITE SETTINGS
       S.listItem()
-        .title('⚙️ Site Settings')
+        .title('⚙️ Settings')
         .icon(() => '⚙️')
         .child(
           S.list()
-            .title('Configuration')
+            .title('Site Settings')
             .items([
               S.listItem()
-                .title('General Settings')
+                .title('Site Settings')
                 .icon(() => '🌐')
                 .child(
                   S.document()
@@ -212,22 +171,13 @@ export const structure = (S: StructureBuilder) =>
                     .schemaType('footerSettings')
                     .documentId('footerSettings')
                 ),
-              S.divider(),
               S.listItem()
-                .title('Project Categories')
-                .icon(() => '🎬')
-                .child(
-                  S.document()
-                    .schemaType('projectCategory')
-                    .documentId('projectCategory')
-                ),
-              S.listItem()
-                .title('Script Types')
+                .title('Page Copy')
                 .icon(() => '📝')
                 .child(
                   S.document()
-                    .schemaType('scriptType')
-                    .documentId('scriptType')
+                    .schemaType('pageContent')
+                    .documentId('pageContent')
                 ),
             ])
         ),
