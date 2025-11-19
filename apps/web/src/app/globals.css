@@ -68,12 +68,16 @@
   scroll-behavior: smooth;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   background: linear-gradient(135deg, #0a0a0f 0%, #1a1625 50%, #0f0a15 100%);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
   position: relative;
 }
 

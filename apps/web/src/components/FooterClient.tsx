@@ -34,7 +34,8 @@ export default function FooterClient({ settings }: FooterClientProps) {
   const [footerSettings, setFooterSettings] = useState<FooterSettings | null>(null);
 
   useEffect(() => {
-    fetch('/api/footer')
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000';
+    fetch(`${API_URL}/api/footer`)
       .then(res => res.json())
       .then((data: FooterSettings) => setFooterSettings(data))
       .catch(err => console.error('Error fetching footer settings:', err));

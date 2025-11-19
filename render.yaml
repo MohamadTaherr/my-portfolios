@@ -19,6 +19,8 @@ projects:
                 value: production
               - key: PORT
                 value: 10000
+              - key: BACKEND_URL
+                sync: false
               - key: FRONTEND_URL
                 value: http://localhost:3000,https://my-portfolios-studio.vercel.app
               - key: ADMIN_PASSWORD

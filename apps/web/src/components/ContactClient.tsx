@@ -33,7 +33,8 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
   const [pageContent, setPageContent] = useState<PageContent | null>(null);
 
   useEffect(() => {
-    fetch('/api/page-content')
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000';
+    fetch(`${API_URL}/api/page-content`)
       .then(res => res.json())
       .then((data: PageContent) => setPageContent(data))
       .catch(err => console.error('Error fetching page content:', err));
@@ -51,7 +52,8 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
     setStatus('loading');
 
     try {
-      const response = await fetch('/api/contact', {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000';
+      const response = await fetch(`${API_URL}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

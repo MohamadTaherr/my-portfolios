@@ -35,16 +35,9 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
 
   return (
     <>
-      <section id="hero" className="relative py-20 md:py-32 flex items-center justify-center overflow-hidden">
+      <section id="hero" className="relative py-16 md:py-24 flex items-center justify-center overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-7xl mx-auto">
-            {/* Welcome Badge */}
-            <div className="flex justify-center mb-8 animate-fade-in">
-              <span className="inline-block px-6 py-2.5 glass rounded-full text-primary text-xs tracking-[0.3em] uppercase font-semibold border border-primary/30 shadow-lg shadow-primary/20">
-                {settings.welcomeMessage}
-              </span>
-            </div>
-
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left Column - Text */}

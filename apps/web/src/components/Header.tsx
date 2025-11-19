@@ -27,7 +27,8 @@ export default function Header() {
 
   useEffect(() => {
     // Fetch navigation settings from API
-    fetch('/api/navigation')
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000';
+    fetch(`${API_URL}/api/navigation`)
       .then(res => res.json())
       .then((data: NavigationSettings) => {
         if (data.mainNavigation && data.mainNavigation.length > 0) {
