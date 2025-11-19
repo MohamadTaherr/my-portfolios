@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -147,7 +147,11 @@ export async function initDatabase() {
       });
     }
   } catch (error) {
-    console.error('Error initializing database:', error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2021') {
+      console.error('Database schema missing. Run `pnpm --filter backend run db:push` to create the Prisma tables.');
+    } else {
+      console.error('Error initializing database:', error);
+    }
   }
 }
 

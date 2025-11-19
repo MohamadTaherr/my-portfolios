@@ -12,7 +12,8 @@
     "type-check": "turbo type-check",
     "db:generate": "pnpm --filter backend run db:generate",
     "start": "pnpm --filter backend run start",
-    "clean": "turbo clean && rm -rf node_modules"
+    "clean": "turbo clean && rm -rf node_modules",
+    "db:push": "pnpm --filter backend run db:push"
   },
   "dependencies": {
     "dotenv": "^16.4.7"

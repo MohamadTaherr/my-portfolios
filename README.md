@@ -93,6 +93,8 @@ pnpm dev
    - `FRONTEND_URL` (your Vercel URL)
    - `PORT` (10000)
 
+> The Render build/start commands run `pnpm --filter backend run db:push` before generating Prisma Client or starting the server, so your PostgreSQL schema is created automatically on each deploy. If you deploy elsewhere, run `pnpm db:push` manually first.
+
 ### Frontend (Vercel)
 
 1. Connect your GitHub repository to Vercel
