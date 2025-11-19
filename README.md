@@ -97,11 +97,13 @@ pnpm dev
 
 ### Frontend (Vercel)
 
-1. Connect your GitHub repository to Vercel
-2. Set root directory to `apps/web`
+1. Connect the repo to Vercel (root directory can remain `/` because `vercel.json` already builds `apps/web`).
+2. Keep the build command `pnpm --filter web run build` and output directory `apps/web/.next`.
 3. Set environment variables:
-   - `NEXT_PUBLIC_API_URL` (your Render backend URL)
-   - `NEXT_PUBLIC_SITE_URL` (your Vercel frontend URL)
+   - `NEXT_PUBLIC_API_URL` → your Render backend URL
+   - `NEXT_PUBLIC_SITE_URL` → your public Vercel domain
+   - (Optional) configure Vercel secrets `backend_url` / `frontend_url` referenced in `vercel.json`.
+4. Pushes to `main` now trigger Vercel automatically—no manual retargeting after the Sanity removal.
 
 ## Environment Variables
 
@@ -167,12 +169,13 @@ pnpm db:push
 
 ## Admin Panel
 
-Access the admin panel at `/admin` (to be built) to manage:
-- Site settings
-- Projects/Portfolio items
-- Clients
-- Page content
-- Skills
-- About section
-- Navigation
-- Footer
+Visit `/admin` to open the password-protected studio (it uses the `ADMIN_PASSWORD` env var from Render). The dashboard runs on the Next.js frontend and talks directly to the Express API, so content updates go live instantly.
+
+What you can do now:
+- Update hero voice, contact info, metrics, and welcome badges.
+- Edit per-section copy (about, skills, contact) plus navigation/footer JSON.
+- Manage every schema-less block (skills, about, navigation, footer) via JSON editors when you need total flexibility.
+- Add, edit, or delete portfolio entries across any medium—video (YouTube/Vimeo/direct), articles, galleries, documents, stills, or pure text.
+- Maintain client testimonials with quick add/remove actions.
+
+> Tip: keep `FRONTEND_URL` on Render set to your live Vercel domain so the admin cookies stay valid across origins.

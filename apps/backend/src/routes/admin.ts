@@ -152,6 +152,60 @@ router.delete('/projects/:id', checkAuth, async (req: Request, res: Response) =>
   }
 });
 
+// Portfolio Items
+router.get('/portfolio', async (req: Request, res: Response) => {
+  try {
+    const items = await db.getPortfolioItems();
+    res.json(items);
+  } catch (error) {
+    console.error('Error fetching portfolio items:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/portfolio/:id', async (req: Request, res: Response) => {
+  try {
+    const item = await db.getPortfolioItem(req.params.id);
+    if (!item) {
+      return res.status(404).json({ error: 'Portfolio item not found' });
+    }
+    res.json(item);
+  } catch (error) {
+    console.error('Error fetching portfolio item:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post('/portfolio', checkAuth, async (req: Request, res: Response) => {
+  try {
+    const item = await db.createPortfolioItem(req.body);
+    res.status(201).json(item);
+  } catch (error) {
+    console.error('Error creating portfolio item:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/portfolio/:id', checkAuth, async (req: Request, res: Response) => {
+  try {
+    const updated = await db.updatePortfolioItem(req.params.id, req.body);
+    res.json(updated);
+  } catch (error) {
+    console.error('Error updating portfolio item:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.delete('/portfolio/:id', checkAuth, async (req: Request, res: Response) => {
+  try {
+    await db.deletePortfolioItem(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting portfolio item:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Clients
 router.get('/clients', async (req: Request, res: Response) => {
   try {
@@ -247,6 +301,48 @@ router.put('/about', checkAuth, async (req: Request, res: Response) => {
     res.json(updated);
   } catch (error) {
     console.error('Error updating about:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Navigation
+router.get('/navigation', async (req: Request, res: Response) => {
+  try {
+    const navigation = await db.getNavigation();
+    res.json(navigation);
+  } catch (error) {
+    console.error('Error fetching navigation:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/navigation', checkAuth, async (req: Request, res: Response) => {
+  try {
+    const updated = await db.updateNavigation(req.body);
+    res.json(updated);
+  } catch (error) {
+    console.error('Error updating navigation:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Footer
+router.get('/footer', async (req: Request, res: Response) => {
+  try {
+    const footer = await db.getFooter();
+    res.json(footer);
+  } catch (error) {
+    console.error('Error fetching footer:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/footer', checkAuth, async (req: Request, res: Response) => {
+  try {
+    const updated = await db.updateFooter(req.body);
+    res.json(updated);
+  } catch (error) {
+    console.error('Error updating footer:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

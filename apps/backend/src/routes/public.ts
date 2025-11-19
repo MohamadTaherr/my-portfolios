@@ -83,6 +83,30 @@ router.get('/projects/:id', async (req: Request, res: Response) => {
   }
 });
 
+// Portfolio (public read)
+router.get('/portfolio', async (req: Request, res: Response) => {
+  try {
+    const items = await db.getPortfolioItems();
+    res.json(items);
+  } catch (error) {
+    console.error('Error fetching portfolio items:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/portfolio/:id', async (req: Request, res: Response) => {
+  try {
+    const item = await db.getPortfolioItem(req.params.id);
+    if (!item) {
+      return res.status(404).json({ error: 'Portfolio item not found' });
+    }
+    res.json(item);
+  } catch (error) {
+    console.error('Error fetching portfolio item:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Clients (public read)
 router.get('/clients', async (req: Request, res: Response) => {
   try {

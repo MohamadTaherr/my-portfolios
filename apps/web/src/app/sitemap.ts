@@ -4,16 +4,16 @@ import { fetchAPI } from '@/lib/api';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
 
-  // Fetch all projects from database for dynamic sitemap entries
-  let projects: Array<{ id: string; updatedAt: Date }> = [];
+  // Fetch all portfolio entries from database for dynamic sitemap entries
+  let portfolioItems: Array<{ id: string; updatedAt: Date }> = [];
   try {
-    const allProjects = await fetchAPI('/projects');
-    projects = allProjects.map((p: any) => ({
+    const allItems = await fetchAPI('/portfolio');
+    portfolioItems = allItems.map((p: any) => ({
       id: p.id,
       updatedAt: p.updatedAt || p.createdAt || new Date(),
     }));
   } catch (error) {
-    console.error('Error fetching projects for sitemap:', error);
+    console.error('Error fetching portfolio items for sitemap:', error);
   }
 
   // Static pages
@@ -50,13 +50,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Dynamic project pages
-  const projectPages: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${baseUrl}/projects/${project.id}`,
-    lastModified: project.updatedAt instanceof Date ? project.updatedAt : new Date(project.updatedAt),
+  // Dynamic portfolio pages
+  const portfolioPages: MetadataRoute.Sitemap = portfolioItems.map((item) => ({
+    url: `${baseUrl}/portfolio/${item.id}`,
+    lastModified: item.updatedAt instanceof Date ? item.updatedAt : new Date(item.updatedAt),
     changeFrequency: 'monthly',
     priority: 0.8,
   }));
 
-  return [...staticPages, ...projectPages];
+  return [...staticPages, ...portfolioPages];
 }

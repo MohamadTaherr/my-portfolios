@@ -73,7 +73,7 @@ export default async function About() {
               <div className="space-y-6 text-ivory/90 text-lg leading-relaxed">
                 {aboutSection?.bodyParagraphs && aboutSection.bodyParagraphs.length > 0 ? (
                   <div className="portable-text">
-                    {aboutSection.bodyParagraphs.map((para, idx) => (
+                    {aboutSection.bodyParagraphs.map((para: string, idx: number) => (
                       <p key={idx} className={idx === 0 ? "first-letter:text-6xl first-letter:font-[family-name:var(--font-playfair)] first-letter:text-gold first-letter:float-left first-letter:mr-3 first-letter:leading-none" : ""}>
                         {para}
                       </p>
@@ -143,7 +143,7 @@ export default async function About() {
                     Featured Work With
                   </div>
                   <div className="space-y-2 text-ivory/60">
-                    {featuredBrands.map((brand, index) => (
+                    {featuredBrands.map((brand: string, index: number) => (
                       <div key={index}>{brand}</div>
                     ))}
                   </div>

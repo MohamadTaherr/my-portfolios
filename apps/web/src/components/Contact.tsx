@@ -17,18 +17,25 @@ interface ContactInfo {
 export default async function Contact() {
   const settings = await fetchAPI('/site-settings').catch(() => null);
 
-  const contactInfo: ContactInfo = settings ? {
-    email: settings.email,
-    phone: settings.phone,
-    location: settings.location,
-    socialLinks: settings.socialLinks,
-  } : null;
-
-  const defaultContactInfo: ContactInfo = {
+  const fallbackContact: ContactInfo = {
     email: 'contact@example.com',
     phone: '+1 (234) 567-8900',
     location: 'Los Angeles, CA',
   };
 
-  return <ContactClient contactInfo={contactInfo?.email ? contactInfo : defaultContactInfo} />;
+  const dynamicContact: ContactInfo | null = settings
+    ? {
+        email: settings.email,
+        phone: settings.phone,
+        location: settings.location,
+        socialLinks: settings.socialLinks,
+      }
+    : null;
+
+  const contactInfo: ContactInfo =
+    dynamicContact && (dynamicContact.email || dynamicContact.phone || dynamicContact.location)
+      ? dynamicContact
+      : fallbackContact;
+
+  return <ContactClient contactInfo={contactInfo} />;
 }

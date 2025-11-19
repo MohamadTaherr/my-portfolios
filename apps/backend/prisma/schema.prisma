@@ -64,6 +64,42 @@ model Client {
   @@map("clients")
 }
 
+enum PortfolioMediaType {
+  VIDEO
+  IMAGE
+  ARTICLE
+  DOCUMENT
+  GALLERY
+  TEXT
+}
+
+model PortfolioItem {
+  id            String             @id @default(uuid())
+  title         String
+  summary       String?            @db.Text
+  client        String?            @db.VarChar(255)
+  category      String?            @db.VarChar(100)
+  mediaType     PortfolioMediaType @map("media_type")
+  videoProvider String?            @db.VarChar(50)  @map("video_provider")
+  videoId       String?            @db.VarChar(255) @map("video_id")
+  mediaUrl      String?            @db.Text         @map("media_url")
+  thumbnailUrl  String?            @db.Text         @map("thumbnail_url")
+  documentUrl   String?            @db.Text         @map("document_url")
+  externalUrl   String?            @db.Text         @map("external_url")
+  content       Json?              @default("{}")
+  gallery       String[]
+  tags          String[]
+  featured      Boolean            @default(false)
+  order         Int                @default(0)
+  createdAt     DateTime           @default(now())  @map("created_at")
+  updatedAt     DateTime           @updatedAt       @map("updated_at")
+
+  @@index([category])
+  @@index([featured])
+  @@index([mediaType])
+  @@map("portfolio_items")
+}
+
 model Skills {
   id        Int      @id @default(autoincrement())
   data      Json     @default("{}")

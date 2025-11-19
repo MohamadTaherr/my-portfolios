@@ -73,7 +73,7 @@ export default async function Skills() {
 
         {/* Cinematic Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24 max-w-6xl mx-auto">
-          {cinematicStats.map((stat, index) => (
+          {cinematicStats.map((stat: Stat, index: number) => (
             <div
               key={stat.id || index}
               className="glass p-8 text-center group cinematic-hover animate-fade-in-up"
@@ -98,7 +98,7 @@ export default async function Skills() {
             Core Competencies
           </h3>
           <div className="flex flex-wrap justify-center gap-4">
-            {expertise.map((skill, index) => (
+            {expertise.map((skill: string, index: number) => (
               <div
                 key={skill}
                 className="px-6 py-3 border border-gold/30 text-ivory/80 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all duration-500 cursor-default animate-fade-in"

@@ -1,7 +1,44 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma, $Enums } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+};
+
+const portfolioMediaTypeValues = new Set((Object.values($Enums.PortfolioMediaType ?? {}) as $Enums.PortfolioMediaType[]));
+
+const coerceMediaType = (value?: string): $Enums.PortfolioMediaType => {
+  if (!value) {
+    return $Enums.PortfolioMediaType.VIDEO;
+  }
+  const normalized = value.toUpperCase() as $Enums.PortfolioMediaType;
+  return portfolioMediaTypeValues.has(normalized) ? normalized : $Enums.PortfolioMediaType.VIDEO;
+};
+
+const toStringArray = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.map((entry) => String(entry));
+  }
+  if (typeof value === 'string') {
+    return value.split(',').map((entry) => entry.trim()).filter(Boolean);
+  }
+  return [];
+};
+
+const toJsonObject = (value: unknown) => {
+  if (value && typeof value === 'object') {
+    return value;
+  }
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === 'object') {
+        return parsed;
+      }
+    } catch {
+      return {};
+    }
+  }
+  return {};
 };
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
@@ -146,6 +183,75 @@ export async function initDatabase() {
         },
       });
     }
+
+    // Check and initialize portfolio items
+    const portfolioCount = await prisma.portfolioItem.count();
+    if (portfolioCount === 0) {
+      await prisma.portfolioItem.create({
+        data: {
+          title: 'Cinematic Showreel 2025',
+          summary: 'A kinetic montage of commercial, narrative, and documentary work crafted for global brands.',
+          client: 'Global Brands',
+          category: 'Showreel',
+          mediaType: $Enums.PortfolioMediaType.VIDEO,
+          videoProvider: 'VIMEO',
+          videoId: '923456781',
+          mediaUrl: 'https://vimeo.com/923456781',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80',
+          tags: ['showreel', 'direction', 'color-grading'],
+          featured: true,
+          order: 0,
+        },
+      });
+
+      await prisma.portfolioItem.create({
+        data: {
+          title: 'The Anatomy of an Unforgettable Brand Film',
+          summary: 'An editorial deep-dive breaking down the frameworks I use to architect emotive brand stories.',
+          category: 'Editorial',
+          mediaType: $Enums.PortfolioMediaType.ARTICLE,
+          tags: ['strategy', 'writing', 'narrative'],
+          content: {
+            body: 'A cinematic manifesto covering discovery, scripting, color psychology, and delivery for premium films.',
+            readingTime: '8 min read',
+          },
+          externalUrl: 'https://medium.com/@edmond/brand-film-blueprint',
+          featured: false,
+          order: 1,
+        },
+      });
+
+      await prisma.portfolioItem.create({
+        data: {
+          title: 'Frames From The Atlas Expedition',
+          summary: 'Gallery of stills captured while directing a hybrid documentary across Morocco and Iceland.',
+          category: 'Photography',
+          mediaType: $Enums.PortfolioMediaType.GALLERY,
+          gallery: [
+            'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=1400&q=80',
+            'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1400&q=80',
+            'https://images.unsplash.com/photo-1481277542470-605612bd2d61?auto=format&fit=crop&w=1400&q=80'
+          ],
+          tags: ['documentary', 'travel', 'cinematography'],
+          featured: true,
+          order: 2,
+        },
+      });
+
+      await prisma.portfolioItem.create({
+        data: {
+          title: 'Immersive Documentary Pitch Deck',
+          summary: 'A downloadable treatment and lookbook for an upcoming long-form series.',
+          category: 'Pitch Material',
+          mediaType: $Enums.PortfolioMediaType.DOCUMENT,
+          documentUrl: 'https://example.com/documents/immersion-deck.pdf',
+          thumbnailUrl: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1400&q=80',
+          tags: ['deck', 'strategy'],
+          featured: false,
+          order: 3,
+        },
+      });
+    }
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2021') {
       console.error('Database schema missing. Run `pnpm --filter backend run db:push` to create the Prisma tables.');
@@ -256,6 +362,66 @@ export const db = {
   },
   deleteProject: async (id: string) => {
     await prisma.project.delete({ where: { id } });
+    return true;
+  },
+
+  // Portfolio Items
+  getPortfolioItems: async () => {
+    return await prisma.portfolioItem.findMany({
+      orderBy: [{ featured: 'desc' }, { order: 'asc' }, { createdAt: 'desc' }],
+    });
+  },
+  getPortfolioItem: async (id: string) => {
+    return await prisma.portfolioItem.findUnique({ where: { id } });
+  },
+  createPortfolioItem: async (item: any) => {
+    return await prisma.portfolioItem.create({
+      data: {
+        title: item.title,
+        summary: item.summary,
+        client: item.client,
+        category: item.category,
+        mediaType: coerceMediaType(item.mediaType),
+        videoProvider: item.videoProvider,
+        videoId: item.videoId,
+        mediaUrl: item.mediaUrl,
+        thumbnailUrl: item.thumbnailUrl,
+        documentUrl: item.documentUrl,
+        externalUrl: item.externalUrl,
+        content: toJsonObject(item.content),
+        gallery: toStringArray(item.gallery),
+        tags: toStringArray(item.tags),
+        featured: item.featured ?? false,
+        order: item.order ?? 0,
+      },
+    });
+  },
+  updatePortfolioItem: async (id: string, updates: any) => {
+    const data: Prisma.PortfolioItemUpdateInput = {};
+    if (updates.title !== undefined) data.title = updates.title;
+    if (updates.summary !== undefined) data.summary = updates.summary;
+    if (updates.client !== undefined) data.client = updates.client;
+    if (updates.category !== undefined) data.category = updates.category;
+    if (updates.mediaType !== undefined) data.mediaType = coerceMediaType(updates.mediaType);
+    if (updates.videoProvider !== undefined) data.videoProvider = updates.videoProvider;
+    if (updates.videoId !== undefined) data.videoId = updates.videoId;
+    if (updates.mediaUrl !== undefined) data.mediaUrl = updates.mediaUrl;
+    if (updates.thumbnailUrl !== undefined) data.thumbnailUrl = updates.thumbnailUrl;
+    if (updates.documentUrl !== undefined) data.documentUrl = updates.documentUrl;
+    if (updates.externalUrl !== undefined) data.externalUrl = updates.externalUrl;
+    if (updates.content !== undefined) data.content = toJsonObject(updates.content);
+    if (updates.gallery !== undefined) data.gallery = toStringArray(updates.gallery);
+    if (updates.tags !== undefined) data.tags = toStringArray(updates.tags);
+    if (updates.featured !== undefined) data.featured = updates.featured;
+    if (updates.order !== undefined) data.order = updates.order;
+
+    return await prisma.portfolioItem.update({
+      where: { id },
+      data,
+    });
+  },
+  deletePortfolioItem: async (id: string) => {
+    await prisma.portfolioItem.delete({ where: { id } });
     return true;
   },
 
