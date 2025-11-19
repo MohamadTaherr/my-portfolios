@@ -20,7 +20,7 @@ projects:
               - key: PORT
                 value: 10000
               - key: FRONTEND_URL
-                sync: false
+                value: http://localhost:3000,https://my-portfolios-studio.vercel.app
               - key: ADMIN_PASSWORD
                 value: admin
               - key: DATABASE_URL
