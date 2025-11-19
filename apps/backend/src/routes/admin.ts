@@ -1,14 +1,14 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 import cookieParser from 'cookie-parser';
 import { verifyPassword, createSession, verifySession } from '../lib/auth.js';
 import { db } from '../lib/db.js';
 import { checkAuth } from '../middleware/auth.js';
 
-const router = Router();
+const router: Router = Router();
 router.use(cookieParser());
 
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req: Request, res: Response) => {
   try {
     const { password } = req.body;
 
@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Verify session
-router.get('/verify', (req, res) => {
+router.get('/verify', (req: Request, res: Response) => {
   try {
     const sessionToken = req.cookies?.['admin-session'] || req.headers.authorization?.replace('Bearer ', '');
     
@@ -54,7 +54,7 @@ router.get('/verify', (req, res) => {
 });
 
 // Site Settings
-router.get('/site-settings', async (req, res) => {
+router.get('/site-settings', async (req: Request, res: Response) => {
   try {
     const settings = await db.getSiteSettings();
     res.json(settings);
@@ -64,7 +64,7 @@ router.get('/site-settings', async (req, res) => {
   }
 });
 
-router.put('/site-settings', checkAuth, async (req, res) => {
+router.put('/site-settings', checkAuth, async (req: Request, res: Response) => {
   try {
     const updated = await db.updateSiteSettings(req.body);
     res.json(updated);
@@ -75,7 +75,7 @@ router.put('/site-settings', checkAuth, async (req, res) => {
 });
 
 // Page Content
-router.get('/page-content', async (req, res) => {
+router.get('/page-content', async (req: Request, res: Response) => {
   try {
     const content = await db.getPageContent();
     res.json(content);
@@ -85,7 +85,7 @@ router.get('/page-content', async (req, res) => {
   }
 });
 
-router.put('/page-content', checkAuth, async (req, res) => {
+router.put('/page-content', checkAuth, async (req: Request, res: Response) => {
   try {
     const updated = await db.updatePageContent(req.body);
     res.json(updated);
@@ -96,7 +96,7 @@ router.put('/page-content', checkAuth, async (req, res) => {
 });
 
 // Projects
-router.get('/projects', async (req, res) => {
+router.get('/projects', async (req: Request, res: Response) => {
   try {
     const projects = await db.getProjects();
     res.json(projects);
@@ -106,7 +106,7 @@ router.get('/projects', async (req, res) => {
   }
 });
 
-router.get('/projects/:id', async (req, res) => {
+router.get('/projects/:id', async (req: Request, res: Response) => {
   try {
     const project = await db.getProject(req.params.id);
     if (!project) {
@@ -119,7 +119,7 @@ router.get('/projects/:id', async (req, res) => {
   }
 });
 
-router.post('/projects', checkAuth, async (req, res) => {
+router.post('/projects', checkAuth, async (req: Request, res: Response) => {
   try {
     const project = await db.createProject(req.body);
     res.status(201).json(project);
@@ -129,7 +129,7 @@ router.post('/projects', checkAuth, async (req, res) => {
   }
 });
 
-router.put('/projects/:id', checkAuth, async (req, res) => {
+router.put('/projects/:id', checkAuth, async (req: Request, res: Response) => {
   try {
     const updated = await db.updateProject(req.params.id, req.body);
     if (!updated) {
@@ -142,7 +142,7 @@ router.put('/projects/:id', checkAuth, async (req, res) => {
   }
 });
 
-router.delete('/projects/:id', checkAuth, async (req, res) => {
+router.delete('/projects/:id', checkAuth, async (req: Request, res: Response) => {
   try {
     await db.deleteProject(req.params.id);
     res.json({ success: true });
@@ -153,7 +153,7 @@ router.delete('/projects/:id', checkAuth, async (req, res) => {
 });
 
 // Clients
-router.get('/clients', async (req, res) => {
+router.get('/clients', async (req: Request, res: Response) => {
   try {
     const clients = await db.getClients();
     res.json(clients);
@@ -163,7 +163,7 @@ router.get('/clients', async (req, res) => {
   }
 });
 
-router.get('/clients/:id', async (req, res) => {
+router.get('/clients/:id', async (req: Request, res: Response) => {
   try {
     const client = await db.getClient(req.params.id);
     if (!client) {
@@ -176,7 +176,7 @@ router.get('/clients/:id', async (req, res) => {
   }
 });
 
-router.post('/clients', checkAuth, async (req, res) => {
+router.post('/clients', checkAuth, async (req: Request, res: Response) => {
   try {
     const client = await db.createClient(req.body);
     res.status(201).json(client);
@@ -186,7 +186,7 @@ router.post('/clients', checkAuth, async (req, res) => {
   }
 });
 
-router.put('/clients/:id', checkAuth, async (req, res) => {
+router.put('/clients/:id', checkAuth, async (req: Request, res: Response) => {
   try {
     const updated = await db.updateClient(req.params.id, req.body);
     if (!updated) {
@@ -199,7 +199,7 @@ router.put('/clients/:id', checkAuth, async (req, res) => {
   }
 });
 
-router.delete('/clients/:id', checkAuth, async (req, res) => {
+router.delete('/clients/:id', checkAuth, async (req: Request, res: Response) => {
   try {
     await db.deleteClient(req.params.id);
     res.json({ success: true });
@@ -210,7 +210,7 @@ router.delete('/clients/:id', checkAuth, async (req, res) => {
 });
 
 // Skills
-router.get('/skills', async (req, res) => {
+router.get('/skills', async (req: Request, res: Response) => {
   try {
     const skills = await db.getSkills();
     res.json(skills);
@@ -220,7 +220,7 @@ router.get('/skills', async (req, res) => {
   }
 });
 
-router.put('/skills', checkAuth, async (req, res) => {
+router.put('/skills', checkAuth, async (req: Request, res: Response) => {
   try {
     const updated = await db.updateSkills(req.body);
     res.json(updated);
@@ -231,7 +231,7 @@ router.put('/skills', checkAuth, async (req, res) => {
 });
 
 // About
-router.get('/about', async (req, res) => {
+router.get('/about', async (req: Request, res: Response) => {
   try {
     const about = await db.getAbout();
     res.json(about);
@@ -241,7 +241,7 @@ router.get('/about', async (req, res) => {
   }
 });
 
-router.put('/about', checkAuth, async (req, res) => {
+router.put('/about', checkAuth, async (req: Request, res: Response) => {
   try {
     const updated = await db.updateAbout(req.body);
     res.json(updated);

@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 import { db } from '../lib/db.js';
 
-const router = Router();
+const router: Router = Router();
 
 // Site Settings (public read)
-router.get('/site-settings', async (req, res) => {
+router.get('/site-settings', async (req: Request, res: Response) => {
   try {
     const settings = await db.getSiteSettings();
     res.json(settings);
@@ -15,7 +15,7 @@ router.get('/site-settings', async (req, res) => {
 });
 
 // Page Content (public read)
-router.get('/page-content', async (req, res) => {
+router.get('/page-content', async (req: Request, res: Response) => {
   try {
     const content = await db.getPageContent();
     res.json({
@@ -30,7 +30,7 @@ router.get('/page-content', async (req, res) => {
 });
 
 // Navigation (public read)
-router.get('/navigation', async (req, res) => {
+router.get('/navigation', async (req: Request, res: Response) => {
   try {
     const navigation = await db.getNavigation();
     res.json({
@@ -44,7 +44,7 @@ router.get('/navigation', async (req, res) => {
 });
 
 // Footer (public read)
-router.get('/footer', async (req, res) => {
+router.get('/footer', async (req: Request, res: Response) => {
   try {
     const footer = await db.getFooter();
     res.json({
@@ -60,7 +60,7 @@ router.get('/footer', async (req, res) => {
 });
 
 // Projects (public read)
-router.get('/projects', async (req, res) => {
+router.get('/projects', async (req: Request, res: Response) => {
   try {
     const projects = await db.getProjects();
     res.json(projects);
@@ -70,7 +70,7 @@ router.get('/projects', async (req, res) => {
   }
 });
 
-router.get('/projects/:id', async (req, res) => {
+router.get('/projects/:id', async (req: Request, res: Response) => {
   try {
     const project = await db.getProject(req.params.id);
     if (!project) {
@@ -84,7 +84,7 @@ router.get('/projects/:id', async (req, res) => {
 });
 
 // Clients (public read)
-router.get('/clients', async (req, res) => {
+router.get('/clients', async (req: Request, res: Response) => {
   try {
     const clients = await db.getClients();
     res.json(clients);
@@ -95,7 +95,7 @@ router.get('/clients', async (req, res) => {
 });
 
 // Skills (public read)
-router.get('/skills', async (req, res) => {
+router.get('/skills', async (req: Request, res: Response) => {
   try {
     const skills = await db.getSkills();
     res.json(skills);
@@ -106,7 +106,7 @@ router.get('/skills', async (req, res) => {
 });
 
 // About (public read)
-router.get('/about', async (req, res) => {
+router.get('/about', async (req: Request, res: Response) => {
   try {
     const about = await db.getAbout();
     res.json(about);
