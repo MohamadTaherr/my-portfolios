@@ -10,6 +10,8 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
+    "db:generate": "pnpm --filter backend run db:generate",
+    "start": "pnpm --filter backend run start",
     "clean": "turbo clean && rm -rf node_modules"
   },
   "dependencies": {

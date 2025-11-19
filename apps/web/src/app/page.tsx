@@ -4,7 +4,7 @@ import Projects from '@/components/Projects';
 import Skills from '@/components/Skills';
 import Contact from '@/components/Contact';
 
-// Revalidate page every 10 seconds to fetch fresh content from Sanity
+// Revalidate page every 10 seconds to keep backend content fresh
 export const revalidate = 10;
 
 export default function Home() {

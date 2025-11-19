@@ -155,6 +155,14 @@ pnpm db:migrate
 pnpm db:push
 ```
 
+## Prisma Model Strategy
+
+- Prisma schema lives at `apps/backend/prisma/schema.prisma`; run `pnpm --filter backend run db:generate` any time you change it.
+- `Project` and `Client` are strongly typed tables with indexes for `category`/`featured` so portfolio and client grids stay fast.
+- Content-heavy sections (`SiteSettings`, `PageContent`, `Skills`, `About`, `Navigation`, `Footer`) use JSON columns so you can add or remove fields without a migration.
+- `initDatabase()` seeds sensible defaults during boot so a fresh deployment always has data to render.
+- Keep migrations alongside the schema to evolve the data model in a controlled way, then redeploy to Render (build step now regenerates the Prisma client automatically).
+
 ## Admin Panel
 
 Access the admin panel at `/admin` (to be built) to manage:
