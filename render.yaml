@@ -20,7 +20,7 @@ projects:
               - key: PORT
                 value: 10000
               - key: BACKEND_URL
-                sync: false
+                value: https://portfolio-backend-9i6h.onrender.com
               - key: FRONTEND_URL
                 value: http://localhost:3000,https://my-portfolios-studio.vercel.app
               - key: ADMIN_PASSWORD
