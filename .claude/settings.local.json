@@ -39,7 +39,9 @@
       "Bash(/dev/null)",
       "Bash(pnpm turbo build:*)",
       "Bash(pnpm --filter web dev:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(pnpm db:generate:*)",
+      "Bash(pnpm db:push:*)"
     ],
     "deny": [],
     "ask": []

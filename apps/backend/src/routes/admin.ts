@@ -348,5 +348,62 @@ router.put('/footer', checkAuth, async (req: Request, res: Response) => {
   }
 });
 
+// Categories
+router.get('/categories', async (req: Request, res: Response) => {
+  try {
+    const categories = await db.getCategories();
+    res.json(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/categories/:id', async (req: Request, res: Response) => {
+  try {
+    const category = await db.getCategory(req.params.id);
+    if (!category) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+    res.json(category);
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post('/categories', checkAuth, async (req: Request, res: Response) => {
+  try {
+    const category = await db.createCategory(req.body);
+    res.status(201).json(category);
+  } catch (error) {
+    console.error('Error creating category:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/categories/:id', checkAuth, async (req: Request, res: Response) => {
+  try {
+    const updated = await db.updateCategory(req.params.id, req.body);
+    if (!updated) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+    res.json(updated);
+  } catch (error) {
+    console.error('Error updating category:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.delete('/categories/:id', checkAuth, async (req: Request, res: Response) => {
+  try {
+    await db.deleteCategory(req.params.id);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;
 

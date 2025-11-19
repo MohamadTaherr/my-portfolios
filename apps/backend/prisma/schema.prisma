@@ -124,3 +124,16 @@ model Footer {
   updatedAt DateTime @updatedAt @default(now())
 }
 
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+  color       String?  @db.VarChar(20)
+  icon        String?  @db.VarChar(50)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("categories")
+}
+

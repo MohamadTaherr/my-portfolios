@@ -1,10 +1,19 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { fetchAdminAPI } from '@/lib/api';
+import { FormEvent, useEffect, useMemo, useState, useRef } from 'react';
+import { fetchAdminAPI, uploadFile, uploadMultipleFiles } from '@/lib/api';
 import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
 
-type Panel = 'portfolio' | 'site' | 'page' | 'structure' | 'skills' | 'clients';
+type Panel = 'portfolio' | 'categories' | 'site' | 'page' | 'structure' | 'skills' | 'clients';
+
+type Category = {
+  id: string;
+  name: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  order: number;
+};
 
 type PortfolioDraft = ReturnType<typeof createEmptyDraft>;
 
@@ -71,10 +80,13 @@ export default function AdminDashboard() {
   const [about, setAbout] = useState<Record<string, any>>({});
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
   const [clients, setClients] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [portfolioDraft, setPortfolioDraft] = useState<PortfolioDraft>(createEmptyDraft());
   const [editingPortfolioId, setEditingPortfolioId] = useState<string | null>(null);
   const [clientDraft, setClientDraft] = useState<ClientDraft>(createEmptyClient());
+  const [categoryDraft, setCategoryDraft] = useState({ name: '', description: '', color: '', icon: '', order: 0 });
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   useEffect(() => {
     verifySession();
@@ -103,7 +115,7 @@ export default function AdminDashboard() {
   const loadAdminData = async () => {
     setLoading(true);
     try {
-      const [site, page, nav, foot, skillsData, aboutData, portfolio, clientList] = await Promise.all([
+      const [site, page, nav, foot, skillsData, aboutData, portfolio, clientList, categoriesList] = await Promise.all([
         fetchAdminAPI('/site-settings'),
         fetchAdminAPI('/page-content'),
         fetchAdminAPI('/navigation'),
@@ -112,6 +124,7 @@ export default function AdminDashboard() {
         fetchAdminAPI('/about'),
         fetchAdminAPI('/portfolio'),
         fetchAdminAPI('/clients'),
+        fetchAdminAPI('/categories'),
       ]);
 
       setSiteSettings(site || {});
@@ -122,6 +135,7 @@ export default function AdminDashboard() {
       setAbout(aboutData || {});
       setPortfolioItems(portfolio || []);
       setClients(clientList || []);
+      setCategories(categoriesList || []);
     } catch (err) {
       console.error('Failed to load admin data', err);
       setError('Unable to load dashboard data. Please try again.');
@@ -288,6 +302,58 @@ export default function AdminDashboard() {
     [portfolioItems]
   );
 
+  const handleFileUpload = async (file: File, field: 'mediaUrl' | 'thumbnailUrl' | 'logoUrl') => {
+    try {
+      setUploadingFile(true);
+      const result = await uploadFile(file);
+      if (field === 'logoUrl') {
+        setClientDraft((prev) => ({ ...prev, logoUrl: result.url }));
+      } else {
+        setPortfolioDraft((prev) => ({ ...prev, [field]: result.url }));
+      }
+      triggerToast(`File uploaded successfully`);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      setError('File upload failed. Please try again.');
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
+  const handleMultipleFileUpload = async (files: FileList) => {
+    try {
+      setUploadingFile(true);
+      const fileArray = Array.from(files);
+      const result = await uploadMultipleFiles(fileArray);
+      const urls = result.files.map((f) => f.url);
+      setPortfolioDraft((prev) => ({
+        ...prev,
+        galleryInput: [...(prev.galleryInput ? prev.galleryInput.split('\n') : []), ...urls].join('\n'),
+      }));
+      triggerToast(`${urls.length} files uploaded successfully`);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      setError('File upload failed. Please try again.');
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
+  const handleCategorySubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    await fetchAdminAPI('/categories', { method: 'POST', body: JSON.stringify(categoryDraft) });
+    setCategoryDraft({ name: '', description: '', color: '', icon: '', order: 0 });
+    await loadAdminData();
+    triggerToast('Category added');
+  };
+
+  const handleCategoryDelete = async (id: string) => {
+    if (!confirm('Delete this category?')) return;
+    await fetchAdminAPI(`/categories/${id}`, { method: 'DELETE' });
+    await loadAdminData();
+    triggerToast('Category deleted');
+  };
+
   if (status === 'checking') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
@@ -337,6 +403,7 @@ export default function AdminDashboard() {
         <nav className="flex flex-wrap gap-3">
           {[
             { id: 'portfolio', label: 'Portfolio' },
+            { id: 'categories', label: 'Categories' },
             { id: 'site', label: 'Brand Voice' },
             { id: 'page', label: 'Section Copy' },
             { id: 'structure', label: 'Navigation & Footer' },
@@ -362,6 +429,7 @@ export default function AdminDashboard() {
         <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur p-8 space-y-8">
           {loading && <p className="text-white/60">Refreshing data...</p>}
           {activePanel === 'portfolio' && renderPortfolioPanel()}
+          {activePanel === 'categories' && renderCategoriesPanel()}
           {activePanel === 'site' && renderSitePanel()}
           {activePanel === 'page' && renderPagePanel()}
           {activePanel === 'structure' && renderStructurePanel()}
@@ -407,12 +475,20 @@ export default function AdminDashboard() {
               />
             </label>
             <label className={labelClass}>
-              Category
-              <input
+              Category (required)
+              <select
                 className={textInputClass}
                 value={portfolioDraft.category}
                 onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, category: event.target.value }))}
-              />
+                required
+              >
+                <option value="">Select a category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.name}>
+                    {cat.icon} {cat.name}
+                  </option>
+                ))}
+              </select>
             </label>
             <label className={labelClass}>
               Media type
@@ -448,19 +524,43 @@ export default function AdminDashboard() {
             </label>
             <label className={labelClass}>
               Media URL (video or hero asset)
-              <input
-                className={textInputClass}
-                value={portfolioDraft.mediaUrl}
-                onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, mediaUrl: event.target.value }))}
-              />
+              <div className="flex gap-2">
+                <input
+                  className={textInputClass}
+                  value={portfolioDraft.mediaUrl}
+                  onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, mediaUrl: event.target.value }))}
+                />
+                <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
+                  {uploadingFile ? 'Uploading...' : 'Upload'}
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'mediaUrl')}
+                    disabled={uploadingFile}
+                  />
+                </label>
+              </div>
             </label>
             <label className={labelClass}>
               Thumbnail URL
-              <input
-                className={textInputClass}
-                value={portfolioDraft.thumbnailUrl}
-                onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, thumbnailUrl: event.target.value }))}
-              />
+              <div className="flex gap-2">
+                <input
+                  className={textInputClass}
+                  value={portfolioDraft.thumbnailUrl}
+                  onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, thumbnailUrl: event.target.value }))}
+                />
+                <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
+                  {uploadingFile ? 'Uploading...' : 'Upload'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'thumbnailUrl')}
+                    disabled={uploadingFile}
+                  />
+                </label>
+              </div>
             </label>
             <label className={labelClass}>
               Document URL (PDF pitch / deck)
@@ -497,6 +597,17 @@ export default function AdminDashboard() {
                 value={portfolioDraft.galleryInput}
                 onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, galleryInput: event.target.value }))}
               />
+              <label className="mt-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition text-center block">
+                {uploadingFile ? 'Uploading...' : 'Upload Gallery Images'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => e.target.files && handleMultipleFileUpload(e.target.files)}
+                  disabled={uploadingFile}
+                />
+              </label>
             </label>
             <label className={labelClass}>
               Tags (comma separated)
@@ -809,6 +920,93 @@ export default function AdminDashboard() {
     );
   }
 
+  function renderCategoriesPanel() {
+    return (
+      <div className="space-y-8">
+        <form onSubmit={handleCategorySubmit} className="space-y-4">
+          <h3 className="text-xl font-semibold">Add Category</h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className={labelClass}>
+              Name
+              <input
+                className={textInputClass}
+                value={categoryDraft.name}
+                onChange={(e) => setCategoryDraft((prev) => ({ ...prev, name: e.target.value }))}
+                required
+              />
+            </label>
+            <label className={labelClass}>
+              Icon (emoji)
+              <input
+                className={textInputClass}
+                value={categoryDraft.icon}
+                onChange={(e) => setCategoryDraft((prev) => ({ ...prev, icon: e.target.value }))}
+                placeholder="🎬"
+              />
+            </label>
+            <label className={labelClass}>
+              Color (hex)
+              <input
+                type="color"
+                className={textInputClass}
+                value={categoryDraft.color}
+                onChange={(e) => setCategoryDraft((prev) => ({ ...prev, color: e.target.value }))}
+              />
+            </label>
+            <label className={labelClass}>
+              Order
+              <input
+                type="number"
+                className={textInputClass}
+                value={categoryDraft.order}
+                onChange={(e) => setCategoryDraft((prev) => ({ ...prev, order: Number(e.target.value) }))}
+              />
+            </label>
+          </div>
+          <label className={labelClass}>
+            Description
+            <textarea
+              className={`${textInputClass} min-h-[80px]`}
+              value={categoryDraft.description}
+              onChange={(e) => setCategoryDraft((prev) => ({ ...prev, description: e.target.value }))}
+            />
+          </label>
+          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
+            Add Category
+          </button>
+        </form>
+
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Existing Categories</h3>
+          <div className="grid gap-4">
+            {categories.map((category) => (
+              <div key={category.id} className="rounded-2xl border border-white/10 p-4 flex flex-wrap items-center gap-4 bg-white/5">
+                <div className="flex-1 min-w-[200px]">
+                  <p className="text-lg font-semibold">
+                    {category.icon} {category.name}
+                  </p>
+                  <p className="text-sm text-white/60">{category.description}</p>
+                  {category.color && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <div className="w-6 h-6 rounded" style={{ backgroundColor: category.color }} />
+                      <span className="text-xs text-white/50">{category.color}</span>
+                    </div>
+                  )}
+                </div>
+                <button
+                  className="px-4 py-2 rounded-full border border-rose-400/40 text-sm text-rose-300"
+                  onClick={() => handleCategoryDelete(category.id)}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function renderClientsPanel() {
     return (
       <div className="space-y-8">
@@ -818,16 +1016,37 @@ export default function AdminDashboard() {
             {Object.entries(clientDraft).map(([key, value]) => (
               <label key={key} className={labelClass}>
                 {key}
-                <input
-                  className={textInputClass}
-                  value={value}
-                  onChange={(event) =>
-                    setClientDraft((prev) => ({
-                      ...prev,
-                      [key]: key === 'rating' ? Number(event.target.value) || 0 : event.target.value,
-                    }))
-                  }
-                />
+                {key === 'logoUrl' ? (
+                  <div className="flex gap-2">
+                    <input
+                      className={textInputClass}
+                      value={value}
+                      onChange={(event) => setClientDraft((prev) => ({ ...prev, [key]: event.target.value }))}
+                    />
+                    <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
+                      {uploadingFile ? 'Uploading...' : 'Upload'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'logoUrl')}
+                        disabled={uploadingFile}
+                      />
+                    </label>
+                  </div>
+                ) : (
+                  <input
+                    className={textInputClass}
+                    type={key === 'rating' ? 'number' : 'text'}
+                    value={value}
+                    onChange={(event) =>
+                      setClientDraft((prev) => ({
+                        ...prev,
+                        [key]: key === 'rating' ? Number(event.target.value) || 0 : event.target.value,
+                      }))
+                    }
+                  />
+                )}
               </label>
             ))}
           </div>

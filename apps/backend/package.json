@@ -15,15 +15,17 @@
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.8.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.1",
+    "multer": "^2.0.2",
     "prisma": "^5.20.0",
-    "@types/cookie-parser": "^1.4.7",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/node": "^24.8.1",
     "typescript": "^5.9.3"
   },
   "devDependencies": {

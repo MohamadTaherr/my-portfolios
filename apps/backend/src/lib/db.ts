@@ -252,6 +252,24 @@ export async function initDatabase() {
         },
       });
     }
+
+    // Check and initialize categories
+    const categoriesCount = await prisma.category.count();
+    if (categoriesCount === 0) {
+      const defaultCategories = [
+        { name: 'Showreel', description: 'Compilation reels and highlights', color: '#FF6B6B', icon: '🎬', order: 0 },
+        { name: 'Commercial', description: 'Brand films and advertisements', color: '#4ECDC4', icon: '📺', order: 1 },
+        { name: 'Documentary', description: 'Documentary films and series', color: '#45B7D1', icon: '🎥', order: 2 },
+        { name: 'Narrative', description: 'Narrative films and shorts', color: '#96CEB4', icon: '🎭', order: 3 },
+        { name: 'Editorial', description: 'Articles and written content', color: '#FFEAA7', icon: '✍️', order: 4 },
+        { name: 'Photography', description: 'Photo essays and galleries', color: '#DFE6E9', icon: '📷', order: 5 },
+        { name: 'Pitch Material', description: 'Decks and treatments', color: '#A29BFE', icon: '📋', order: 6 },
+      ];
+
+      for (const category of defaultCategories) {
+        await prisma.category.create({ data: category });
+      }
+    }
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2021') {
       console.error('Database schema missing. Run `pnpm --filter backend run db:push` to create the Prisma tables.');
@@ -564,6 +582,43 @@ export const db = {
       await prisma.footer.create({ data: { data } });
     }
     return data;
+  },
+
+  // Categories
+  getCategories: async () => {
+    return await prisma.category.findMany({
+      orderBy: [{ order: 'asc' }, { name: 'asc' }],
+    });
+  },
+  getCategory: async (id: string) => {
+    return await prisma.category.findUnique({ where: { id } });
+  },
+  createCategory: async (category: any) => {
+    return await prisma.category.create({
+      data: {
+        name: category.name,
+        description: category.description,
+        color: category.color,
+        icon: category.icon,
+        order: category.order ?? 0,
+      },
+    });
+  },
+  updateCategory: async (id: string, updates: any) => {
+    return await prisma.category.update({
+      where: { id },
+      data: {
+        ...(updates.name !== undefined && { name: updates.name }),
+        ...(updates.description !== undefined && { description: updates.description }),
+        ...(updates.color !== undefined && { color: updates.color }),
+        ...(updates.icon !== undefined && { icon: updates.icon }),
+        ...(updates.order !== undefined && { order: updates.order }),
+      },
+    });
+  },
+  deleteCategory: async (id: string) => {
+    await prisma.category.delete({ where: { id } });
+    return true;
   },
 };
 
