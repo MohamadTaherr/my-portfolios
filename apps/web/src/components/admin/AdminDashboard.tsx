@@ -87,6 +87,7 @@ export default function AdminDashboard() {
   const [portfolioDraft, setPortfolioDraft] = useState<PortfolioDraft>(createEmptyDraft());
   const [editingPortfolioId, setEditingPortfolioId] = useState<string | null>(null);
   const [clientDraft, setClientDraft] = useState<ClientDraft>(createEmptyClient());
+  const [editingClientId, setEditingClientId] = useState<string | null>(null);
   const [categoryDraft, setCategoryDraft] = useState({ name: '', description: '', color: '', icon: '', order: 0 });
   const [uploadingFile, setUploadingFile] = useState(false);
 
@@ -281,10 +282,32 @@ export default function AdminDashboard() {
 
   const handleClientSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    await fetchAdminAPI('/clients', { method: 'POST', body: JSON.stringify(clientDraft) });
+    if (editingClientId) {
+      await fetchAdminAPI(`/clients/${editingClientId}`, { method: 'PUT', body: JSON.stringify(clientDraft) });
+      triggerToast('Client updated');
+      setEditingClientId(null);
+    } else {
+      await fetchAdminAPI('/clients', { method: 'POST', body: JSON.stringify(clientDraft) });
+      triggerToast('Client added');
+    }
     setClientDraft(createEmptyClient());
     await loadAdminData();
-    triggerToast('Client added');
+  };
+
+  const handleClientEdit = (client: any) => {
+    setEditingClientId(client.id);
+    setClientDraft({
+      name: client.name || '',
+      project: client.project || '',
+      category: client.category || '',
+      description: client.description || '',
+      testimonial: client.testimonial || '',
+      clientName: client.clientName || '',
+      year: client.year || '',
+      logoUrl: client.logoUrl || '',
+      rating: client.rating || 5,
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleClientDelete = async (id: string) => {
@@ -1100,7 +1123,21 @@ export default function AdminDashboard() {
     return (
       <div className="space-y-8">
         <form onSubmit={handleClientSubmit} className="space-y-4">
-          <h3 className="text-xl font-semibold">Add client highlight</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-semibold">{editingClientId ? 'Edit Client' : 'Add Client Highlight'}</h3>
+            {editingClientId && (
+              <button
+                type="button"
+                className="text-sm text-white/60 hover:text-white"
+                onClick={() => {
+                  setEditingClientId(null);
+                  setClientDraft(createEmptyClient());
+                }}
+              >
+                Cancel Edit
+              </button>
+            )}
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
             {Object.entries(clientDraft).map(([key, value]) => (
               <label key={key} className={labelClass}>
@@ -1139,9 +1176,23 @@ export default function AdminDashboard() {
               </label>
             ))}
           </div>
-          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
-            Add client
-          </button>
+          <div className="flex gap-3">
+            <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
+              {editingClientId ? 'Update Client' : 'Add Client'}
+            </button>
+            {editingClientId && (
+              <button
+                type="button"
+                className="rounded-full border border-white/30 px-6 py-3"
+                onClick={() => {
+                  setEditingClientId(null);
+                  setClientDraft(createEmptyClient());
+                }}
+              >
+                Reset
+              </button>
+            )}
+          </div>
         </form>
 
         <div className="space-y-4">
@@ -1153,12 +1204,20 @@ export default function AdminDashboard() {
                   <p className="text-lg font-semibold">{client.name}</p>
                   <p className="text-sm text-white/60">{client.project}</p>
                 </div>
-                <button
-                  className="px-4 py-2 rounded-full border border-rose-400/40 text-sm text-rose-300"
-                  onClick={() => handleClientDelete(client.id)}
-                >
-                  Remove
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    className="px-4 py-2 rounded-full border border-white/30 text-sm"
+                    onClick={() => handleClientEdit(client)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="px-4 py-2 rounded-full border border-rose-400/40 text-sm text-rose-300"
+                    onClick={() => handleClientDelete(client.id)}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
           </div>
