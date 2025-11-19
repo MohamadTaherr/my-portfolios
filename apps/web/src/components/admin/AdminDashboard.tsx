@@ -302,7 +302,7 @@ export default function AdminDashboard() {
     [portfolioItems]
   );
 
-  const handleFileUpload = async (file: File, field: 'mediaUrl' | 'thumbnailUrl' | 'logoUrl') => {
+  const handleFileUpload = async (file: File, field: 'mediaUrl' | 'thumbnailUrl' | 'documentUrl' | 'logoUrl') => {
     try {
       setUploadingFile(true);
       const result = await uploadFile(file);
@@ -507,40 +507,54 @@ export default function AdminDashboard() {
               </select>
             </label>
             <label className={labelClass}>
-              Video provider (YouTube, Vimeo, etc)
-              <input
+              Video Provider (for VIDEO type only)
+              <select
                 className={textInputClass}
                 value={portfolioDraft.videoProvider}
                 onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, videoProvider: event.target.value }))}
-              />
+              >
+                <option value="">Select provider</option>
+                <option value="YouTube">YouTube</option>
+                <option value="Vimeo">Vimeo</option>
+              </select>
             </label>
             <label className={labelClass}>
-              Video ID / direct URL
+              Video ID (for VIDEO type only)
               <input
                 className={textInputClass}
                 value={portfolioDraft.videoId}
                 onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, videoId: event.target.value }))}
+                placeholder="e.g., dQw4w9WgXcQ (YouTube) or 123456789 (Vimeo)"
               />
+              <p className="text-xs text-white/50 mt-1">
+                For YouTube: Copy ID from URL youtube.com/watch?v=<strong>ID</strong>
+                <br />
+                For Vimeo: Copy ID from URL vimeo.com/<strong>ID</strong>
+              </p>
             </label>
             <label className={labelClass}>
-              Media URL (video or hero asset)
+              Media URL (for IMAGE type - optional)
               <div className="flex gap-2">
                 <input
                   className={textInputClass}
                   value={portfolioDraft.mediaUrl}
                   onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, mediaUrl: event.target.value }))}
+                  placeholder="Upload an image file"
                 />
                 <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
                   {uploadingFile ? 'Uploading...' : 'Upload'}
                   <input
                     type="file"
-                    accept="image/*,video/*"
+                    accept="image/*"
                     className="hidden"
                     onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'mediaUrl')}
                     disabled={uploadingFile}
                   />
                 </label>
               </div>
+              <p className="text-xs text-white/50 mt-1">
+                For videos, use Video Provider + Video ID above. Upload images only here.
+              </p>
             </label>
             <label className={labelClass}>
               Thumbnail URL
@@ -564,11 +578,24 @@ export default function AdminDashboard() {
             </label>
             <label className={labelClass}>
               Document URL (PDF pitch / deck)
-              <input
-                className={textInputClass}
-                value={portfolioDraft.documentUrl}
-                onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, documentUrl: event.target.value }))}
-              />
+              <div className="flex gap-2">
+                <input
+                  className={textInputClass}
+                  value={portfolioDraft.documentUrl}
+                  onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, documentUrl: event.target.value }))}
+                  placeholder="Upload a PDF document"
+                />
+                <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
+                  {uploadingFile ? 'Uploading...' : 'Upload PDF'}
+                  <input
+                    type="file"
+                    accept=".pdf,application/pdf"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'documentUrl' as any)}
+                    disabled={uploadingFile}
+                  />
+                </label>
+              </div>
             </label>
             <label className={labelClass}>
               External link

@@ -23,12 +23,12 @@ const mediaTypeCopy: Record<PortfolioMediaType, string> = {
 };
 
 const mediaBadgeColor: Record<PortfolioMediaType, string> = {
-  VIDEO: 'from-primary to-primary/70',
-  IMAGE: 'from-pink-500 to-rose-500',
-  ARTICLE: 'from-amber-500 to-orange-500',
-  DOCUMENT: 'from-slate-500 to-slate-700',
-  GALLERY: 'from-emerald-500 to-teal-500',
-  TEXT: 'from-violet-500 to-indigo-500',
+  VIDEO: 'from-purple-500 via-pink-500 to-red-500',
+  IMAGE: 'from-cyan-500 via-blue-500 to-indigo-500',
+  ARTICLE: 'from-yellow-400 via-orange-500 to-red-500',
+  DOCUMENT: 'from-green-400 via-emerald-500 to-teal-600',
+  GALLERY: 'from-pink-400 via-purple-500 to-indigo-600',
+  TEXT: 'from-blue-400 via-cyan-500 to-teal-500',
 };
 
 const iconForType: Record<PortfolioMediaType, ReactElement> = {
@@ -103,12 +103,26 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
   const closeModal = () => setSelected(null);
 
   const renderPreview = (item: PortfolioItem) => {
-    if (item.mediaType === 'VIDEO' && item.mediaUrl) {
-      return (
-        <div className="relative rounded-3xl overflow-hidden bg-black/60">
-          <VideoPlayer url={item.mediaUrl} title={item.title} posterImage={item.thumbnailUrl ?? undefined} />
-        </div>
-      );
+    if (item.mediaType === 'VIDEO') {
+      // Construct video URL from provider and ID, or use mediaUrl directly
+      let videoUrl = item.mediaUrl || '';
+
+      if (item.videoProvider && item.videoId) {
+        const provider = item.videoProvider.toLowerCase();
+        if (provider.includes('youtube')) {
+          videoUrl = `https://www.youtube.com/watch?v=${item.videoId}`;
+        } else if (provider.includes('vimeo')) {
+          videoUrl = `https://vimeo.com/${item.videoId}`;
+        }
+      }
+
+      if (videoUrl) {
+        return (
+          <div className="relative rounded-3xl overflow-hidden bg-black/60 aspect-video">
+            <VideoPlayer url={videoUrl} title={item.title} posterImage={item.thumbnailUrl ?? undefined} />
+          </div>
+        );
+      }
     }
 
     if (item.mediaType === 'GALLERY' && item.gallery && item.gallery.length > 0) {
@@ -190,10 +204,10 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
+              className={`px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 transform hover:scale-105 ${
                 activeCategory === category
-                  ? 'bg-white text-black shadow-lg shadow-white/20'
-                  : 'bg-white/5 text-white/70 border border-white/10 hover:bg-white/10'
+                  ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white shadow-[0_10px_40px_rgba(236,72,153,0.5)]'
+                  : 'bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 hover:border-purple-400/30'
               }`}
             >
               {category}
@@ -206,10 +220,10 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
             <button
               key={type}
               onClick={() => setActiveMediaType(type)}
-              className={`px-4 py-2 text-xs tracking-[0.3em] uppercase rounded-full transition-all ${
+              className={`px-5 py-2.5 text-xs tracking-[0.3em] uppercase rounded-full transition-all duration-300 transform hover:scale-105 ${
                 activeMediaType === type
-                  ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                  : 'bg-white/5 text-white/60 border border-white/10 hover:border-primary/40'
+                  ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white shadow-[0_10px_40px_rgba(99,102,241,0.5)]'
+                  : 'bg-white/5 text-white/60 border border-white/10 hover:border-cyan-400/40 hover:text-white/80'
               }`}
             >
               {type === 'ALL' ? 'All Media' : mediaTypeCopy[type]}
@@ -227,13 +241,21 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
           {filteredItems.map((item) => (
             <article
               key={item.id}
-              className="group relative rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden hover:border-white/40 transition-all hover:-translate-y-1 cursor-pointer"
+              className="group relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] backdrop-blur-xl overflow-hidden hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(108,99,255,0.3)] cursor-pointer"
               onClick={() => handleSelect(item)}
             >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               {item.thumbnailUrl ? (
-                <img src={item.thumbnailUrl} alt={item.title} className="h-64 w-full object-cover" />
+                <div className="relative h-64 w-full overflow-hidden">
+                  <img
+                    src={item.thumbnailUrl}
+                    alt={item.title}
+                    className="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                </div>
               ) : (
-                <div className="h-64 w-full bg-gradient-to-br from-neutral-900 to-neutral-800 flex items-center justify-center text-5xl text-white/20 font-[family-name:var(--font-playfair)]">
+                <div className="h-64 w-full bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 flex items-center justify-center text-5xl text-white/30 font-[family-name:var(--font-playfair)]">
                   {item.title.charAt(0)}
                 </div>
               )}
@@ -268,14 +290,15 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
       </div>
 
       {selected && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-lg flex items-center justify-center p-6" onClick={closeModal}>
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-6 animate-fade-in" onClick={closeModal}>
           <div
-            className="relative w-full max-w-6xl bg-[#07070d] rounded-3xl border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)] overflow-hidden"
+            className="relative w-full max-w-6xl bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f0c29] rounded-3xl border border-purple-500/30 shadow-[0_40px_120px_rgba(108,99,255,0.4)] overflow-hidden animate-scale-in"
             onClick={(event) => event.stopPropagation()}
           >
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5 pointer-events-none" />
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+              className="absolute top-4 right-4 w-12 h-12 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white hover:from-purple-500/40 hover:to-pink-500/40 transition-all duration-300 backdrop-blur-xl border border-white/10 flex items-center justify-center text-2xl hover:scale-110 z-10"
               aria-label="Close portfolio modal"
             >
               ×
