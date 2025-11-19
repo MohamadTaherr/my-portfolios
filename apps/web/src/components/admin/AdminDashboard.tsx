@@ -93,6 +93,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     verifySession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -601,7 +602,7 @@ export default function AdminDashboard() {
                     placeholder="Paste full YouTube/Vimeo URL or just the video ID"
                   />
                   <p className="text-xs text-white/50 mt-1">
-                    ✨ Paste the full URL and we'll extract the ID automatically!
+                    ✨ Paste the full URL and we&apos;ll extract the ID automatically!
                   </p>
                 </label>
               </>
