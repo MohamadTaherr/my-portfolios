@@ -1,37 +1,47 @@
 @import "tailwindcss";
 
-/* Modern Creative Portfolio Design System */
+/* Cinematic Creative Portfolio Design System */
 :root {
-  /* Modern Color Palette - Sophisticated & Professional */
-  --background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-  --background-light: #1a1a2e;
-  --background-card: rgba(255, 255, 255, 0.05);
-  --foreground: #ffffff;
-  --foreground-muted: #a8a8b3;
+  /* Cinematic Color Palette - Film Production Inspired */
+  --background: linear-gradient(135deg, #0a0a0f 0%, #1a1625 50%, #0f0a15 100%);
+  --background-light: #0f0a15;
+  --background-card: rgba(255, 255, 255, 0.03);
+  --foreground: #f8f9fa;
+  --foreground-muted: #a0a8b0;
 
-  /* Accent Colors - Vibrant & Eye-catching */
-  --primary: #6C63FF;
-  --primary-light: #8B85FF;
-  --secondary: #FF6584;
-  --accent: #00D9FF;
-  --accent-glow: rgba(0, 217, 255, 0.3);
+  /* Primary Accent - Electric Purple (Creativity & Innovation) */
+  --primary: #8B5CF6;
+  --primary-light: #A78BFA;
+  --primary-dark: #7C3AED;
+
+  /* Secondary - Cinematic Teal (Production & Film) */
+  --secondary: #14B8A6;
+  --secondary-light: #2DD4BF;
+  --secondary-dark: #0D9488;
+
+  /* Accent - Vibrant Coral (Energy & Passion) */
+  --accent: #F472B6;
+  --accent-light: #FB7185;
+  --accent-glow: rgba(244, 114, 182, 0.3);
 
   /* Neutral Tones */
-  --muted: #2d2d3a;
-  --muted-foreground: #9898a3;
-  --border: rgba(255, 255, 255, 0.1);
-  --card: rgba(26, 26, 46, 0.8);
-  --card-foreground: #ffffff;
+  --muted: #1f1b2e;
+  --muted-foreground: #8b91a0;
+  --border: rgba(139, 92, 246, 0.15);
+  --card: rgba(15, 10, 21, 0.9);
+  --card-foreground: #f8f9fa;
 
-  /* Brand Colors */
-  --gold: #FFD700;
-  --gold-light: #FFED4E;
-  --navy: #0d1b2a;
-  --ivory: #f5f5f5;
+  /* Premium Brand Colors */
+  --gold: #FCD34D;
+  --gold-light: #FDE68A;
+  --gold-dark: #F59E0B;
+  --navy: #0a0a0f;
+  --ivory: #f8f9fa;
 
-  /* Glass Effect */
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  /* Cinematic Effects */
+  --glass-bg: rgba(139, 92, 246, 0.05);
+  --glass-border: rgba(139, 92, 246, 0.15);
+  --glow: rgba(139, 92, 246, 0.4);
 }
 
 @theme inline {
@@ -59,7 +69,7 @@
 }
 
 body {
-  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1625 50%, #0f0a15 100%);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -67,7 +77,7 @@ body {
   position: relative;
 }
 
-/* Animated Gradient Background */
+/* Animated Cinematic Gradient Background */
 body::before {
   content: '';
   position: fixed;
@@ -76,16 +86,16 @@ body::before {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg,
-    rgba(108, 99, 255, 0.1) 0%,
-    rgba(255, 101, 132, 0.1) 50%,
-    rgba(0, 217, 255, 0.1) 100%);
+    rgba(139, 92, 246, 0.08) 0%,
+    rgba(20, 184, 166, 0.06) 50%,
+    rgba(244, 114, 182, 0.08) 100%);
   background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
+  animation: gradientShift 20s ease infinite;
   z-index: 0;
   pointer-events: none;
 }
 
-/* Floating Orbs Background */
+/* Cinematic Floating Orbs Background */
 body::after {
   content: '';
   position: fixed;
@@ -94,12 +104,12 @@ body::after {
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(circle at 20% 30%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(255, 101, 132, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(0, 217, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.10) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.08) 0%, transparent 50%);
   z-index: 0;
   pointer-events: none;
-  animation: float 20s ease-in-out infinite;
+  animation: float 25s ease-in-out infinite;
 }
 
 /* Main content should be above background */
@@ -261,14 +271,14 @@ main, header, footer {
   border-color: rgba(108, 99, 255, 0.3);
 }
 
-/* Modern Gradient Text */
+/* Cinematic Gradient Text */
 .gradient-text {
-  background: linear-gradient(135deg, #6C63FF 0%, #FF6584 50%, #00D9FF 100%);
+  background: linear-gradient(135deg, #8B5CF6 0%, #14B8A6 50%, #F472B6 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% 200%;
-  animation: gradientShift 5s ease infinite;
+  animation: gradientShift 6s ease infinite;
 }
 
 .gradient-text-gold {

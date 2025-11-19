@@ -49,37 +49,37 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left Column - Text */}
               <div className="space-y-6 text-center lg:text-left animate-slide-in-left">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] gradient-text leading-tight font-bold">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] gradient-text leading-tight font-bold">
                   {settings.name}
                 </h1>
 
-                <p className="text-lg md:text-xl text-primary tracking-wide font-semibold">
+                <p className="text-base sm:text-lg md:text-xl text-primary tracking-wide font-semibold">
                   {heroSubheadline}
                 </p>
 
-                <p className="text-3xl md:text-4xl lg:text-5xl font-[family-name:var(--font-playfair)] text-foreground leading-tight italic font-medium">
+                <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-[family-name:var(--font-playfair)] text-foreground leading-tight italic font-medium">
                   {heroHeadline}
                 </p>
 
                 {/* Stats Row */}
-                <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
-                  <div className="glass-card px-6 py-4 rounded-xl hover-lift">
-                    <div className="text-4xl font-[family-name:var(--font-playfair)] gradient-text-gold font-bold">
+                <div className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 pt-4">
+                  <div className="glass-card px-4 sm:px-6 py-3 sm:py-4 rounded-xl hover-lift flex-shrink-0">
+                    <div className="text-3xl sm:text-4xl font-[family-name:var(--font-playfair)] gradient-text-gold font-bold">
                       {settings.yearsExperience}+
                     </div>
-                    <div className="text-foreground-muted text-sm tracking-wider uppercase font-medium">Years</div>
+                    <div className="text-foreground-muted text-xs sm:text-sm tracking-wider uppercase font-medium">Years</div>
                   </div>
-                  <div className="glass-card px-6 py-4 rounded-xl hover-lift">
-                    <div className="text-4xl font-[family-name:var(--font-playfair)] gradient-text-gold font-bold">
+                  <div className="glass-card px-4 sm:px-6 py-3 sm:py-4 rounded-xl hover-lift flex-shrink-0">
+                    <div className="text-3xl sm:text-4xl font-[family-name:var(--font-playfair)] gradient-text-gold font-bold">
                       {settings.projectsCompleted}+
                     </div>
-                    <div className="text-foreground-muted text-sm tracking-wider uppercase font-medium">Projects</div>
+                    <div className="text-foreground-muted text-xs sm:text-sm tracking-wider uppercase font-medium">Projects</div>
                   </div>
-                  <div className="glass-card px-6 py-4 rounded-xl hover-lift">
-                    <div className="text-4xl font-[family-name:var(--font-playfair)] gradient-text-gold font-bold">
+                  <div className="glass-card px-4 sm:px-6 py-3 sm:py-4 rounded-xl hover-lift flex-shrink-0">
+                    <div className="text-3xl sm:text-4xl font-[family-name:var(--font-playfair)] gradient-text-gold font-bold">
                       {settings.clientsServed}+
                     </div>
-                    <div className="text-foreground-muted text-sm tracking-wider uppercase font-medium">Clients</div>
+                    <div className="text-foreground-muted text-xs sm:text-sm tracking-wider uppercase font-medium">Clients</div>
                   </div>
                 </div>
 
@@ -104,7 +104,7 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
 
               {/* Right Column - Creative Visual */}
               <div className="relative animate-fade-in-up">
-                <div className="relative aspect-square max-w-lg mx-auto">
+                <div className="relative aspect-square max-w-sm sm:max-w-md lg:max-w-lg mx-auto">
                   {/* Multiple animated gradient layers */}
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-red-500/20 rounded-[3rem] blur-3xl animate-pulse-slow" />
                   <div className="absolute inset-0 bg-gradient-to-tl from-cyan-500/15 via-blue-500/15 to-purple-500/15 rounded-[3rem] blur-2xl animate-pulse-slow" style={{ animationDelay: '1s' }} />

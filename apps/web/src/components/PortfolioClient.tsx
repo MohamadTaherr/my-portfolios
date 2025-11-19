@@ -198,13 +198,13 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
 
   return (
     <>
-      <div className="space-y-10">
-        <div className="flex flex-wrap justify-center gap-3">
+      <div className="space-y-8 sm:space-y-10">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
           {['All', ...categories].map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 transform hover:scale-105 ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 transform hover:scale-105 ${
                 activeCategory === category
                   ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white shadow-[0_10px_40px_rgba(236,72,153,0.5)]'
                   : 'bg-white/5 text-white/70 border border-white/10 hover:bg-white/10 hover:border-purple-400/30'
@@ -215,12 +215,12 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
           ))}
         </div>
 
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
           {(['ALL', ...mediaTypes] as ActiveMediaFilter[]).map((type) => (
             <button
               key={type}
               onClick={() => setActiveMediaType(type)}
-              className={`px-5 py-2.5 text-xs tracking-[0.3em] uppercase rounded-full transition-all duration-300 transform hover:scale-105 ${
+              className={`px-3 sm:px-5 py-2 sm:py-2.5 text-[0.65rem] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase rounded-full transition-all duration-300 transform hover:scale-105 ${
                 activeMediaType === type
                   ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white shadow-[0_10px_40px_rgba(99,102,241,0.5)]'
                   : 'bg-white/5 text-white/60 border border-white/10 hover:border-cyan-400/40 hover:text-white/80'
@@ -231,7 +231,7 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
           {filteredItems.length === 0 && (
             <div className="col-span-full text-center text-white/60 py-16 border border-dashed border-white/10 rounded-3xl">
               No work in this filter yet — add an entry from the admin studio.
@@ -290,29 +290,29 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
       </div>
 
       {selected && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-6 animate-fade-in" onClick={closeModal}>
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 md:p-6 animate-fade-in overflow-y-auto" onClick={closeModal}>
           <div
-            className="relative w-full max-w-6xl bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f0c29] rounded-3xl border border-purple-500/30 shadow-[0_40px_120px_rgba(108,99,255,0.4)] overflow-hidden animate-scale-in"
+            className="relative w-full max-w-6xl my-8 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f0c29] rounded-2xl md:rounded-3xl border border-purple-500/30 shadow-[0_40px_120px_rgba(108,99,255,0.4)] overflow-hidden animate-scale-in"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5 pointer-events-none" />
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 w-12 h-12 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white hover:from-purple-500/40 hover:to-pink-500/40 transition-all duration-300 backdrop-blur-xl border border-white/10 flex items-center justify-center text-2xl hover:scale-110 z-10"
+              className="absolute top-3 right-3 md:top-4 md:right-4 w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white hover:from-purple-500/40 hover:to-pink-500/40 transition-all duration-300 backdrop-blur-xl border border-white/10 flex items-center justify-center text-xl md:text-2xl hover:scale-110 z-10"
               aria-label="Close portfolio modal"
             >
               ×
             </button>
 
-            <div className="grid gap-8 lg:grid-cols-2 p-8">
+            <div className="grid gap-6 md:gap-8 lg:grid-cols-2 p-4 sm:p-6 md:p-8">
               <div>{renderPreview(selected)}</div>
-              <div className="space-y-6">
-                <div className="space-y-3">
+              <div className="space-y-4 md:space-y-6">
+                <div className="space-y-2 md:space-y-3">
                   <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 text-xs uppercase tracking-[0.4em] text-white/60">
                     {iconForType[selected.mediaType]}
                     {mediaTypeCopy[selected.mediaType]}
                   </span>
-                  <h3 className="text-3xl md:text-4xl font-[family-name:var(--font-playfair)] text-white">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-[family-name:var(--font-playfair)] text-white">
                     {selected.title}
                   </h3>
                   {selected.client && (
@@ -338,10 +338,10 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
                   </div>
                 )}
 
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
                   <Link
                     href={`/portfolio/${selected.id}`}
-                    className="flex-1 min-w-[200px] inline-flex items-center justify-center gap-2 rounded-full bg-white text-black font-semibold py-3"
+                    className="flex-1 sm:min-w-[200px] inline-flex items-center justify-center gap-2 rounded-full bg-white text-black font-semibold py-3 text-sm sm:text-base"
                   >
                     Open Case Study
                   </Link>
@@ -350,7 +350,7 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
                       href={selected.externalUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex-1 min-w-[200px] inline-flex items-center justify-center gap-2 rounded-full border border-white/30 text-white/80 py-3 hover:border-white/60 transition"
+                      className="flex-1 sm:min-w-[200px] inline-flex items-center justify-center gap-2 rounded-full border border-white/30 text-white/80 py-3 hover:border-white/60 transition text-sm sm:text-base"
                     >
                       Visit External Link
                     </a>
@@ -360,7 +360,7 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
                       href={selected.documentUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex-1 min-w-[200px] inline-flex items-center justify-center gap-2 rounded-full border border-white/30 text-white/80 py-3 hover:border-white/60 transition"
+                      className="flex-1 sm:min-w-[200px] inline-flex items-center justify-center gap-2 rounded-full border border-white/30 text-white/80 py-3 hover:border-white/60 transition text-sm sm:text-base"
                     >
                       Download Deck
                     </a>

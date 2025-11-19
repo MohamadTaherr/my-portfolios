@@ -88,14 +88,14 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           {/* Section Header */}
-          <div className="text-center mb-20 animate-fade-in">
-            <p className="text-gold/60 text-sm tracking-[0.3em] uppercase mb-4">
+          <div className="text-center mb-12 sm:mb-16 md:mb-20 animate-fade-in">
+            <p className="text-gold/60 text-xs sm:text-sm tracking-[0.3em] uppercase mb-3 sm:mb-4">
               {contactSubtitle}
             </p>
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] text-ivory mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-[family-name:var(--font-playfair)] text-ivory mb-4 sm:mb-6">
               {contactTitle}
             </h2>
-            <p className="text-xl text-ivory/60 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-ivory/60 max-w-2xl mx-auto px-4">
               {contactDescription}
             </p>
           </div>
@@ -176,8 +176,8 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
           </form>
 
           {/* Contact Info & Social */}
-          <div className="glass p-10 space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="glass p-6 sm:p-8 md:p-10 space-y-6 sm:space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 text-center">
               {contactInfo.email && (
                 <div className="space-y-2">
                   <p className="text-gold/60 text-xs tracking-widest uppercase">Email</p>
