@@ -30,7 +30,9 @@ type ClientDraft = {
 };
 
 const textInputClass =
-  'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:border-primary focus:outline-none';
+  'w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-primary focus:outline-none';
+const selectClass =
+  'w-full rounded-xl border border-white/10 bg-[#1a1a2e] px-4 py-3 text-sm text-white focus:border-primary focus:outline-none [&>option]:bg-[#1a1a2e] [&>option]:text-white';
 const labelClass = 'space-y-2 text-sm text-white/70';
 
 const createEmptyDraft = () => ({
@@ -354,6 +356,53 @@ export default function AdminDashboard() {
     triggerToast('Category deleted');
   };
 
+  const extractVideoIdFromUrl = (url: string): { provider: string; id: string } | null => {
+    // YouTube patterns
+    const youtubePatterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/,
+      /youtube\.com\/embed\/([^?&\s]+)/,
+      /youtube\.com\/v\/([^?&\s]+)/,
+    ];
+
+    for (const pattern of youtubePatterns) {
+      const match = url.match(pattern);
+      if (match) {
+        return { provider: 'YouTube', id: match[1] };
+      }
+    }
+
+    // Vimeo patterns
+    const vimeoPatterns = [
+      /vimeo\.com\/(\d+)/,
+      /vimeo\.com\/video\/(\d+)/,
+      /player\.vimeo\.com\/video\/(\d+)/,
+    ];
+
+    for (const pattern of vimeoPatterns) {
+      const match = url.match(pattern);
+      if (match) {
+        return { provider: 'Vimeo', id: match[1] };
+      }
+    }
+
+    return null;
+  };
+
+  const handleVideoUrlChange = (value: string) => {
+    const extracted = extractVideoIdFromUrl(value);
+    if (extracted) {
+      setPortfolioDraft((prev) => ({
+        ...prev,
+        videoProvider: extracted.provider,
+        videoId: extracted.id,
+      }));
+      triggerToast(`Extracted ${extracted.provider} video ID: ${extracted.id}`);
+    } else {
+      // If it's just an ID, keep it
+      setPortfolioDraft((prev) => ({ ...prev, videoId: value }));
+    }
+  };
+
   if (status === 'checking') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white">
@@ -477,7 +526,7 @@ export default function AdminDashboard() {
             <label className={labelClass}>
               Category (required)
               <select
-                className={textInputClass}
+                className={selectClass}
                 value={portfolioDraft.category}
                 onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, category: event.target.value }))}
                 required
@@ -493,7 +542,7 @@ export default function AdminDashboard() {
             <label className={labelClass}>
               Media type
               <select
-                className={textInputClass}
+                className={selectClass}
                 value={portfolioDraft.mediaType}
                 onChange={(event) =>
                   setPortfolioDraft((prev) => ({ ...prev, mediaType: event.target.value as PortfolioMediaType }))
@@ -506,56 +555,58 @@ export default function AdminDashboard() {
                 ))}
               </select>
             </label>
-            <label className={labelClass}>
-              Video Provider (for VIDEO type only)
-              <select
-                className={textInputClass}
-                value={portfolioDraft.videoProvider}
-                onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, videoProvider: event.target.value }))}
-              >
-                <option value="">Select provider</option>
-                <option value="YouTube">YouTube</option>
-                <option value="Vimeo">Vimeo</option>
-              </select>
-            </label>
-            <label className={labelClass}>
-              Video ID (for VIDEO type only)
-              <input
-                className={textInputClass}
-                value={portfolioDraft.videoId}
-                onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, videoId: event.target.value }))}
-                placeholder="e.g., dQw4w9WgXcQ (YouTube) or 123456789 (Vimeo)"
-              />
-              <p className="text-xs text-white/50 mt-1">
-                For YouTube: Copy ID from URL youtube.com/watch?v=<strong>ID</strong>
-                <br />
-                For Vimeo: Copy ID from URL vimeo.com/<strong>ID</strong>
-              </p>
-            </label>
-            <label className={labelClass}>
-              Media URL (for IMAGE type - optional)
-              <div className="flex gap-2">
-                <input
-                  className={textInputClass}
-                  value={portfolioDraft.mediaUrl}
-                  onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, mediaUrl: event.target.value }))}
-                  placeholder="Upload an image file"
-                />
-                <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
-                  {uploadingFile ? 'Uploading...' : 'Upload'}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'mediaUrl')}
-                    disabled={uploadingFile}
-                  />
+            {portfolioDraft.mediaType === 'VIDEO' && (
+              <>
+                <label className={labelClass}>
+                  Video Provider
+                  <select
+                    className={selectClass}
+                    value={portfolioDraft.videoProvider}
+                    onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, videoProvider: event.target.value }))}
+                  >
+                    <option value="">Select provider</option>
+                    <option value="YouTube">YouTube</option>
+                    <option value="Vimeo">Vimeo</option>
+                  </select>
                 </label>
-              </div>
-              <p className="text-xs text-white/50 mt-1">
-                For videos, use Video Provider + Video ID above. Upload images only here.
-              </p>
-            </label>
+                <label className={labelClass}>
+                  Video URL or ID
+                  <input
+                    className={textInputClass}
+                    value={portfolioDraft.videoId}
+                    onChange={(event) => handleVideoUrlChange(event.target.value)}
+                    placeholder="Paste full YouTube/Vimeo URL or just the video ID"
+                  />
+                  <p className="text-xs text-white/50 mt-1">
+                    ✨ Paste the full URL and we'll extract the ID automatically!
+                  </p>
+                </label>
+              </>
+            )}
+
+            {portfolioDraft.mediaType === 'IMAGE' && (
+              <label className={labelClass}>
+                Image URL
+                <div className="flex gap-2">
+                  <input
+                    className={textInputClass}
+                    value={portfolioDraft.mediaUrl}
+                    onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, mediaUrl: event.target.value }))}
+                    placeholder="Upload an image file"
+                  />
+                  <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
+                    {uploadingFile ? 'Uploading...' : 'Upload'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'mediaUrl')}
+                      disabled={uploadingFile}
+                    />
+                  </label>
+                </div>
+              </label>
+            )}
             <label className={labelClass}>
               Thumbnail URL
               <div className="flex gap-2">
@@ -576,35 +627,41 @@ export default function AdminDashboard() {
                 </label>
               </div>
             </label>
-            <label className={labelClass}>
-              Document URL (PDF pitch / deck)
-              <div className="flex gap-2">
+            {portfolioDraft.mediaType === 'DOCUMENT' && (
+              <label className={labelClass}>
+                Document URL (PDF pitch / deck)
+                <div className="flex gap-2">
+                  <input
+                    className={textInputClass}
+                    value={portfolioDraft.documentUrl}
+                    onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, documentUrl: event.target.value }))}
+                    placeholder="Upload a PDF document"
+                  />
+                  <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
+                    {uploadingFile ? 'Uploading...' : 'Upload PDF'}
+                    <input
+                      type="file"
+                      accept=".pdf,application/pdf"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'documentUrl' as any)}
+                      disabled={uploadingFile}
+                    />
+                  </label>
+                </div>
+              </label>
+            )}
+
+            {(portfolioDraft.mediaType === 'ARTICLE' || portfolioDraft.mediaType === 'TEXT') && (
+              <label className={labelClass}>
+                External link (optional)
                 <input
                   className={textInputClass}
-                  value={portfolioDraft.documentUrl}
-                  onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, documentUrl: event.target.value }))}
-                  placeholder="Upload a PDF document"
+                  value={portfolioDraft.externalUrl}
+                  onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, externalUrl: event.target.value }))}
+                  placeholder="Link to article or external content"
                 />
-                <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
-                  {uploadingFile ? 'Uploading...' : 'Upload PDF'}
-                  <input
-                    type="file"
-                    accept=".pdf,application/pdf"
-                    className="hidden"
-                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'documentUrl' as any)}
-                    disabled={uploadingFile}
-                  />
-                </label>
-              </div>
-            </label>
-            <label className={labelClass}>
-              External link
-              <input
-                className={textInputClass}
-                value={portfolioDraft.externalUrl}
-                onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, externalUrl: event.target.value }))}
-              />
-            </label>
+              </label>
+            )}
           </div>
 
           <label className={labelClass}>
@@ -617,25 +674,27 @@ export default function AdminDashboard() {
           </label>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <label className={labelClass}>
-              Gallery URLs (one per line)
-              <textarea
-                className={`${textInputClass} min-h-[120px]`}
-                value={portfolioDraft.galleryInput}
-                onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, galleryInput: event.target.value }))}
-              />
-              <label className="mt-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition text-center block">
-                {uploadingFile ? 'Uploading...' : 'Upload Gallery Images'}
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => e.target.files && handleMultipleFileUpload(e.target.files)}
-                  disabled={uploadingFile}
+            {portfolioDraft.mediaType === 'GALLERY' && (
+              <label className={labelClass}>
+                Gallery URLs (one per line)
+                <textarea
+                  className={`${textInputClass} min-h-[120px]`}
+                  value={portfolioDraft.galleryInput}
+                  onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, galleryInput: event.target.value }))}
                 />
+                <label className="mt-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition text-center block">
+                  {uploadingFile ? 'Uploading...' : 'Upload Gallery Images'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => e.target.files && handleMultipleFileUpload(e.target.files)}
+                    disabled={uploadingFile}
+                  />
+                </label>
               </label>
-            </label>
+            )}
             <label className={labelClass}>
               Tags (comma separated)
               <textarea
@@ -646,14 +705,17 @@ export default function AdminDashboard() {
             </label>
           </div>
 
-          <label className={labelClass}>
-            Long-form content (JSON or plain text)
-            <textarea
-              className={`${textInputClass} min-h-[160px]`}
-              value={portfolioDraft.contentJson}
-              onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, contentJson: event.target.value }))}
-            />
-          </label>
+          {(portfolioDraft.mediaType === 'ARTICLE' || portfolioDraft.mediaType === 'TEXT') && (
+            <label className={labelClass}>
+              Long-form content (JSON or plain text)
+              <textarea
+                className={`${textInputClass} min-h-[160px]`}
+                value={portfolioDraft.contentJson}
+                onChange={(event) => setPortfolioDraft((prev) => ({ ...prev, contentJson: event.target.value }))}
+                placeholder="Enter article content or JSON with 'body' field"
+              />
+            </label>
+          )}
 
           <div className="grid gap-4 md:grid-cols-3">
             <label className={`${labelClass} flex items-center gap-2`}>
