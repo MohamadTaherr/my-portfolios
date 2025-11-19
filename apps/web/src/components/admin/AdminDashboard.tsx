@@ -936,47 +936,190 @@ export default function AdminDashboard() {
   function renderStructurePanel() {
     return (
       <div className="space-y-8">
-        <form onSubmit={saveNavigation} className="space-y-4">
+        <form onSubmit={saveNavigation} className="space-y-6">
           <h3 className="text-xl font-semibold">Navigation</h3>
+
           <label className={labelClass}>
-            Links JSON
-            <textarea
-              className={`${textInputClass} min-h-[180px]`}
-              value={JSON.stringify(navigation, null, 2)}
-              onChange={(event) => {
-                try {
-                  setNavigation(JSON.parse(event.target.value));
-                  setError(null);
-                } catch {
-                  setError('Invalid navigation JSON');
-                }
-              }}
+            Logo Text
+            <input
+              type="text"
+              className={textInputClass}
+              value={navigation.logoText || ''}
+              onChange={(e) => setNavigation({ ...navigation, logoText: e.target.value })}
+              placeholder="Logo text (e.g., EH)"
             />
           </label>
-          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
-            Save navigation
+
+          <div className="space-y-4">
+            <h4 className="text-lg font-medium text-white/80">Navigation Links</h4>
+            <p className="text-sm text-white/60">Main navigation menu items</p>
+            {(navigation.mainNavigation || []).map((item: any, index: number) => (
+              <div key={index} className="p-4 bg-white/5 rounded-lg space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    className={textInputClass}
+                    value={item.label || ''}
+                    onChange={(e) => {
+                      const newNav = [...(navigation.mainNavigation || [])];
+                      newNav[index] = { ...newNav[index], label: e.target.value };
+                      setNavigation({ ...navigation, mainNavigation: newNav });
+                    }}
+                    placeholder="Label (e.g., Home)"
+                  />
+                  <input
+                    type="text"
+                    className={textInputClass}
+                    value={item.href || ''}
+                    onChange={(e) => {
+                      const newNav = [...(navigation.mainNavigation || [])];
+                      newNav[index] = { ...newNav[index], href: e.target.value };
+                      setNavigation({ ...navigation, mainNavigation: newNav });
+                    }}
+                    placeholder="Link (e.g., #hero)"
+                  />
+                </div>
+                <input
+                  type="number"
+                  className={textInputClass}
+                  value={item.order ?? index}
+                  onChange={(e) => {
+                    const newNav = [...(navigation.mainNavigation || [])];
+                    newNav[index] = { ...newNav[index], order: parseInt(e.target.value) };
+                    setNavigation({ ...navigation, mainNavigation: newNav });
+                  }}
+                  placeholder="Display order"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newNav = (navigation.mainNavigation || []).filter((_: any, i: number) => i !== index);
+                    setNavigation({ ...navigation, mainNavigation: newNav });
+                  }}
+                  className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors w-full"
+                >
+                  Remove Link
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newLink = { label: '', href: '', order: (navigation.mainNavigation || []).length };
+                setNavigation({ ...navigation, mainNavigation: [...(navigation.mainNavigation || []), newLink] });
+              }}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+            >
+              + Add Navigation Link
+            </button>
+          </div>
+
+          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold hover:bg-white/90 transition-colors">
+            Save Navigation
           </button>
         </form>
 
-        <form onSubmit={saveFooter} className="space-y-4">
+        <form onSubmit={saveFooter} className="space-y-6">
           <h3 className="text-xl font-semibold">Footer</h3>
+
           <label className={labelClass}>
-            Footer JSON
-            <textarea
-              className={`${textInputClass} min-h-[180px]`}
-              value={JSON.stringify(footer, null, 2)}
-              onChange={(event) => {
-                try {
-                  setFooter(JSON.parse(event.target.value));
-                  setError(null);
-                } catch {
-                  setError('Invalid footer JSON');
-                }
-              }}
+            Copyright Text
+            <input
+              type="text"
+              className={textInputClass}
+              value={footer.copyrightText || ''}
+              onChange={(e) => setFooter({ ...footer, copyrightText: e.target.value })}
+              placeholder="© 2025 Your Name. All rights reserved."
             />
           </label>
-          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
-            Save footer
+
+          <label className={labelClass}>
+            Tagline
+            <input
+              type="text"
+              className={textInputClass}
+              value={footer.tagline || ''}
+              onChange={(e) => setFooter({ ...footer, tagline: e.target.value })}
+              placeholder="Footer tagline or slogan"
+            />
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={footer.showSocialLinks ?? true}
+              onChange={(e) => setFooter({ ...footer, showSocialLinks: e.target.checked })}
+              className="w-5 h-5 rounded border-white/20 bg-white/5 text-primary focus:ring-2 focus:ring-primary"
+            />
+            <span className="text-white/90">Show social links in footer</span>
+          </label>
+
+          <div className="space-y-4">
+            <h4 className="text-lg font-medium text-white/80">Footer Navigation</h4>
+            <p className="text-sm text-white/60">Additional footer links</p>
+            {(footer.footerNavigation || []).map((item: any, index: number) => (
+              <div key={index} className="p-4 bg-white/5 rounded-lg space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    className={textInputClass}
+                    value={item.label || ''}
+                    onChange={(e) => {
+                      const newNav = [...(footer.footerNavigation || [])];
+                      newNav[index] = { ...newNav[index], label: e.target.value };
+                      setFooter({ ...footer, footerNavigation: newNav });
+                    }}
+                    placeholder="Label (e.g., Privacy)"
+                  />
+                  <input
+                    type="text"
+                    className={textInputClass}
+                    value={item.href || ''}
+                    onChange={(e) => {
+                      const newNav = [...(footer.footerNavigation || [])];
+                      newNav[index] = { ...newNav[index], href: e.target.value };
+                      setFooter({ ...footer, footerNavigation: newNav });
+                    }}
+                    placeholder="Link (e.g., /privacy)"
+                  />
+                </div>
+                <input
+                  type="number"
+                  className={textInputClass}
+                  value={item.order ?? index}
+                  onChange={(e) => {
+                    const newNav = [...(footer.footerNavigation || [])];
+                    newNav[index] = { ...newNav[index], order: parseInt(e.target.value) };
+                    setFooter({ ...footer, footerNavigation: newNav });
+                  }}
+                  placeholder="Display order"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newNav = (footer.footerNavigation || []).filter((_: any, i: number) => i !== index);
+                    setFooter({ ...footer, footerNavigation: newNav });
+                  }}
+                  className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors w-full"
+                >
+                  Remove Link
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newLink = { label: '', href: '', order: (footer.footerNavigation || []).length };
+                setFooter({ ...footer, footerNavigation: [...(footer.footerNavigation || []), newLink] });
+              }}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+            >
+              + Add Footer Link
+            </button>
+          </div>
+
+          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold hover:bg-white/90 transition-colors">
+            Save Footer
           </button>
         </form>
       </div>
@@ -986,25 +1129,128 @@ export default function AdminDashboard() {
   function renderSkillsPanel() {
     return (
       <div className="space-y-8">
-        <form onSubmit={saveSkills} className="space-y-4">
+        <form onSubmit={saveSkills} className="space-y-6">
           <h3 className="text-xl font-semibold">Skills & Metrics</h3>
-          <label className={labelClass}>
-            Skills JSON
-            <textarea
-              className={`${textInputClass} min-h-[200px]`}
-              value={JSON.stringify(skills, null, 2)}
-              onChange={(event) => {
-                try {
-                  setSkills(JSON.parse(event.target.value));
-                  setError(null);
-                } catch {
-                  setError('Invalid skills JSON');
-                }
+
+          <div className="space-y-4">
+            <h4 className="text-lg font-medium text-white/80">Statistics</h4>
+            <p className="text-sm text-white/60">Add impressive numbers to showcase your achievements</p>
+            {(skills.stats || []).map((stat: any, index: number) => (
+              <div key={index} className="p-4 bg-white/5 rounded-lg space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    className={textInputClass}
+                    value={stat.number || ''}
+                    onChange={(e) => {
+                      const newStats = [...(skills.stats || [])];
+                      newStats[index] = { ...newStats[index], number: e.target.value };
+                      setSkills({ ...skills, stats: newStats });
+                    }}
+                    placeholder="Number (e.g., 20+)"
+                  />
+                  <input
+                    type="text"
+                    className={textInputClass}
+                    value={stat.label || ''}
+                    onChange={(e) => {
+                      const newStats = [...(skills.stats || [])];
+                      newStats[index] = { ...newStats[index], label: e.target.value };
+                      setSkills({ ...skills, stats: newStats });
+                    }}
+                    placeholder="Label (e.g., Years Experience)"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="text"
+                    className={textInputClass}
+                    value={stat.icon || ''}
+                    onChange={(e) => {
+                      const newStats = [...(skills.stats || [])];
+                      newStats[index] = { ...newStats[index], icon: e.target.value };
+                      setSkills({ ...skills, stats: newStats });
+                    }}
+                    placeholder="Icon emoji (e.g., 🎬)"
+                  />
+                  <input
+                    type="number"
+                    className={textInputClass}
+                    value={stat.order ?? index}
+                    onChange={(e) => {
+                      const newStats = [...(skills.stats || [])];
+                      newStats[index] = { ...newStats[index], order: parseInt(e.target.value) };
+                      setSkills({ ...skills, stats: newStats });
+                    }}
+                    placeholder="Display order"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newStats = (skills.stats || []).filter((_: any, i: number) => i !== index);
+                    setSkills({ ...skills, stats: newStats });
+                  }}
+                  className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors w-full"
+                >
+                  Remove Stat
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newStat = { id: Date.now().toString(), number: '', label: '', icon: '⭐', order: (skills.stats || []).length };
+                setSkills({ ...skills, stats: [...(skills.stats || []), newStat] });
               }}
-            />
-          </label>
-          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
-            Save skills
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+            >
+              + Add Statistic
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="text-lg font-medium text-white/80">Core Competencies</h4>
+            <p className="text-sm text-white/60">Your key skills and expertise areas</p>
+            {(skills.competencies || ['']).map((comp: string, index: number) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  type="text"
+                  className={`${textInputClass} flex-1`}
+                  value={comp}
+                  onChange={(e) => {
+                    const newComps = [...(skills.competencies || [''])];
+                    newComps[index] = e.target.value;
+                    setSkills({ ...skills, competencies: newComps });
+                  }}
+                  placeholder={`Competency ${index + 1} (e.g., Scriptwriting)`}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newComps = (skills.competencies || ['']).filter((_: string, i: number) => i !== index);
+                    setSkills({ ...skills, competencies: newComps.length > 0 ? newComps : [''] });
+                  }}
+                  className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newComps = [...(skills.competencies || ['']), ''];
+                setSkills({ ...skills, competencies: newComps });
+              }}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+            >
+              + Add Competency
+            </button>
+          </div>
+
+          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold hover:bg-white/90 transition-colors">
+            Save Skills & Metrics
           </button>
         </form>
 
@@ -1063,7 +1309,7 @@ export default function AdminDashboard() {
 
           <div className="space-y-4">
             <h4 className="text-lg font-medium text-white/80">Featured Brands</h4>
-            <p className="text-sm text-white/60">Brands you've worked with (displayed in the stats sidebar)</p>
+            <p className="text-sm text-white/60">Brands you&apos;ve worked with (displayed in the stats sidebar)</p>
             {(about.featuredBrands || ['']).map((brand: string, index: number) => (
               <div key={index} className="flex gap-2">
                 <input
