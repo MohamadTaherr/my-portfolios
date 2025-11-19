@@ -55,7 +55,7 @@ export default function CinematicIntro({ name, tagline }: CinematicIntroProps) {
       <div className="absolute inset-0 opacity-20 pointer-events-none film-grain" />
 
       {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-black to-pink-900/30 animate-pulse-slow" />
+      <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/20 via-black to-cyan-900/20 animate-pulse-slow" />
 
       {/* Cinematic bars */}
       <div className="absolute top-0 left-0 right-0 h-20 bg-black border-b border-white/10 animate-slide-down" />
@@ -89,14 +89,14 @@ export default function CinematicIntro({ name, tagline }: CinematicIntroProps) {
               />
               <defs>
                 <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#a855f7" />
-                  <stop offset="50%" stopColor="#ec4899" />
-                  <stop offset="100%" stopColor="#ef4444" />
+                  <stop offset="0%" stopColor="#D4AF37" />
+                  <stop offset="50%" stopColor="#06B6D4" />
+                  <stop offset="100%" stopColor="#EA580C" />
                 </linearGradient>
               </defs>
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent font-[family-name:var(--font-playfair)]">
+              <div className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-yellow-400 via-cyan-400 to-orange-400 bg-clip-text text-transparent font-[family-name:var(--font-playfair)]">
                 {stage >= 2 ? '2' : '3'}
               </div>
             </div>
@@ -105,7 +105,7 @@ export default function CinematicIntro({ name, tagline }: CinematicIntroProps) {
           {/* Name reveal */}
           <div className={`text-center transition-all duration-1000 delay-500 px-4 ${stage >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-[family-name:var(--font-playfair)] font-bold mb-4 md:mb-6 tracking-tight">
-              <span className="inline-block bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
+              <span className="inline-block bg-gradient-to-r from-yellow-400 via-cyan-400 to-orange-400 bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
                 {name}
               </span>
             </h1>
@@ -121,7 +121,7 @@ export default function CinematicIntro({ name, tagline }: CinematicIntroProps) {
           {/* Loading bar */}
           <div className={`mt-8 md:mt-12 w-48 md:w-64 mx-auto transition-all duration-1000 delay-1000 ${stage >= 3 ? 'opacity-100' : 'opacity-0'}`}>
             <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full animate-loading-bar" />
+              <div className="h-full bg-gradient-to-r from-yellow-500 via-cyan-500 to-orange-500 rounded-full animate-loading-bar" />
             </div>
             <p className="text-white/40 text-xs text-center mt-3 tracking-widest uppercase">
               Loading Experience

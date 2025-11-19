@@ -1008,25 +1008,101 @@ export default function AdminDashboard() {
           </button>
         </form>
 
-        <form onSubmit={saveAbout} className="space-y-4">
+        <form onSubmit={saveAbout} className="space-y-6">
           <h3 className="text-xl font-semibold">About Section</h3>
-          <label className={labelClass}>
-            About JSON
-            <textarea
-              className={`${textInputClass} min-h-[200px]`}
-              value={JSON.stringify(about, null, 2)}
-              onChange={(event) => {
-                try {
-                  setAbout(JSON.parse(event.target.value));
-                  setError(null);
-                } catch {
-                  setError('Invalid about JSON');
-                }
+
+          <div className="space-y-4">
+            <h4 className="text-lg font-medium text-white/80">Body Paragraphs</h4>
+            <p className="text-sm text-white/60">Add the main text content for your About section. First paragraph will have a large drop cap.</p>
+            {(about.bodyParagraphs || ['']).map((para: string, index: number) => (
+              <div key={index} className="flex gap-2">
+                <textarea
+                  className={`${textInputClass} min-h-[100px] flex-1`}
+                  value={para}
+                  onChange={(e) => {
+                    const newParagraphs = [...(about.bodyParagraphs || [''])];
+                    newParagraphs[index] = e.target.value;
+                    setAbout({ ...about, bodyParagraphs: newParagraphs });
+                  }}
+                  placeholder={`Paragraph ${index + 1}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newParagraphs = (about.bodyParagraphs || ['']).filter((_: string, i: number) => i !== index);
+                    setAbout({ ...about, bodyParagraphs: newParagraphs.length > 0 ? newParagraphs : [''] });
+                  }}
+                  className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors self-start"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newParagraphs = [...(about.bodyParagraphs || ['']), ''];
+                setAbout({ ...about, bodyParagraphs: newParagraphs });
               }}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+            >
+              + Add Paragraph
+            </button>
+          </div>
+
+          <label className={labelClass}>
+            Signing Name (optional)
+            <input
+              type="text"
+              className={textInputClass}
+              value={about.signingName || ''}
+              onChange={(e) => setAbout({ ...about, signingName: e.target.value })}
+              placeholder="Name displayed at the end (e.g., Edmond Haddad)"
             />
           </label>
-          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
-            Save about section
+
+          <div className="space-y-4">
+            <h4 className="text-lg font-medium text-white/80">Featured Brands</h4>
+            <p className="text-sm text-white/60">Brands you've worked with (displayed in the stats sidebar)</p>
+            {(about.featuredBrands || ['']).map((brand: string, index: number) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  type="text"
+                  className={`${textInputClass} flex-1`}
+                  value={brand}
+                  onChange={(e) => {
+                    const newBrands = [...(about.featuredBrands || [''])];
+                    newBrands[index] = e.target.value;
+                    setAbout({ ...about, featuredBrands: newBrands });
+                  }}
+                  placeholder={`Brand ${index + 1}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newBrands = (about.featuredBrands || ['']).filter((_: string, i: number) => i !== index);
+                    setAbout({ ...about, featuredBrands: newBrands.length > 0 ? newBrands : [''] });
+                  }}
+                  className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newBrands = [...(about.featuredBrands || ['']), ''];
+                setAbout({ ...about, featuredBrands: newBrands });
+              }}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+            >
+              + Add Brand
+            </button>
+          </div>
+
+          <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold hover:bg-white/90 transition-colors">
+            Save About Section
           </button>
         </form>
       </div>

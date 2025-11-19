@@ -3,45 +3,50 @@
 /* Cinematic Creative Portfolio Design System */
 :root {
   /* Cinematic Color Palette - Film Production Inspired */
-  --background: linear-gradient(135deg, #0a0a0f 0%, #1a1625 50%, #0f0a15 100%);
-  --background-light: #0f0a15;
+  --background: linear-gradient(135deg, #0a0a0f 0%, #12141a 50%, #0a0a0f 100%);
+  --background-light: #0a0a0f;
   --background-card: rgba(255, 255, 255, 0.03);
   --foreground: #f8f9fa;
   --foreground-muted: #a0a8b0;
 
-  /* Primary Accent - Electric Purple (Creativity & Innovation) */
-  --primary: #8B5CF6;
-  --primary-light: #A78BFA;
-  --primary-dark: #7C3AED;
+  /* Primary - Rich Gold (Awards, Prestige, Achievement) */
+  --primary: #D4AF37;
+  --primary-light: #F4D03F;
+  --primary-dark: #B8941F;
 
-  /* Secondary - Cinematic Teal (Production & Film) */
-  --secondary: #14B8A6;
-  --secondary-light: #2DD4BF;
-  --secondary-dark: #0D9488;
+  /* Secondary - Deep Slate (Professional, Sophisticated) */
+  --secondary: #475569;
+  --secondary-light: #64748B;
+  --secondary-dark: #334155;
 
-  /* Accent - Vibrant Coral (Energy & Passion) */
-  --accent: #F472B6;
-  --accent-light: #FB7185;
-  --accent-glow: rgba(244, 114, 182, 0.3);
+  /* Accent - Vibrant Teal (Creativity & Modern Edge) */
+  --accent: #06B6D4;
+  --accent-light: #22D3EE;
+  --accent-glow: rgba(6, 182, 212, 0.3);
+
+  /* Highlight - Warm Copper (Energy & Passion) */
+  --highlight: #EA580C;
+  --highlight-light: #F97316;
+  --highlight-dark: #C2410C;
 
   /* Neutral Tones */
-  --muted: #1f1b2e;
-  --muted-foreground: #8b91a0;
-  --border: rgba(139, 92, 246, 0.15);
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --border: rgba(212, 175, 55, 0.15);
   --card: rgba(15, 10, 21, 0.9);
   --card-foreground: #f8f9fa;
 
   /* Premium Brand Colors */
-  --gold: #FCD34D;
-  --gold-light: #FDE68A;
-  --gold-dark: #F59E0B;
+  --gold: #D4AF37;
+  --gold-light: #F4D03F;
+  --gold-dark: #B8941F;
   --navy: #0a0a0f;
   --ivory: #f8f9fa;
 
   /* Cinematic Effects */
-  --glass-bg: rgba(139, 92, 246, 0.05);
-  --glass-border: rgba(139, 92, 246, 0.15);
-  --glow: rgba(139, 92, 246, 0.4);
+  --glass-bg: rgba(212, 175, 55, 0.05);
+  --glass-border: rgba(212, 175, 55, 0.15);
+  --glow: rgba(212, 175, 55, 0.4);
 }
 
 @theme inline {
@@ -74,7 +79,7 @@ html, body {
 }
 
 body {
-  background: linear-gradient(135deg, #0a0a0f 0%, #1a1625 50%, #0f0a15 100%);
+  background: linear-gradient(135deg, #0a0a0f 0%, #12141a 50%, #0a0a0f 100%);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -90,9 +95,9 @@ body::before {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg,
-    rgba(139, 92, 246, 0.08) 0%,
-    rgba(20, 184, 166, 0.06) 50%,
-    rgba(244, 114, 182, 0.08) 100%);
+    rgba(212, 175, 55, 0.08) 0%,
+    rgba(6, 182, 212, 0.06) 50%,
+    rgba(234, 88, 12, 0.05) 100%);
   background-size: 400% 400%;
   animation: gradientShift 20s ease infinite;
   z-index: 0;
@@ -108,9 +113,9 @@ body::after {
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.10) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.08) 0%, transparent 50%);
+    radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.10) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(234, 88, 12, 0.06) 0%, transparent 50%);
   z-index: 0;
   pointer-events: none;
   animation: float 25s ease-in-out infinite;
@@ -277,7 +282,7 @@ main, header, footer {
 
 /* Cinematic Gradient Text */
 .gradient-text {
-  background: linear-gradient(135deg, #8B5CF6 0%, #14B8A6 50%, #F472B6 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #06B6D4 50%, #EA580C 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -419,12 +424,12 @@ main, header, footer {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #6C63FF 0%, #FF6584 100%);
+  background: linear-gradient(135deg, #D4AF37 0%, #06B6D4 100%);
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #8B85FF 0%, #FF8599 100%);
+  background: linear-gradient(135deg, #F4D03F 0%, #22D3EE 100%);
 }
 
 /* Film grain texture (subtle) */
