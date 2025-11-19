@@ -59,52 +59,62 @@ export default async function Skills() {
   const skillsSubtitle = pageContent?.skillsSubtitle || 'Expertise';
 
   return (
-    <section id="skills" className="relative py-32 md:py-40 overflow-hidden bg-black">
+    <section id="skills" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-b from-background via-background/95 to-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-20 animate-fade-in">
-          <p className="text-gold/60 text-sm tracking-[0.3em] uppercase mb-4">
-            {skillsSubtitle}
-          </p>
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] text-ivory">
-            {skillsTitle}
+        <div className="text-center mb-16 animate-fade-in">
+          <div className="inline-flex items-center justify-center gap-3 text-xs tracking-[0.4em] uppercase font-semibold text-primary/80 mb-4">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent via-primary/60 to-primary/40 animate-pulse" />
+            <span className="relative">
+              <span className="absolute inset-0 blur-sm bg-primary/20"></span>
+              <span className="relative">{skillsSubtitle}</span>
+            </span>
+            <span className="h-px w-16 bg-gradient-to-l from-transparent via-primary/60 to-primary/40 animate-pulse" />
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-[family-name:var(--font-playfair)] text-balance leading-tight">
+            <span className="inline-block bg-gradient-to-r from-foreground via-primary/90 to-foreground bg-clip-text text-transparent">
+              {skillsTitle}
+            </span>
           </h2>
         </div>
 
-        {/* Cinematic Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-24 max-w-6xl mx-auto">
+        {/* Modern Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20 max-w-6xl mx-auto">
           {cinematicStats.map((stat: Stat, index: number) => (
             <div
               key={stat.id || index}
-              className="glass p-8 text-center group cinematic-hover animate-fade-in-up"
+              className="group relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] backdrop-blur-xl p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(108,99,255,0.3)] hover:border-primary/50 animate-fade-in-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="text-4xl mb-4 opacity-60 group-hover:opacity-100 transition-opacity">
-                {stat.icon}
-              </div>
-              <div className="text-5xl md:text-6xl font-[family-name:var(--font-playfair)] text-gold mb-3 animate-flicker">
-                {stat.number}
-              </div>
-              <div className="text-ivory/60 tracking-wider uppercase text-sm">
-                {stat.label}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
+              <div className="relative">
+                <div className="text-5xl mb-4 opacity-80 group-hover:scale-110 transition-transform duration-300">
+                  {stat.icon}
+                </div>
+                <div className="text-5xl md:text-6xl font-[family-name:var(--font-playfair)] bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 bg-clip-text text-transparent mb-3 font-bold">
+                  {stat.number}
+                </div>
+                <div className="text-foreground-muted tracking-wider uppercase text-sm font-medium">
+                  {stat.label}
+                </div>
               </div>
             </div>
           ))}
         </div>
 
         {/* Expertise Tags */}
-        <div className="max-w-4xl mx-auto">
-          <h3 className="text-2xl md:text-3xl font-[family-name:var(--font-playfair)] text-ivory text-center mb-12">
+        <div className="max-w-5xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-[family-name:var(--font-playfair)] text-foreground text-center mb-10">
             Core Competencies
           </h3>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             {expertise.map((skill: string, index: number) => (
               <div
                 key={skill}
-                className="px-6 py-3 border border-gold/30 text-ivory/80 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all duration-500 cursor-default animate-fade-in"
+                className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-foreground/90 hover:border-primary/60 hover:bg-gradient-to-r hover:from-purple-500/10 hover:via-pink-500/10 hover:to-red-500/10 hover:text-white transition-all duration-300 cursor-default animate-fade-in backdrop-blur-sm"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <span className="tracking-wider text-sm">{skill}</span>
+                <span className="tracking-wide text-sm font-medium">{skill}</span>
               </div>
             ))}
           </div>
@@ -112,9 +122,8 @@ export default async function Skills() {
       </div>
 
       {/* Background decorations */}
-      <div className="absolute top-1/3 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/3 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-      <div className="film-grain absolute inset-0 opacity-20 pointer-events-none" />
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
     </section>
   );
 }
