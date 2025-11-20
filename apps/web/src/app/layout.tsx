@@ -5,11 +5,9 @@ import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import StructuredData from "@/components/StructuredData";
 import { GoogleAnalytics } from "@/components/Analytics";
+import ConditionalAnalytics from "@/components/ConditionalAnalytics";
 import { fetchAPI } from '@/lib/api';
 import { Metadata } from 'next';
-import dynamic from 'next/dynamic';
-
-const VercelAnalytics = dynamic(() => import("@vercel/analytics/react").then((mod) => mod.Analytics), { ssr: false });
 
 // Clean sans-serif for body text
 const inter = Inter({
@@ -169,7 +167,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <main className="min-h-screen">{children}</main>
           <Footer />
         </ThemeProvider>
-        {analyticsSettings?.enableVercelAnalytics && <VercelAnalytics />}
+        <ConditionalAnalytics enableVercelAnalytics={analyticsSettings?.enableVercelAnalytics || false} />
       </body>
     </html>
   );
