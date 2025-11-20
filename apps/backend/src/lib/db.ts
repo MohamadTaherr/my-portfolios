@@ -62,6 +62,7 @@ export async function initDatabase() {
             profileImageUrl: '',
             showreelUrl: '',
             welcomeMessage: 'Welcome to my portfolio',
+            enableCinematicIntro: true,
             yearsExperience: 20,
             projectsCompleted: 200,
             clientsServed: 100,

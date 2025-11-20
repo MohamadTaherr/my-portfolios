@@ -820,6 +820,30 @@ export default function AdminDashboard() {
           <p className="text-xs uppercase tracking-[0.4em] text-white/60">Brand voice</p>
           <h2 className="text-2xl font-semibold">Hero & Biography</h2>
         </header>
+
+        {/* Cinematic Intro Toggle */}
+        <div className="p-6 rounded-2xl border border-white/10 bg-white/5 space-y-4">
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-white">Cinematic Intro</h3>
+              <p className="text-sm text-white/60">
+                Show the animated countdown intro when users first visit your site. The intro only plays once per session.
+              </p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={siteSettings.enableCinematicIntro ?? true}
+                onChange={(e) =>
+                  setSiteSettings((prev) => ({ ...prev, enableCinematicIntro: e.target.checked }))
+                }
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-white/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </div>
+        </div>
+
         <div className="grid gap-4 md:grid-cols-2">
           <label className={labelClass}>
             Name
@@ -1508,6 +1532,19 @@ export default function AdminDashboard() {
                       />
                     </label>
                   </div>
+                ) : key === 'category' ? (
+                  <select
+                    className={selectClass}
+                    value={value}
+                    onChange={(event) => setClientDraft((prev) => ({ ...prev, [key]: event.target.value }))}
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.name}>
+                        {cat.icon} {cat.name}
+                      </option>
+                    ))}
+                  </select>
                 ) : (
                   <input
                     className={textInputClass}

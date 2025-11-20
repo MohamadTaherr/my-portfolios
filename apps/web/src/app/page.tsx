@@ -15,10 +15,11 @@ export default async function Home() {
 
   const name = settings?.name || 'Edmond Haddad';
   const tagline = settings?.tagline || 'Creative Producer & Director';
+  const enableCinematicIntro = settings?.enableCinematicIntro ?? true;
 
   return (
     <>
-      <CinematicIntro name={name} tagline={tagline} />
+      {enableCinematicIntro && <CinematicIntro name={name} tagline={tagline} />}
       <div className="flex flex-col">
         <Hero />
         <About />

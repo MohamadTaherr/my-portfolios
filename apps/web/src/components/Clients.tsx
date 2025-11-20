@@ -49,9 +49,13 @@ export default function Clients() {
 
         setClients(clientsData);
 
-        // Extract unique categories from categories table
-        const categoryNames = categoriesData.map((cat: Category) => cat.name);
-        setCategories(['All', ...categoryNames]);
+        // Extract unique categories from categories table, but only show those that have clients
+        const clientCategories = new Set(clientsData.map((client: Client) => client.category).filter(Boolean));
+        const availableCategories = categoriesData
+          .filter((cat: Category) => clientCategories.has(cat.name))
+          .map((cat: Category) => cat.name);
+
+        setCategories(['All', ...availableCategories]);
 
         setPageContent(contentData);
       } catch (error) {
