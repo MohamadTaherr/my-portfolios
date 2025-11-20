@@ -41,7 +41,8 @@
       "Bash(pnpm --filter web dev:*)",
       "Bash(curl:*)",
       "Bash(pnpm db:generate:*)",
-      "Bash(pnpm db:push:*)"
+      "Bash(pnpm db:push:*)",
+      "Bash(pnpm db:test:*)"
     ],
     "deny": [],
     "ask": []

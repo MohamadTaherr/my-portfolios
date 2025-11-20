@@ -953,7 +953,7 @@ export default function AdminDashboard() {
           <p className="text-xs uppercase tracking-[0.4em] text-white/60">Section copy</p>
           <h2 className="text-2xl font-semibold">Page content</h2>
           <p className="text-sm text-white/60 mt-2">
-            For clientsTitle, you can use HTML like: Trusted by &lt;span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"&gt;World-Class Brands&lt;/span&gt;
+            For clientsTitle, you can use HTML like: Trusted by &lt;span className=&quot;bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent&quot;&gt;World-Class Brands&lt;/span&gt;
           </p>
         </header>
         {fields.map((field) => (
