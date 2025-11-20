@@ -157,12 +157,14 @@ export async function initDatabase() {
         data: {
           data: {
             links: [
-              { label: 'Home', href: '#home' },
-              { label: 'About', href: '#about' },
-              { label: 'Portfolio', href: '#portfolio' },
-              { label: 'Skills', href: '#skills' },
-              { label: 'Contact', href: '#contact' },
+              { label: 'Home', href: '#home', order: 0 },
+              { label: 'About', href: '#about', order: 1 },
+              { label: 'Portfolio', href: '#portfolio', order: 2 },
+              { label: 'Skills', href: '#skills', order: 3 },
+              { label: 'Contact', href: '#contact', order: 4 },
             ],
+            logoText: 'EH',
+            logoUrl: '',
           },
         },
       });

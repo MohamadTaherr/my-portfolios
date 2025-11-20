@@ -988,21 +988,60 @@ export default function AdminDashboard() {
         <form onSubmit={saveNavigation} className="space-y-6">
           <h3 className="text-xl font-semibold">Navigation</h3>
 
-          <label className={labelClass}>
-            Logo Text
-            <input
-              type="text"
-              className={textInputClass}
-              value={navigation.logoText || ''}
-              onChange={(e) => setNavigation({ ...navigation, logoText: e.target.value })}
-              placeholder="Logo text (e.g., EH)"
-            />
-          </label>
+          <div className="p-6 rounded-2xl border border-white/10 bg-white/5 space-y-4">
+            <h4 className="text-lg font-semibold text-white">Logo Settings</h4>
+            <p className="text-sm text-white/60">
+              Upload a logo image OR enter logo text. If both are provided, the image will be displayed.
+            </p>
+
+            <label className={labelClass}>
+              Logo Image
+              <div className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  className={textInputClass}
+                  value={navigation.logoUrl || ''}
+                  onChange={(e) => setNavigation({ ...navigation, logoUrl: e.target.value })}
+                  placeholder="Logo image URL"
+                />
+                <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
+                  {uploadingFile ? 'Uploading...' : 'Upload'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'logoUrl', navigation, setNavigation)}
+                    disabled={uploadingFile}
+                  />
+                </label>
+              </div>
+              {navigation.logoUrl && (
+                <div className="mt-2">
+                  <img
+                    src={navigation.logoUrl}
+                    alt="Logo preview"
+                    className="h-12 object-contain bg-white/10 p-2 rounded"
+                  />
+                </div>
+              )}
+            </label>
+
+            <label className={labelClass}>
+              Logo Text (fallback)
+              <input
+                type="text"
+                className={textInputClass}
+                value={navigation.logoText || ''}
+                onChange={(e) => setNavigation({ ...navigation, logoText: e.target.value })}
+                placeholder="Logo text (e.g., EH) - used if no image is uploaded"
+              />
+            </label>
+          </div>
 
           <div className="space-y-4">
             <h4 className="text-lg font-medium text-white/80">Navigation Links</h4>
             <p className="text-sm text-white/60">Main navigation menu items</p>
-            {(navigation.mainNavigation || []).map((item: any, index: number) => (
+            {(navigation.links || []).map((item: any, index: number) => (
               <div key={index} className="p-4 bg-white/5 rounded-lg space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <input
@@ -1010,9 +1049,9 @@ export default function AdminDashboard() {
                     className={textInputClass}
                     value={item.label || ''}
                     onChange={(e) => {
-                      const newNav = [...(navigation.mainNavigation || [])];
+                      const newNav = [...(navigation.links || [])];
                       newNav[index] = { ...newNav[index], label: e.target.value };
-                      setNavigation({ ...navigation, mainNavigation: newNav });
+                      setNavigation({ ...navigation, links: newNav });
                     }}
                     placeholder="Label (e.g., Home)"
                   />
@@ -1021,11 +1060,11 @@ export default function AdminDashboard() {
                     className={textInputClass}
                     value={item.href || ''}
                     onChange={(e) => {
-                      const newNav = [...(navigation.mainNavigation || [])];
+                      const newNav = [...(navigation.links || [])];
                       newNav[index] = { ...newNav[index], href: e.target.value };
-                      setNavigation({ ...navigation, mainNavigation: newNav });
+                      setNavigation({ ...navigation, links: newNav });
                     }}
-                    placeholder="Link (e.g., #hero)"
+                    placeholder="Link (e.g., #home)"
                   />
                 </div>
                 <input
@@ -1033,17 +1072,17 @@ export default function AdminDashboard() {
                   className={textInputClass}
                   value={item.order ?? index}
                   onChange={(e) => {
-                    const newNav = [...(navigation.mainNavigation || [])];
+                    const newNav = [...(navigation.links || [])];
                     newNav[index] = { ...newNav[index], order: parseInt(e.target.value) };
-                    setNavigation({ ...navigation, mainNavigation: newNav });
+                    setNavigation({ ...navigation, links: newNav });
                   }}
                   placeholder="Display order"
                 />
                 <button
                   type="button"
                   onClick={() => {
-                    const newNav = (navigation.mainNavigation || []).filter((_: any, i: number) => i !== index);
-                    setNavigation({ ...navigation, mainNavigation: newNav });
+                    const newNav = (navigation.links || []).filter((_: any, i: number) => i !== index);
+                    setNavigation({ ...navigation, links: newNav });
                   }}
                   className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors w-full"
                 >
@@ -1054,8 +1093,8 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={() => {
-                const newLink = { label: '', href: '', order: (navigation.mainNavigation || []).length };
-                setNavigation({ ...navigation, mainNavigation: [...(navigation.mainNavigation || []), newLink] });
+                const newLink = { label: '', href: '', order: (navigation.links || []).length };
+                setNavigation({ ...navigation, links: [...(navigation.links || []), newLink] });
               }}
               className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
             >

@@ -73,17 +73,17 @@ async function cleanupData() {
 
     // 3. Optional: Delete all portfolio items (commented out for safety)
     // Uncomment the following lines if you want to delete portfolio items as well
-    /*
+    
     console.log('Deleting all portfolio items...');
     const deletedPortfolio = await prisma.portfolioItem.deleteMany({});
     console.log(`✓ Deleted ${deletedPortfolio.count} portfolio items\n`);
-    */
+    
 
     console.log('✅ Cleanup completed successfully!\n');
     console.log('Summary:');
     console.log(`- Clients deleted: ${deletedClients.count}`);
     console.log('- Page content titles reset to defaults');
-    console.log('\nNote: Portfolio items were NOT deleted (uncomment in script if needed)');
+    //console.log('\nNote: Portfolio items were NOT deleted (uncomment in script if needed)');
 
   } catch (error) {
     console.error('❌ Error during cleanup:', error);

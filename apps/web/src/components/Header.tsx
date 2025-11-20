@@ -10,20 +10,22 @@ interface NavItem {
 }
 
 interface NavigationSettings {
-  mainNavigation: NavItem[];
+  links?: NavItem[];
   logoText?: string;
+  logoUrl?: string;
 }
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState<NavItem[]>([
-    { href: '#hero', label: 'Home', order: 0 },
+    { href: '#home', label: 'Home', order: 0 },
     { href: '#about', label: 'About', order: 1 },
     { href: '#portfolio', label: 'Portfolio', order: 2 },
-    { href: '#skills', label: 'Expertise', order: 3 },
+    { href: '#skills', label: 'Skills', order: 3 },
     { href: '#contact', label: 'Contact', order: 4 },
   ]);
   const [logoText, setLogoText] = useState('EH');
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     // Fetch navigation settings from API
@@ -31,11 +33,17 @@ export default function Header() {
     fetch(`${API_URL}/api/navigation`)
       .then(res => res.json())
       .then((data: NavigationSettings) => {
-        if (data.mainNavigation && data.mainNavigation.length > 0) {
-          setNavItems(data.mainNavigation.sort((a, b) => a.order - b.order));
+        if (data.links && data.links.length > 0) {
+          const sortedLinks = data.links
+            .map((link, index) => ({ ...link, order: link.order ?? index }))
+            .sort((a, b) => a.order - b.order);
+          setNavItems(sortedLinks);
         }
         if (data.logoText) {
           setLogoText(data.logoText);
+        }
+        if (data.logoUrl) {
+          setLogoUrl(data.logoUrl);
         }
       })
       .catch(err => console.error('Error fetching navigation:', err));
@@ -49,9 +57,17 @@ export default function Header() {
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-[family-name:var(--font-playfair)] text-gold tracking-wider">
-              {logoText}
-            </span>
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt="Logo"
+                className="h-12 w-auto object-contain"
+              />
+            ) : (
+              <span className="text-2xl font-[family-name:var(--font-playfair)] text-gold tracking-wider">
+                {logoText}
+              </span>
+            )}
           </Link>
 
           {/* Desktop Navigation */}
