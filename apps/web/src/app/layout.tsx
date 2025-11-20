@@ -5,9 +5,11 @@ import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import StructuredData from "@/components/StructuredData";
 import { GoogleAnalytics } from "@/components/Analytics";
-import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 import { fetchAPI } from '@/lib/api';
 import { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+
+const VercelAnalytics = dynamic(() => import("@vercel/analytics/react").then((mod) => mod.Analytics), { ssr: false });
 
 // Clean sans-serif for body text
 const inter = Inter({
@@ -54,6 +56,16 @@ async function getSiteSettings() {
   } catch (error) {
     console.error('Error fetching site settings:', error);
     return null;
+  }
+}
+
+async function getAnalyticsSettings() {
+  try {
+    const settings = await fetchAPI('/analytics-settings');
+    return settings;
+  } catch (error) {
+    console.error('Error fetching analytics settings:', error);
+    return { enableVercelAnalytics: false, enableGoogleAnalytics: false };
   }
 }
 
@@ -140,7 +152,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const analyticsSettings = await getAnalyticsSettings();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -155,7 +169,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="min-h-screen">{children}</main>
           <Footer />
         </ThemeProvider>
-        <VercelAnalytics />
+        {analyticsSettings?.enableVercelAnalytics && <VercelAnalytics />}
       </body>
     </html>
   );

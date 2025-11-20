@@ -405,5 +405,26 @@ router.delete('/categories/:id', checkAuth, async (req: Request, res: Response) 
   }
 });
 
+// Analytics Settings
+router.get('/analytics-settings', async (req: Request, res: Response) => {
+  try {
+    const settings = await db.getAnalyticsSettings();
+    res.json(settings);
+  } catch (error) {
+    console.error('Error fetching analytics settings:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/analytics-settings', checkAuth, async (req: Request, res: Response) => {
+  try {
+    const updated = await db.updateAnalyticsSettings(req.body);
+    res.json(updated);
+  } catch (error) {
+    console.error('Error updating analytics settings:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;
 

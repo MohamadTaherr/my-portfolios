@@ -22,6 +22,16 @@ model PageContent {
   updatedAt DateTime @updatedAt @default(now())
 }
 
+model AnalyticsSettings {
+  id                    Int      @id @default(autoincrement())
+  enableVercelAnalytics Boolean  @default(false)
+  enableGoogleAnalytics Boolean  @default(false)
+  googleAnalyticsId     String?  @db.VarChar(50)
+  updatedAt             DateTime @updatedAt @default(now())
+
+  @@map("analytics_settings")
+}
+
 model Project {
   id          String   @id @default(uuid())
   title       String   @db.VarChar(500)

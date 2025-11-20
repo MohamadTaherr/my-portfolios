@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useMemo, useState, useRef } from 'react';
 import { fetchAdminAPI, uploadFile, uploadMultipleFiles } from '@/lib/api';
 import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
 
-type Panel = 'portfolio' | 'categories' | 'site' | 'page' | 'structure' | 'skills' | 'clients';
+type Panel = 'portfolio' | 'categories' | 'site' | 'page' | 'structure' | 'skills' | 'clients' | 'analytics';
 
 type Category = {
   id: string;
@@ -83,6 +83,7 @@ export default function AdminDashboard() {
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([]);
   const [clients, setClients] = useState<any[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [analyticsSettings, setAnalyticsSettings] = useState<Record<string, any>>({});
 
   const [portfolioDraft, setPortfolioDraft] = useState<PortfolioDraft>(createEmptyDraft());
   const [editingPortfolioId, setEditingPortfolioId] = useState<string | null>(null);
@@ -119,7 +120,7 @@ export default function AdminDashboard() {
   const loadAdminData = async () => {
     setLoading(true);
     try {
-      const [site, page, nav, foot, skillsData, aboutData, portfolio, clientList, categoriesList] = await Promise.all([
+      const [site, page, nav, foot, skillsData, aboutData, portfolio, clientList, categoriesList, analytics] = await Promise.all([
         fetchAdminAPI('/site-settings'),
         fetchAdminAPI('/page-content'),
         fetchAdminAPI('/navigation'),
@@ -129,6 +130,7 @@ export default function AdminDashboard() {
         fetchAdminAPI('/portfolio'),
         fetchAdminAPI('/clients'),
         fetchAdminAPI('/categories'),
+        fetchAdminAPI('/analytics-settings'),
       ]);
 
       setSiteSettings(site || {});
@@ -140,6 +142,7 @@ export default function AdminDashboard() {
       setPortfolioItems(portfolio || []);
       setClients(clientList || []);
       setCategories(categoriesList || []);
+      setAnalyticsSettings(analytics || {});
     } catch (err) {
       console.error('Failed to load admin data', err);
       setError('Unable to load dashboard data. Please try again.');
@@ -198,6 +201,12 @@ export default function AdminDashboard() {
     event.preventDefault();
     await fetchAdminAPI('/about', { method: 'PUT', body: JSON.stringify(about) });
     triggerToast('About saved');
+  };
+
+  const saveAnalyticsSettings = async (event: FormEvent) => {
+    event.preventDefault();
+    await fetchAdminAPI('/analytics-settings', { method: 'PUT', body: JSON.stringify(analyticsSettings) });
+    triggerToast('Analytics settings saved');
   };
 
   const resetPortfolioDraft = () => {
@@ -482,6 +491,7 @@ export default function AdminDashboard() {
             { id: 'structure', label: 'Navigation & Footer' },
             { id: 'skills', label: 'Skills & About' },
             { id: 'clients', label: 'Clients' },
+            { id: 'analytics', label: 'Analytics' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -508,6 +518,7 @@ export default function AdminDashboard() {
           {activePanel === 'structure' && renderStructurePanel()}
           {activePanel === 'skills' && renderSkillsPanel()}
           {activePanel === 'clients' && renderClientsPanel()}
+          {activePanel === 'analytics' && renderAnalyticsPanel()}
         </div>
       </div>
     </div>
@@ -908,6 +919,8 @@ export default function AdminDashboard() {
       'contactTitle',
       'contactSubtitle',
       'contactDescription',
+      'clientsTitle',
+      'clientsSubtitle',
     ];
 
     return (
@@ -915,15 +928,27 @@ export default function AdminDashboard() {
         <header>
           <p className="text-xs uppercase tracking-[0.4em] text-white/60">Section copy</p>
           <h2 className="text-2xl font-semibold">Page content</h2>
+          <p className="text-sm text-white/60 mt-2">
+            For clientsTitle, you can use HTML like: Trusted by &lt;span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"&gt;World-Class Brands&lt;/span&gt;
+          </p>
         </header>
         {fields.map((field) => (
           <label key={field} className={labelClass}>
             {field}
-            <input
-              className={textInputClass}
-              value={pageContent[field] || ''}
-              onChange={(event) => setPageContent((prev) => ({ ...prev, [field]: event.target.value }))}
-            />
+            {field === 'clientsTitle' ? (
+              <textarea
+                className={`${textInputClass} min-h-[80px]`}
+                value={pageContent[field] || ''}
+                onChange={(event) => setPageContent((prev) => ({ ...prev, [field]: event.target.value }))}
+                placeholder="e.g., Trusted by <span class='bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent'>World-Class Brands</span>"
+              />
+            ) : (
+              <input
+                className={textInputClass}
+                value={pageContent[field] || ''}
+                onChange={(event) => setPageContent((prev) => ({ ...prev, [field]: event.target.value }))}
+              />
+            )}
           </label>
         ))}
         <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
@@ -1546,6 +1571,95 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+    );
+  }
+
+  function renderAnalyticsPanel() {
+    return (
+      <form onSubmit={saveAnalyticsSettings} className="space-y-6">
+        <header>
+          <p className="text-xs uppercase tracking-[0.4em] text-white/60">Analytics & Tracking</p>
+          <h2 className="text-2xl font-semibold">Analytics Settings</h2>
+          <p className="text-white/70 max-w-2xl mt-2">
+            Control which analytics services are enabled on your site. Changes take effect immediately after saving.
+          </p>
+        </header>
+
+        <div className="space-y-6">
+          {/* Vercel Analytics */}
+          <div className="p-6 rounded-2xl border border-white/10 bg-white/5 space-y-4">
+            <div className="flex items-start justify-between">
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-white">Vercel Web Analytics</h3>
+                <p className="text-sm text-white/60">
+                  Track page views and visitor insights with Vercel&apos;s built-in analytics. Make sure to enable Web Analytics in your Vercel project settings first.
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={analyticsSettings.enableVercelAnalytics || false}
+                  onChange={(e) =>
+                    setAnalyticsSettings((prev) => ({ ...prev, enableVercelAnalytics: e.target.checked }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-white/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </div>
+            {analyticsSettings.enableVercelAnalytics && (
+              <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-200">
+                ✓ Vercel Analytics is enabled. Make sure you&apos;ve enabled it in your Vercel project dashboard.
+              </div>
+            )}
+          </div>
+
+          {/* Google Analytics */}
+          <div className="p-6 rounded-2xl border border-white/10 bg-white/5 space-y-4">
+            <div className="flex items-start justify-between">
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-white">Google Analytics</h3>
+                <p className="text-sm text-white/60">
+                  Track detailed user behavior with Google Analytics. Enter your GA4 Measurement ID (e.g., G-XXXXXXXXXX).
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={analyticsSettings.enableGoogleAnalytics || false}
+                  onChange={(e) =>
+                    setAnalyticsSettings((prev) => ({ ...prev, enableGoogleAnalytics: e.target.checked }))
+                  }
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-white/20 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </div>
+            <label className={labelClass}>
+              Google Analytics Measurement ID
+              <input
+                type="text"
+                className={textInputClass}
+                value={analyticsSettings.googleAnalyticsId || ''}
+                onChange={(e) =>
+                  setAnalyticsSettings((prev) => ({ ...prev, googleAnalyticsId: e.target.value }))
+                }
+                placeholder="G-XXXXXXXXXX"
+                disabled={!analyticsSettings.enableGoogleAnalytics}
+              />
+            </label>
+            {analyticsSettings.enableGoogleAnalytics && !analyticsSettings.googleAnalyticsId && (
+              <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 text-sm text-amber-200">
+                ⚠ Please enter your Google Analytics Measurement ID to enable tracking.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <button type="submit" className="rounded-full bg-white text-black px-6 py-3 font-semibold">
+          Save analytics settings
+        </button>
+      </form>
     );
   }
 }

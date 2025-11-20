@@ -151,5 +151,16 @@ router.get('/categories', async (req: Request, res: Response) => {
   }
 });
 
+// Analytics Settings (public read)
+router.get('/analytics-settings', async (req: Request, res: Response) => {
+  try {
+    const settings = await db.getAnalyticsSettings();
+    res.json(settings);
+  } catch (error) {
+    console.error('Error fetching analytics settings:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;
 

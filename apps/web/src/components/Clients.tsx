@@ -17,26 +17,51 @@ interface Client {
   featured: boolean;
 }
 
-const categories = ['All', 'Video Production', 'Scriptwriting'];
+interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  order: number;
+}
+
+interface PageContent {
+  clientsTitle?: string;
+  clientsSubtitle?: string;
+}
 
 export default function Clients() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [clients, setClients] = useState<Client[]>([]);
+  const [categories, setCategories] = useState<string[]>(['All']);
+  const [pageContent, setPageContent] = useState<PageContent>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchClients = async () => {
+    const fetchData = async () => {
       try {
-        const data = await fetchAPI('/clients');
-        setClients(data);
+        const [clientsData, categoriesData, contentData] = await Promise.all([
+          fetchAPI('/clients'),
+          fetchAPI('/categories'),
+          fetchAPI('/page-content'),
+        ]);
+
+        setClients(clientsData);
+
+        // Extract unique categories from categories table
+        const categoryNames = categoriesData.map((cat: Category) => cat.name);
+        setCategories(['All', ...categoryNames]);
+
+        setPageContent(contentData);
       } catch (error) {
-        console.error('Error fetching clients:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchClients();
+    fetchData();
   }, []);
 
   const filteredClients =
@@ -63,13 +88,19 @@ export default function Clients() {
           {/* Section Header */}
           <div className="text-center space-y-6 max-w-3xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-playfair)]">
-              Trusted by{' '}
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                World-Class Brands
-              </span>
+              {pageContent.clientsTitle ? (
+                <span dangerouslySetInnerHTML={{ __html: pageContent.clientsTitle }} />
+              ) : (
+                <>
+                  Trusted by{' '}
+                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    World-Class Brands
+                  </span>
+                </>
+              )}
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground">
-              Two decades of delivering exceptional scriptwriting and creative production for premium global brands
+              {pageContent.clientsSubtitle || 'Two decades of delivering exceptional scriptwriting and creative production for premium global brands'}
             </p>
           </div>
 

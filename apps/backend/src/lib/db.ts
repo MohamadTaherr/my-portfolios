@@ -96,6 +96,8 @@ export async function initDatabase() {
             contactTitle: 'Get In Touch',
             contactSubtitle: 'Let\'s Create Something Together',
             contactDescription: 'Ready to bring your vision to life? Let\'s discuss your next project.',
+            clientsTitle: 'Trusted by <span class="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">World-Class Brands</span>',
+            clientsSubtitle: 'Two decades of delivering exceptional scriptwriting and creative production for premium global brands',
             seoTitle: '',
             seoDescription: '',
             seoKeywords: [],
@@ -269,6 +271,18 @@ export async function initDatabase() {
       for (const category of defaultCategories) {
         await prisma.category.create({ data: category });
       }
+    }
+
+    // Check and initialize analytics settings
+    const analyticsCount = await prisma.analyticsSettings.count();
+    if (analyticsCount === 0) {
+      await prisma.analyticsSettings.create({
+        data: {
+          enableVercelAnalytics: false,
+          enableGoogleAnalytics: false,
+          googleAnalyticsId: null,
+        },
+      });
     }
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2021') {
@@ -619,6 +633,41 @@ export const db = {
   deleteCategory: async (id: string) => {
     await prisma.category.delete({ where: { id } });
     return true;
+  },
+
+  // Analytics Settings
+  getAnalyticsSettings: async () => {
+    const result = await prisma.analyticsSettings.findFirst({
+      orderBy: { id: 'desc' },
+    });
+    return result || {
+      enableVercelAnalytics: false,
+      enableGoogleAnalytics: false,
+      googleAnalyticsId: null,
+    };
+  },
+  updateAnalyticsSettings: async (settings: any) => {
+    const existing = await prisma.analyticsSettings.findFirst({
+      orderBy: { id: 'desc' },
+    });
+    if (existing) {
+      return await prisma.analyticsSettings.update({
+        where: { id: existing.id },
+        data: {
+          enableVercelAnalytics: settings.enableVercelAnalytics ?? existing.enableVercelAnalytics,
+          enableGoogleAnalytics: settings.enableGoogleAnalytics ?? existing.enableGoogleAnalytics,
+          googleAnalyticsId: settings.googleAnalyticsId ?? existing.googleAnalyticsId,
+        },
+      });
+    } else {
+      return await prisma.analyticsSettings.create({
+        data: {
+          enableVercelAnalytics: settings.enableVercelAnalytics ?? false,
+          enableGoogleAnalytics: settings.enableGoogleAnalytics ?? false,
+          googleAnalyticsId: settings.googleAnalyticsId ?? null,
+        },
+      });
+    }
   },
 };
 
