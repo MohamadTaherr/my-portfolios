@@ -13,17 +13,33 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-const allowedOrigins = (process.env.FRONTEND_URL ?? 'http://localhost:3000')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+// Default allowed origins
+const defaultOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://my-portfolios-studio.vercel.app',
+];
+
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : defaultOrigins;
+
+console.log('🌐 Allowed CORS origins:', allowedOrigins);
 
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps, Postman, etc.)
+    if (!origin) {
       return callback(null, true);
     }
+
+    // Check if origin is in allowed list or is a Vercel preview deployment
+    if (allowedOrigins.includes(origin) || origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    console.warn('⚠️ CORS blocked origin:', origin);
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,

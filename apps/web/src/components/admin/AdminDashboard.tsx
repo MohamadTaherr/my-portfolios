@@ -337,12 +337,14 @@ export default function AdminDashboard() {
     [portfolioItems]
   );
 
-  const handleFileUpload = async (file: File, field: 'mediaUrl' | 'thumbnailUrl' | 'documentUrl' | 'logoUrl') => {
+  const handleFileUpload = async (file: File, field: 'mediaUrl' | 'thumbnailUrl' | 'documentUrl' | 'logoUrl' | 'navLogoUrl') => {
     try {
       setUploadingFile(true);
       const result = await uploadFile(file);
       if (field === 'logoUrl') {
         setClientDraft((prev) => ({ ...prev, logoUrl: result.url }));
+      } else if (field === 'navLogoUrl') {
+        setNavigation((prev) => ({ ...prev, logoUrl: result.url }));
       } else {
         setPortfolioDraft((prev) => ({ ...prev, [field]: result.url }));
       }
@@ -1010,7 +1012,7 @@ export default function AdminDashboard() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'logoUrl', navigation, setNavigation)}
+                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'navLogoUrl')}
                     disabled={uploadingFile}
                   />
                 </label>
