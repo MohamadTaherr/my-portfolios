@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState, useRef } from 'react';
 import { fetchAdminAPI, uploadFile, uploadMultipleFiles } from '@/lib/api';
 import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
+import Image from 'next/image';
 
 type Panel = 'portfolio' | 'categories' | 'site' | 'page' | 'structure' | 'skills' | 'clients' | 'analytics';
 
@@ -1019,11 +1020,15 @@ export default function AdminDashboard() {
               </div>
               {navigation.logoUrl && (
                 <div className="mt-2">
-                  <img
-                    src={navigation.logoUrl}
-                    alt="Logo preview"
-                    className="h-12 object-contain bg-white/10 p-2 rounded"
-                  />
+                  <div className="relative h-12 w-32 bg-white/10 p-2 rounded">
+                    <Image
+                      src={navigation.logoUrl}
+                      alt="Logo preview"
+                      fill
+                      sizes="128px"
+                      className="object-contain"
+                    />
+                  </div>
                 </div>
               )}
             </label>

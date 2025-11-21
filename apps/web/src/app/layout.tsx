@@ -67,6 +67,24 @@ async function getAnalyticsSettings() {
   }
 }
 
+async function getPageContentData() {
+  try {
+    return await fetchAPI('/page-content');
+  } catch (error) {
+    console.error('Error fetching page content:', error);
+    return null;
+  }
+}
+
+async function getFullSiteSettings() {
+  try {
+    return await fetchAPI('/site-settings');
+  } catch (error) {
+    console.error('Error fetching site settings:', error);
+    return null;
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const [seoData, siteSettings] = await Promise.all([
     getSEOData(),
@@ -151,20 +169,27 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const analyticsSettings = await getAnalyticsSettings();
+  const [analyticsSettings, siteSettings, pageContent] = await Promise.all([
+    getAnalyticsSettings(),
+    getFullSiteSettings(),
+    getPageContentData(),
+  ]);
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <StructuredData />
+        <StructuredData siteSettings={siteSettings} pageContent={pageContent} />
       </head>
       <body
         className={`${inter.variable} ${ebGaramond.variable} ${cormorant.variable} antialiased`}
       >
         <GoogleAnalytics />
         <ThemeProvider>
+          <a href="#main-content" className="skip-nav">
+            Skip to content
+          </a>
           <Header />
-          <main className="min-h-screen">{children}</main>
+          <main id="main-content" className="min-h-screen">{children}</main>
           <Footer />
         </ThemeProvider>
         <ConditionalAnalytics enableVercelAnalytics={analyticsSettings?.enableVercelAnalytics || false} />

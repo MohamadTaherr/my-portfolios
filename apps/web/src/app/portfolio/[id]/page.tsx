@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { fetchAPI } from '@/lib/api';
 import VideoPlayer from '@/components/VideoPlayer';
 import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
@@ -84,12 +85,16 @@ const renderPrimaryMedia = (item: PortfolioItem) => {
     return (
       <div className="grid sm:grid-cols-2 gap-4">
         {item.gallery.map((src, index) => (
-          <img
-            key={`${src}-${index}`}
-            src={src}
-            alt={`${item.title} still ${index + 1}`}
-            className="rounded-2xl object-cover w-full h-64 border border-white/10"
-          />
+          <div key={`${src}-${index}`} className="relative w-full h-64 border border-white/10 rounded-2xl overflow-hidden">
+            <Image
+              src={src}
+              alt={`${item.title} still ${index + 1}`}
+              fill
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              className="object-cover"
+              loading="lazy"
+            />
+          </div>
         ))}
       </div>
     );
@@ -117,11 +122,16 @@ const renderPrimaryMedia = (item: PortfolioItem) => {
 
   if ((item.mediaType === 'IMAGE' || item.mediaType === 'GALLERY') && item.thumbnailUrl) {
     return (
-      <img
-        src={item.thumbnailUrl}
-        alt={item.title}
-        className="rounded-3xl w-full object-cover border border-white/10"
-      />
+      <div className="relative rounded-3xl w-full border border-white/10 overflow-hidden">
+        <Image
+          src={item.thumbnailUrl}
+          alt={item.title}
+          fill
+          sizes="(min-width: 1024px) 45vw, 100vw"
+          className="object-cover"
+          priority
+        />
+      </div>
     );
   }
 
@@ -216,12 +226,16 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
             <h2 className="text-2xl text-white font-semibold">Gallery</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {item.gallery.map((src, index) => (
-                <img
-                  key={`${item.id}-gallery-${index}`}
-                  src={src}
-                  alt={`${item.title} gallery frame ${index + 1}`}
-                  className="rounded-2xl border border-white/10 object-cover h-64 w-full"
-                />
+                <div key={`${item.id}-gallery-${index}`} className="relative h-64 w-full border border-white/10 rounded-2xl overflow-hidden">
+                  <Image
+                    src={src}
+                    alt={`${item.title} gallery frame ${index + 1}`}
+                    fill
+                    sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
+                    className="object-cover"
+                    loading="lazy"
+                  />
+                </div>
               ))}
             </div>
           </section>

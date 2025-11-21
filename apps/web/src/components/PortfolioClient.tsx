@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type ReactElement } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import VideoPlayer from './VideoPlayer';
 import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
 
@@ -124,12 +125,16 @@ export default function PortfolioClient({ items, categories }: PortfolioClientPr
       return (
         <div className="grid grid-cols-2 gap-4">
           {item.gallery.slice(0, 4).map((src, index) => (
-            <img
-              key={src + index}
-              src={src}
-              alt={`${item.title} frame ${index + 1}`}
-              className="h-40 w-full object-cover rounded-xl border border-white/10"
-            />
+            <div key={src + index} className="relative h-40 w-full overflow-hidden rounded-xl border border-white/10">
+              <Image
+                src={src}
+                alt={`${item.title} frame ${index + 1}`}
+                fill
+                sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 100vw"
+                className="object-cover"
+                loading="lazy"
+              />
+            </div>
           ))}
         </div>
       );
@@ -168,11 +173,16 @@ export default function PortfolioClient({ items, categories }: PortfolioClientPr
 
     if ((item.mediaType === 'IMAGE' || item.mediaType === 'GALLERY') && item.thumbnailUrl) {
       return (
-        <img
-          src={item.thumbnailUrl}
-          alt={item.title}
-          className="w-full rounded-3xl border border-white/10 object-cover"
-        />
+        <div className="relative w-full rounded-3xl border border-white/10 overflow-hidden">
+          <Image
+            src={item.thumbnailUrl}
+            alt={item.title}
+            fill
+            sizes="(min-width: 1280px) 50vw, 100vw"
+            className="object-cover"
+            loading="lazy"
+          />
+        </div>
       );
     }
 
@@ -227,10 +237,13 @@ export default function PortfolioClient({ items, categories }: PortfolioClientPr
               <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               {item.thumbnailUrl ? (
                 <div className="relative h-64 w-full overflow-hidden">
-                  <img
+                  <Image
                     src={item.thumbnailUrl}
                     alt={item.title}
-                    className="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    fill
+                    sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 </div>

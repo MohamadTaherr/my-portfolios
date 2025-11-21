@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { fetchAPI } from '@/lib/api';
 
 interface Client {
@@ -143,12 +144,15 @@ export default function Clients() {
                 <div className="relative p-8 space-y-5">
                   {/* Client Logo & Category Badge */}
                   <div className="flex items-start justify-between">
-                    <div className="w-20 h-20 rounded-xl bg-card border border-border/50 flex items-center justify-center p-2 overflow-hidden">
+                    <div className="relative w-20 h-20 rounded-xl bg-card border border-border/50 flex items-center justify-center p-2 overflow-hidden">
                       {client.logoUrl ? (
-                        <img
+                        <Image
                           src={client.logoUrl}
                           alt={`${client.name} logo - Client of Edmond Haddad`}
-                          className="w-full h-full object-contain"
+                          fill
+                          sizes="80px"
+                          className="object-contain"
+                          loading="lazy"
                         />
                       ) : (
                         <span className="text-2xl font-bold text-primary font-[family-name:var(--font-playfair)]">

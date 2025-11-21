@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 interface NavItem {
@@ -70,9 +71,12 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             {logoUrl ? (
-              <img
+              <Image
                 src={logoUrl}
-                alt="Logo"
+                alt="Site logo"
+                width={160}
+                height={48}
+                priority
                 className="h-12 w-auto object-contain"
               />
             ) : (

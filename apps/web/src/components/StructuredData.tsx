@@ -1,25 +1,52 @@
-export default function StructuredData() {
+type SocialLinks = Record<string, string | null | undefined>;
+
+type SiteSettings = {
+  name?: string;
+  tagline?: string;
+  bio?: string;
+  location?: string;
+  socialLinks?: SocialLinks;
+};
+
+type PageContent = {
+  seoTitle?: string;
+  seoDescription?: string;
+  heroHeadline?: string;
+  heroSubheadline?: string;
+};
+
+interface StructuredDataProps {
+  siteSettings?: SiteSettings | null;
+  pageContent?: PageContent | null;
+}
+
+const defaultName = 'Edmond Haddad';
+const fallbackDescription = 'Award-winning scriptwriter and creative producer with two decades of experience crafting compelling stories for Porsche, major films, and global brands.';
+
+export default function StructuredData({ siteSettings, pageContent }: StructuredDataProps) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com';
+  const name = siteSettings?.name || defaultName;
+  const tagline = pageContent?.heroHeadline || siteSettings?.tagline || 'I tell stories that move people';
+  const description = pageContent?.seoDescription || siteSettings?.bio || fallbackDescription;
+  const socialLinks = Object.values(siteSettings?.socialLinks || {}).filter(Boolean) as string[];
+  const location = siteSettings?.location || 'Global';
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: 'Edmond Haddad',
+    name,
     jobTitle: 'Scriptwriter & Creative Producer',
-    description: 'Award-winning scriptwriter and creative producer with two decades of experience crafting compelling stories for Porsche, major films, and global brands.',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com',
-    image: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'}/og-image.jpg`,
-    sameAs: [
-      // Add your actual social media profiles here
-      'https://twitter.com/yourusername',
-      'https://linkedin.com/in/yourusername',
-      'https://github.com/yourusername',
-    ],
+    description,
+    url: siteUrl,
+    image: `${siteUrl}/og-image.jpg`,
+    sameAs: socialLinks.length > 0 ? socialLinks : undefined,
     knowsAbout: [
       'Scriptwriting',
       'Video Production',
-      'Creative Directing',
+      'Creative Direction',
       'Documentary Filmmaking',
       'Commercial Production',
-      'Content Creation',
+      'Content Strategy',
       'Brand Storytelling',
     ],
     hasOccupation: {
@@ -27,12 +54,7 @@ export default function StructuredData() {
       name: 'Scriptwriter',
       occupationLocation: {
         '@type': 'City',
-        name: 'Your City', // Replace with actual city
-      },
-      estimatedSalary: {
-        '@type': 'MonetaryAmountDistribution',
-        name: 'Professional',
-        currency: 'USD',
+        name: location,
       },
     },
   };
@@ -40,37 +62,32 @@ export default function StructuredData() {
   const organizationData = {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
-    name: 'Edmond Haddad Creative Services',
-    description: 'Professional scriptwriting, video production, and creative services for brands and filmmakers.',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com',
+    name: `${name} Creative Services`,
+    description,
+    url: siteUrl,
+    slogan: tagline,
     founder: {
       '@type': 'Person',
-      name: 'Edmond Haddad',
+      name,
     },
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Your City', // Replace with actual city
-      addressCountry: 'Your Country', // Replace with actual country
+      addressLocality: location,
+      addressCountry: 'Worldwide',
     },
     areaServed: 'Worldwide',
     serviceType: [
       'Scriptwriting',
       'Video Production',
-      'Creative Directing',
+      'Creative Direction',
       'Content Strategy',
     ],
   };
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationData) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationData) }} />
     </>
   );
 }
