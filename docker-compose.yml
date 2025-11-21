@@ -1,8 +1,11 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
+  # PostgreSQL Database (disabled by default for Coolify - uses external DB)
+  # To use local postgres, run with: docker-compose --profile local-db up
   postgres:
+    profiles:
+      - local-db
     image: postgres:16-alpine
     container_name: portfolio-db
     restart: unless-stopped
@@ -32,26 +35,12 @@ services:
     env_file:
       - .env.production
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
-      PORT: ${PORT:-10000}
-      DATABASE_URL: ${DATABASE_URL:-postgresql://portfolio:portfolio_password@postgres:5432/portfolio_db}
-      BACKEND_URL: ${BACKEND_URL:-}
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
-      # Backblaze B2 credentials (if using)
-      B2_APPLICATION_KEY_ID: ${B2_APPLICATION_KEY_ID:-}
-      B2_APPLICATION_KEY: ${B2_APPLICATION_KEY:-}
-      B2_BUCKET_NAME: ${B2_BUCKET_NAME:-}
-      B2_BUCKET_ID: ${B2_BUCKET_ID:-}
-      # Admin credentials
-      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      NODE_ENV: production
+      PORT: 10000
     ports:
       - "${BACKEND_PORT:-10000}:10000"
     volumes:
       - backend_uploads:/app/apps/backend/uploads
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - portfolio-network
     healthcheck:
@@ -66,27 +55,17 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:10000}
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
-        NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-}
     container_name: portfolio-web
     restart: unless-stopped
     env_file:
       - .env.production
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: production
       PORT: 3000
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:10000}
-      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
-      NEXT_PUBLIC_GA_MEASUREMENT_ID: ${NEXT_PUBLIC_GA_MEASUREMENT_ID:-}
-      RESEND_API_KEY: ${RESEND_API_KEY:-}
-      CONTACT_EMAIL: ${CONTACT_EMAIL:-}
     ports:
       - "${WEB_PORT:-3000}:3000"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - portfolio-network
     healthcheck:

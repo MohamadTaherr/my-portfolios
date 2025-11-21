@@ -42,7 +42,8 @@
       "Bash(curl:*)",
       "Bash(pnpm db:generate:*)",
       "Bash(pnpm db:push:*)",
-      "Bash(pnpm db:test:*)"
+      "Bash(pnpm db:test:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

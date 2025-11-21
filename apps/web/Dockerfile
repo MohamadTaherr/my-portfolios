@@ -14,33 +14,25 @@ COPY turbo.json ./
 # Copy web package.json
 COPY apps/web/package.json ./apps/web/
 
-# Override NODE_ENV to development for installing devDependencies
-ARG NODE_ENV
-ENV NODE_ENV=development
-RUN pnpm install --frozen-lockfile
+# IMPORTANT: Always install ALL dependencies (including devDependencies)
+# Coolify passes NODE_ENV=production as build arg which would skip devDependencies
+# We explicitly ignore the ARG and force development mode for install
+RUN NODE_ENV=development pnpm install --frozen-lockfile
 
 # Build stage
 FROM base AS builder
 
-# Override NODE_ENV build arg to ensure development mode for build
-ARG NODE_ENV
+# Force development mode for build (ignore any NODE_ENV build arg from Coolify)
 ENV NODE_ENV=development
 
-# Declare build arguments with defaults
-ARG NEXT_PUBLIC_API_URL=http://localhost:10000
-ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
-ARG NEXT_PUBLIC_GA_MEASUREMENT_ID=
-
-# Set as environment variables for Next.js build
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
-ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=${NEXT_PUBLIC_GA_MEASUREMENT_ID}
+# Copy env file first for build-time variables
+COPY .env.production .env.production
 
 # Copy web source
 COPY apps/web ./apps/web
 
-# Build Next.js app
-RUN pnpm --filter web run build
+# Build Next.js app (source env file to get NEXT_PUBLIC_* variables)
+RUN set -a && . ./.env.production && set +a && pnpm --filter web run build
 
 # Production stage
 FROM node:20-alpine AS runner

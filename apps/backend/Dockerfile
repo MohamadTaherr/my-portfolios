@@ -14,16 +14,15 @@ COPY turbo.json ./
 # Copy backend package.json
 COPY apps/backend/package.json ./apps/backend/
 
-# Override NODE_ENV to development for installing devDependencies
-ARG NODE_ENV
-ENV NODE_ENV=development
-RUN pnpm install --frozen-lockfile
+# IMPORTANT: Always install ALL dependencies (including devDependencies)
+# Coolify passes NODE_ENV=production as build arg which would skip devDependencies
+# We explicitly ignore the ARG and force development mode for install
+RUN NODE_ENV=development pnpm install --frozen-lockfile
 
 # Build stage
 FROM base AS builder
 
-# Override NODE_ENV build arg to ensure development mode for build
-ARG NODE_ENV
+# Force development mode for build (ignore any NODE_ENV build arg from Coolify)
 ENV NODE_ENV=development
 
 # Copy backend source

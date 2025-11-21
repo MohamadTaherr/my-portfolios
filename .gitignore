@@ -36,8 +36,8 @@ yarn-error.log*
 !.env.example
 !.env.local.example
 !.env.production.example
-# Uncomment the line below if you want to commit .env.production
-# !.env.production
+# Allow .env.production to be committed (for Coolify/Docker deployments)
+!.env.production
 
 # vercel
 .vercel

@@ -11,6 +11,12 @@ const nextConfig = {
       { protocol: 'https', hostname: 'cdn.sanity.io' },
       { protocol: 'http', hostname: 'localhost', port: '10000' },
       { protocol: 'https', hostname: '**.vercel.app' },
+      // Coolify/Hetzner - allow any subdomain pattern
+      { protocol: 'https', hostname: '**.coolify.io' },
+      { protocol: 'https', hostname: '**.hetzner.cloud' },
+      { protocol: 'https', hostname: '**.hetzner.com' },
+      // Allow any HTTPS hostname for flexibility with custom domains
+      { protocol: 'https', hostname: '**' },
     ],
   },
 };
