@@ -35,13 +35,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
-
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/web/package.json ./apps/web/
-RUN pnpm install --frozen-lockfile --prod
-
-# Copy built app
+# Copy the standalone output (includes server.js at root of standalone)
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder /app/apps/web/public ./apps/web/public
@@ -53,4 +47,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+# The standalone output creates server.js in apps/web/ for monorepo
+CMD ["node", "apps/web/server.js"]

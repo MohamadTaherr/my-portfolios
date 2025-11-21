@@ -25,6 +25,9 @@ RUN pnpm --filter backend run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+# Install OpenSSL for Prisma compatibility
+RUN apk add --no-cache openssl
+
 RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -35,7 +38,7 @@ RUN pnpm install --frozen-lockfile --prod
 COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY --from=builder /app/apps/backend/prisma ./apps/backend/prisma
 
-# Regenerate Prisma client for runtime
+# Regenerate Prisma client for Alpine runtime
 RUN pnpm --filter backend run db:generate
 
 # Create uploads directory
@@ -43,5 +46,6 @@ RUN mkdir -p /app/apps/backend/uploads
 
 EXPOSE 10000
 ENV NODE_ENV=production
+ENV PORT=10000
 
 CMD ["node", "apps/backend/dist/server.js"]
