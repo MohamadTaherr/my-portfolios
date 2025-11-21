@@ -14,14 +14,16 @@ COPY turbo.json ./
 # Copy backend package.json
 COPY apps/backend/package.json ./apps/backend/
 
-# Install dependencies (including devDependencies for build)
+# Override NODE_ENV to development for installing devDependencies
+ARG NODE_ENV
 ENV NODE_ENV=development
 RUN pnpm install --frozen-lockfile
 
 # Build stage
 FROM base AS builder
 
-# Ensure NODE_ENV is development for build
+# Override NODE_ENV build arg to ensure development mode for build
+ARG NODE_ENV
 ENV NODE_ENV=development
 
 # Copy backend source
