@@ -33,9 +33,12 @@ router.get('/page-content', async (req: Request, res: Response) => {
 router.get('/navigation', async (req: Request, res: Response) => {
   try {
     const navigation = await db.getNavigation();
+    const links = navigation.links || [];
     res.json({
-      mainNavigation: navigation.links || [],
+      links,
+      mainNavigation: links,
       logoText: navigation.logoText || '',
+      logoUrl: navigation.logoUrl || '',
     });
   } catch (error) {
     console.error('Error fetching navigation:', error);

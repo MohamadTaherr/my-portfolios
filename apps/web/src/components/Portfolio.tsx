@@ -19,22 +19,32 @@ export default async function Portfolio() {
     fetchAPI('/categories').catch(() => []),
   ]);
 
+  const categoryCounts = new Map<string, number>();
   const categorySet = new Set<string>();
   const mediaTypeSet = new Set<PortfolioMediaType>();
 
   items.forEach((item) => {
     if (item.category) {
-      categorySet.add(item.category);
+      const normalizedCategory = item.category.trim();
+      if (normalizedCategory) {
+        categorySet.add(normalizedCategory);
+        categoryCounts.set(normalizedCategory, (categoryCounts.get(normalizedCategory) ?? 0) + 1);
+      }
     }
     if (item.mediaType) {
       mediaTypeSet.add(item.mediaType);
     }
   });
 
-  // Use categories from API if available, otherwise extract from items
+  const categoriesFromApi = categoriesData
+    .map((cat) => ({ ...cat, name: cat.name?.trim() || '' }))
+    .filter((cat) => Boolean(cat.name) && categoryCounts.has(cat.name))
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((cat) => cat.name);
+
   const categories =
-    categoriesData.length > 0
-      ? categoriesData.map((cat) => cat.name).sort()
+    categoriesFromApi.length > 0
+      ? categoriesFromApi
       : categorySet.size > 0
       ? Array.from(categorySet).sort()
       : [];

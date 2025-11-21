@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface NavItem {
   label: string;
@@ -11,11 +12,13 @@ interface NavItem {
 
 interface NavigationSettings {
   links?: NavItem[];
+  mainNavigation?: NavItem[];
   logoText?: string;
   logoUrl?: string;
 }
 
 export default function Header() {
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState<NavItem[]>([
     { href: '#home', label: 'Home', order: 0 },
@@ -33,23 +36,32 @@ export default function Header() {
     fetch(`${API_URL}/api/navigation`)
       .then(res => res.json())
       .then((data: NavigationSettings) => {
-        if (data.links && data.links.length > 0) {
-          const sortedLinks = data.links
+        const links = data.links?.length ? data.links : data.mainNavigation || [];
+        if (links.length > 0) {
+          const sortedLinks = links
             .map((link, index) => ({ ...link, order: link.order ?? index }))
             .sort((a, b) => a.order - b.order);
           setNavItems(sortedLinks);
         }
-        if (data.logoText) {
-          setLogoText(data.logoText);
+        if (typeof data.logoText === 'string' && data.logoText.trim()) {
+          setLogoText(data.logoText.trim());
         }
-        if (data.logoUrl) {
-          setLogoUrl(data.logoUrl);
-        }
+        setLogoUrl(data.logoUrl?.trim() ? data.logoUrl.trim() : null);
       })
       .catch(err => console.error('Error fetching navigation:', err));
   }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const normalizeHref = (href: string) => {
+    if (!href) return '#';
+    if (href.startsWith('/#')) {
+      return href;
+    }
+    if (href.startsWith('#')) {
+      return pathname === '/' ? href : `/${href}`;
+    }
+    return href;
+  };
 
   return (
     <header className="fixed top-0 z-50 w-full bg-black/80 backdrop-blur-md border-b border-gold/10">
@@ -75,7 +87,7 @@ export default function Header() {
             {navItems.map((item) => (
               <Link
                 key={item.href}
-                href={item.href}
+                href={normalizeHref(item.href)}
                 className="text-sm tracking-wider uppercase text-ivory/70 hover:text-gold transition-colors duration-300"
               >
                 {item.label}
@@ -114,7 +126,7 @@ export default function Header() {
               {navItems.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
+                  href={normalizeHref(item.href)}
                   className="text-sm tracking-wider uppercase text-ivory/70 hover:text-gold transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
