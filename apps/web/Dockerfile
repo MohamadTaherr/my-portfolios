@@ -20,17 +20,18 @@ RUN pnpm install --frozen-lockfile
 # Build stage
 FROM base AS builder
 
+# Declare build arguments with defaults
+ARG NEXT_PUBLIC_API_URL=http://localhost:10000
+ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
+ARG NEXT_PUBLIC_GA_MEASUREMENT_ID=
+
+# Set as environment variables for Next.js build
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=${NEXT_PUBLIC_GA_MEASUREMENT_ID}
+
 # Copy web source
 COPY apps/web ./apps/web
-
-# Set build-time environment variables (can be overridden)
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_SITE_URL
-ARG NEXT_PUBLIC_GA_MEASUREMENT_ID
-
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
-ENV NEXT_PUBLIC_GA_MEASUREMENT_ID=$NEXT_PUBLIC_GA_MEASUREMENT_ID
 
 # Build Next.js app
 RUN pnpm --filter web run build

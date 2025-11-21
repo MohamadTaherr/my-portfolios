@@ -7,4 +7,5 @@ uploads/*
 .env.*
 *.test.ts
 *.spec.ts
-
+.git
+.gitignore

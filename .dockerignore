@@ -60,8 +60,8 @@ Thumbs.db
 .render
 *.pem
 
-# Docker
-Dockerfile*
+# Docker (keep Dockerfiles for build context)
+# Dockerfile* - commented out, needed for build
 docker-compose*.yml
 .dockerignore
 
