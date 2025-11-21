@@ -29,6 +29,14 @@ projects:
                 fromDatabase:
                   name: portfolio-db
                   property: connectionString
+              - key: BACKBLAZE_BUCKET_ID
+                value: b2469a1e1eeea86199ae0813
+              - key: BACKBLAZE_BUCKET_NAME
+                value: myportfolioedmond
+              - key: BACKBLAZE_KEY_ID
+                sync: false
+              - key: BACKBLAZE_APPLICATION_KEY
+                sync: false
         databases:
           - name: portfolio-db
             databaseName: portfolio_db

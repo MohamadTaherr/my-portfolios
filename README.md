@@ -83,6 +83,29 @@ pnpm dev
 
 ## Deployment
 
+### Docker Deployment (Recommended for Coolify/Hetzner)
+
+See [DOCKER_DEPLOYMENT.md](./DOCKER_DEPLOYMENT.md) for complete Docker setup instructions.
+
+**Quick Start:**
+```bash
+# Copy and configure environment variables
+cp .env.example .env
+# Edit .env with your values
+
+# Build and start all services
+docker-compose up -d --build
+
+# Initialize database
+docker-compose exec backend pnpm --filter backend run db:push
+```
+
+**For Coolify:**
+- Option 1: Use `docker-compose.yml` as a Docker Compose resource
+- Option 2: Deploy services separately using:
+  - Backend: `apps/backend/Dockerfile`
+  - Web: `apps/web/Dockerfile`
+
 ### Backend (Render)
 
 1. Connect your GitHub repository to Render

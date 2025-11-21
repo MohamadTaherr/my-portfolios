@@ -35,6 +35,9 @@ yarn-error.log*
 .env*.local
 !.env.example
 !.env.local.example
+!.env.production.example
+# Uncomment the line below if you want to commit .env.production
+# !.env.production
 
 # vercel
 .vercel
