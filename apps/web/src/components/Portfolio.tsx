@@ -1,5 +1,5 @@
 import { fetchAPI } from '@/lib/api';
-import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
+import type { PortfolioItem } from '@/types/portfolio';
 import PortfolioClient from './PortfolioClient';
 
 export const revalidate = 60;
@@ -21,7 +21,6 @@ export default async function Portfolio() {
 
   const categoryCounts = new Map<string, number>();
   const categorySet = new Set<string>();
-  const mediaTypeSet = new Set<PortfolioMediaType>();
 
   items.forEach((item) => {
     if (item.category) {
@@ -30,9 +29,6 @@ export default async function Portfolio() {
         categorySet.add(normalizedCategory);
         categoryCounts.set(normalizedCategory, (categoryCounts.get(normalizedCategory) ?? 0) + 1);
       }
-    }
-    if (item.mediaType) {
-      mediaTypeSet.add(item.mediaType);
     }
   });
 
@@ -48,11 +44,6 @@ export default async function Portfolio() {
       : categorySet.size > 0
       ? Array.from(categorySet).sort()
       : [];
-
-  const mediaTypes: PortfolioMediaType[] =
-    mediaTypeSet.size > 0
-      ? Array.from(mediaTypeSet)
-      : (['VIDEO', 'ARTICLE', 'GALLERY'] as PortfolioMediaType[]);
 
   return (
     <section id="portfolio" className="relative py-32 md:py-40 overflow-hidden bg-gradient-to-b from-background via-background/80 to-background">
@@ -85,7 +76,7 @@ export default async function Portfolio() {
           </p>
         </div>
 
-        <PortfolioClient items={items} categories={categories} mediaTypes={mediaTypes} />
+        <PortfolioClient items={items} categories={categories} />
       </div>
     </section>
   );

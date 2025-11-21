@@ -126,15 +126,35 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
                           <div className="absolute inset-0 rounded-[2.5rem] border-2 border-primary/20 pointer-events-none group-hover:border-primary/60 transition-colors" />
                         </>
                       ) : (
-                        <div className="relative z-10 glass-card w-full h-full rounded-[2.5rem] flex flex-col items-center justify-center hover-lift gap-6">
-                          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 flex items-center justify-center shadow-lg shadow-purple-500/50">
-                            <svg className="w-12 h-12 text-white ml-1" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M8 5v14l11-7z" />
-                            </svg>
+                        <div className="relative z-10 glass-card w-full h-full rounded-[2.5rem] p-8 sm:p-10 flex flex-col gap-8 justify-between overflow-hidden hover-lift">
+                          <div className="space-y-3 text-center">
+                            <p className="text-xs sm:text-sm uppercase tracking-[0.5em] text-white/60">Featured Showreel</p>
+                            <h3 className="text-3xl sm:text-4xl font-[family-name:var(--font-playfair)] text-white">A cinematic snapshot</h3>
+                            <p className="text-white/70 text-sm sm:text-base max-w-md mx-auto">
+                              Preview the latest montage - crafted for global campaigns and filmmaker partners.
+                            </p>
                           </div>
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-white mb-2">Watch Showreel</p>
-                            <p className="text-sm text-white/60">Click to play</p>
+                          <div className="space-y-4">
+                            <div className="relative aspect-video rounded-2xl border border-white/15 bg-gradient-to-br from-black/70 via-purple-900/40 to-pink-900/30 overflow-hidden shadow-2xl shadow-primary/20">
+                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.2),_transparent_60%)]" />
+                              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-white/80 px-6 text-center">
+                                <div className="text-xs tracking-[0.6em] uppercase text-white/60">Showreel</div>
+                                <div className="text-xl sm:text-2xl font-semibold">Tap play to watch</div>
+                                <button
+                                  type="button"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    setIsVideoOpen(true);
+                                  }}
+                                  className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white text-black font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition"
+                                >
+                                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                  </svg>
+                                  Play Showreel
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       )}

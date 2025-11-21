@@ -5,12 +5,9 @@ import Link from 'next/link';
 import VideoPlayer from './VideoPlayer';
 import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
 
-type ActiveMediaFilter = PortfolioMediaType | 'ALL';
-
 interface PortfolioClientProps {
   items: PortfolioItem[];
   categories: string[];
-  mediaTypes: PortfolioMediaType[];
 }
 
 const mediaTypeCopy: Record<PortfolioMediaType, string> = {
@@ -78,9 +75,8 @@ const formatBody = (item: PortfolioItem): string => {
   return 'Additional details coming soon.';
 };
 
-export default function PortfolioClient({ items, categories, mediaTypes }: PortfolioClientProps) {
+export default function PortfolioClient({ items, categories }: PortfolioClientProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [activeMediaType, setActiveMediaType] = useState<ActiveMediaFilter>('ALL');
   const [selected, setSelected] = useState<PortfolioItem | null>(null);
 
   const orderedItems = useMemo(() => {
@@ -94,10 +90,9 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
   const filteredItems = useMemo(() => {
     return orderedItems.filter((item) => {
       const categoryMatch = activeCategory === 'All' || item.category === activeCategory;
-      const mediaMatch = activeMediaType === 'ALL' || item.mediaType === activeMediaType;
-      return categoryMatch && mediaMatch;
+      return categoryMatch;
     });
-  }, [orderedItems, activeCategory, activeMediaType]);
+  }, [orderedItems, activeCategory]);
 
   const handleSelect = (item: PortfolioItem) => setSelected(item);
   const closeModal = () => setSelected(null);
@@ -215,21 +210,6 @@ export default function PortfolioClient({ items, categories, mediaTypes }: Portf
           ))}
         </div>
 
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-          {(['ALL', ...mediaTypes] as ActiveMediaFilter[]).map((type) => (
-            <button
-              key={type}
-              onClick={() => setActiveMediaType(type)}
-              className={`px-3 sm:px-5 py-2 sm:py-2.5 text-[0.65rem] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase rounded-full transition-all duration-300 transform hover:scale-105 ${
-                activeMediaType === type
-                  ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 text-white shadow-[0_10px_40px_rgba(99,102,241,0.5)]'
-                  : 'bg-white/5 text-white/60 border border-white/10 hover:border-cyan-400/40 hover:text-white/80'
-              }`}
-            >
-              {type === 'ALL' ? 'All Media' : mediaTypeCopy[type]}
-            </button>
-          ))}
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
           {filteredItems.length === 0 && (
