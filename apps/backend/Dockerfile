@@ -14,25 +14,30 @@ COPY turbo.json ./
 # Copy backend package.json
 COPY apps/backend/package.json ./apps/backend/
 
-# IMPORTANT: Always install ALL dependencies (including devDependencies)
-# Coolify passes NODE_ENV=production as build arg which would skip devDependencies
-# We explicitly ignore the ARG and force development mode for install
-RUN NODE_ENV=development pnpm install --frozen-lockfile
+# CRITICAL: Unset NODE_ENV completely, then install with development mode
+# Coolify injects ARG NODE_ENV=production which breaks dependency installation
+RUN unset NODE_ENV && NODE_ENV=development pnpm install --frozen-lockfile
 
 # Build stage
-FROM base AS builder
+FROM node:20-alpine AS builder
 
-# Force development mode for build (ignore any NODE_ENV build arg from Coolify)
-ENV NODE_ENV=development
+# Install pnpm fresh in builder stage
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+
+WORKDIR /app
+
+# Copy everything from base stage
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml /app/turbo.json ./
+COPY --from=base /app/apps/backend/node_modules ./apps/backend/node_modules
+COPY --from=base /app/apps/backend/package.json ./apps/backend/
 
 # Copy backend source
 COPY apps/backend ./apps/backend
 
-# Generate Prisma Client
-RUN pnpm --filter backend run db:generate
-
-# Build backend
-RUN pnpm --filter backend run build
+# Generate Prisma Client and build (with NODE_ENV unset to avoid Coolify ARG injection)
+RUN unset NODE_ENV && NODE_ENV=development pnpm --filter backend run db:generate
+RUN unset NODE_ENV && NODE_ENV=development pnpm --filter backend run build
 
 # Production stage
 FROM node:20-alpine AS runner

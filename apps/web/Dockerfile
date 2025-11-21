@@ -14,25 +14,33 @@ COPY turbo.json ./
 # Copy web package.json
 COPY apps/web/package.json ./apps/web/
 
-# IMPORTANT: Always install ALL dependencies (including devDependencies)
-# Coolify passes NODE_ENV=production as build arg which would skip devDependencies
-# We explicitly ignore the ARG and force development mode for install
-RUN NODE_ENV=development pnpm install --frozen-lockfile
+# CRITICAL: Unset NODE_ENV completely, then install with development mode
+# Coolify injects ARG NODE_ENV=production which breaks dependency installation
+RUN unset NODE_ENV && NODE_ENV=development pnpm install --frozen-lockfile
 
 # Build stage
-FROM base AS builder
+FROM node:20-alpine AS builder
 
-# Force development mode for build (ignore any NODE_ENV build arg from Coolify)
-ENV NODE_ENV=development
+# Install pnpm fresh in builder stage
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
-# Copy env file first for build-time variables
+WORKDIR /app
+
+# Copy everything from base stage
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml /app/turbo.json ./
+COPY --from=base /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=base /app/apps/web/package.json ./apps/web/
+
+# Copy env file and web source
 COPY .env.production .env.production
-
-# Copy web source
 COPY apps/web ./apps/web
 
-# Build Next.js app (source env file to get NEXT_PUBLIC_* variables)
-RUN set -a && . ./.env.production && set +a && pnpm --filter web run build
+# Build Next.js app with explicit env vars (bypass any Coolify ARG injection)
+RUN unset NODE_ENV && \
+    export NODE_ENV=development && \
+    export $(grep -v '^#' .env.production | grep 'NEXT_PUBLIC_' | xargs) && \
+    pnpm --filter web run build
 
 # Production stage
 FROM node:20-alpine AS runner
