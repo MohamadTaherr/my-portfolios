@@ -45,13 +45,15 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/backend/package.json ./apps/backend/
 
-# Install production dependencies only
+# Install production dependencies (Prisma is in dependencies)
 RUN pnpm install --frozen-lockfile --prod
 
 # Copy built files from builder
 COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY --from=builder /app/apps/backend/prisma ./apps/backend/prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+# Regenerate Prisma client in production stage (needed for runtime)
+RUN pnpm --filter backend run db:generate
 
 # Create uploads directory
 RUN mkdir -p /app/apps/backend/uploads
