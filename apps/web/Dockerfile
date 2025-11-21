@@ -14,11 +14,15 @@ COPY turbo.json ./
 # Copy web package.json
 COPY apps/web/package.json ./apps/web/
 
-# Install dependencies
+# Install dependencies (including devDependencies for build)
+ENV NODE_ENV=development
 RUN pnpm install --frozen-lockfile
 
 # Build stage
 FROM base AS builder
+
+# Set NODE_ENV to development for build (needs devDependencies)
+ENV NODE_ENV=development
 
 # Declare build arguments with defaults
 ARG NEXT_PUBLIC_API_URL=http://localhost:10000
