@@ -338,7 +338,7 @@ export default function AdminDashboard() {
     [portfolioItems]
   );
 
-  const handleFileUpload = async (file: File, field: 'mediaUrl' | 'thumbnailUrl' | 'documentUrl' | 'logoUrl' | 'navLogoUrl') => {
+  const handleFileUpload = async (file: File, field: 'mediaUrl' | 'thumbnailUrl' | 'documentUrl' | 'logoUrl' | 'navLogoUrl' | 'profileImageUrl') => {
     try {
       setUploadingFile(true);
       const result = await uploadFile(file);
@@ -346,13 +346,15 @@ export default function AdminDashboard() {
         setClientDraft((prev) => ({ ...prev, logoUrl: result.url }));
       } else if (field === 'navLogoUrl') {
         setNavigation((prev) => ({ ...prev, logoUrl: result.url }));
+      } else if (field === 'profileImageUrl') {
+        setSiteSettings((prev) => ({ ...prev, profileImageUrl: result.url }));
       } else {
         setPortfolioDraft((prev) => ({ ...prev, [field]: result.url }));
       }
-      triggerToast(`File uploaded successfully`);
+      triggerToast(`File uploaded successfully to Backblaze B2`);
     } catch (error) {
-      console.error('Upload failed:', error);
-      setError('File upload failed. Please try again.');
+      console.error('Backblaze upload failed:', error);
+      setError('File upload to Backblaze B2 failed. Please check your Backblaze configuration.');
     } finally {
       setUploadingFile(false);
     }
@@ -888,6 +890,41 @@ export default function AdminDashboard() {
             value={siteSettings.bio || ''}
             onChange={(event) => setSiteSettings((prev) => ({ ...prev, bio: event.target.value }))}
           />
+        </label>
+        
+        <label className={labelClass}>
+          Profile Image URL
+          <div className="flex gap-2">
+            <input
+              className={textInputClass}
+              value={siteSettings.profileImageUrl || ''}
+              onChange={(event) => setSiteSettings((prev) => ({ ...prev, profileImageUrl: event.target.value }))}
+              placeholder="Profile image URL (uploaded to Backblaze B2)"
+            />
+            <label className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white cursor-pointer hover:bg-white/10 transition whitespace-nowrap">
+              {uploadingFile ? 'Uploading...' : 'Upload'}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0], 'profileImageUrl')}
+                disabled={uploadingFile}
+              />
+            </label>
+          </div>
+          {siteSettings.profileImageUrl && (
+            <div className="mt-2">
+              <div className="relative h-32 w-32 bg-white/10 p-2 rounded">
+                <Image
+                  src={siteSettings.profileImageUrl}
+                  alt="Profile preview"
+                  fill
+                  sizes="128px"
+                  className="object-cover rounded"
+                />
+              </div>
+            </div>
+          )}
         </label>
         <div className="grid gap-4 md:grid-cols-3">
           {['yearsExperience', 'projectsCompleted', 'clientsServed', 'industryAwards'].map((field) => (

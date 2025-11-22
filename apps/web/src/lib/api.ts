@@ -35,10 +35,19 @@ export async function uploadFile(file: File): Promise<{ url: string; filename: s
   });
 
   if (!response.ok) {
-    throw new Error(`Upload failed: ${response.statusText}`);
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = errorData.details || errorData.error || response.statusText;
+    throw new Error(`Backblaze upload failed: ${errorMessage}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  
+  // Verify the URL is from Backblaze
+  if (result.url && !result.url.includes('backblazeb2.com')) {
+    console.warn('⚠️ Uploaded file URL is not from Backblaze:', result.url);
+  }
+  
+  return result;
 }
 
 export async function uploadMultipleFiles(files: File[]): Promise<{ files: Array<{ url: string; filename: string }> }> {
@@ -53,9 +62,20 @@ export async function uploadMultipleFiles(files: File[]): Promise<{ files: Array
   });
 
   if (!response.ok) {
-    throw new Error(`Upload failed: ${response.statusText}`);
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = errorData.details || errorData.error || response.statusText;
+    throw new Error(`Backblaze upload failed: ${errorMessage}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  
+  // Verify all URLs are from Backblaze
+  result.files?.forEach((file: { url: string }) => {
+    if (file.url && !file.url.includes('backblazeb2.com')) {
+      console.warn('⚠️ Uploaded file URL is not from Backblaze:', file.url);
+    }
+  });
+  
+  return result;
 }
 

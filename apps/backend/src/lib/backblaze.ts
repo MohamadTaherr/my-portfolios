@@ -15,12 +15,24 @@ const initializeB2 = (): B2 => {
 };
 
 export const isBackblazeConfigured = (): boolean => {
-  return !!(
+  const isConfigured = !!(
     process.env.BACKBLAZE_KEY_ID &&
     process.env.BACKBLAZE_APPLICATION_KEY &&
     process.env.BACKBLAZE_BUCKET_ID &&
     process.env.BACKBLAZE_BUCKET_NAME
   );
+  
+  if (!isConfigured) {
+    console.warn('⚠️ Backblaze B2 is not configured. Missing environment variables:');
+    if (!process.env.BACKBLAZE_KEY_ID) console.warn('  - BACKBLAZE_KEY_ID');
+    if (!process.env.BACKBLAZE_APPLICATION_KEY) console.warn('  - BACKBLAZE_APPLICATION_KEY');
+    if (!process.env.BACKBLAZE_BUCKET_ID) console.warn('  - BACKBLAZE_BUCKET_ID');
+    if (!process.env.BACKBLAZE_BUCKET_NAME) console.warn('  - BACKBLAZE_BUCKET_NAME');
+  } else {
+    console.log('✅ Backblaze B2 is configured');
+  }
+  
+  return isConfigured;
 };
 
 export interface UploadResult {
