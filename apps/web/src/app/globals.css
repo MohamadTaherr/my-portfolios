@@ -135,7 +135,7 @@ body {
   contain: layout style paint;
 }
 
-/* Animated Cinematic Gradient Background */
+/* Static Cinematic Gradient Background - animations disabled for performance */
 body::before {
   content: '';
   position: fixed;
@@ -147,15 +147,13 @@ body::before {
     rgba(212, 175, 55, 0.08) 0%,
     rgba(6, 182, 212, 0.06) 50%,
     rgba(234, 88, 12, 0.05) 100%);
-  background-size: 400% 400%;
-  animation: gradientShift 20s ease infinite;
   z-index: 0;
   pointer-events: none;
-  will-change: background-position;
   transform: translateZ(0);
+  contain: strict;
 }
 
-/* Cinematic Floating Orbs Background */
+/* Static Floating Orbs Background - animations disabled for performance */
 body::after {
   content: '';
   position: fixed;
@@ -169,9 +167,8 @@ body::after {
     radial-gradient(circle at 50% 50%, rgba(234, 88, 12, 0.06) 0%, transparent 50%);
   z-index: 0;
   pointer-events: none;
-  animation: float 25s ease-in-out infinite;
-  will-change: transform;
   transform: translateZ(0);
+  contain: strict;
 }
 
 /* Main content should be above background */
@@ -196,6 +193,11 @@ main, header, footer {
 section, div, article, aside, header, footer, main, nav {
   max-width: 100%;
   overflow-x: hidden;
+}
+
+/* Prevent layout shifts from sections */
+section {
+  contain: layout style;
 }
 
 /* Ensure images don't cause overflow */
@@ -306,25 +308,29 @@ img, video, iframe {
 
 /* Animation Classes */
 .animate-fade-in {
-  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: opacity;
+  /* Reduced animation for better performance */
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: auto;
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, opacity;
+  /* Disabled for performance - was causing scroll stuttering */
+  /* animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1); */
+  will-change: auto;
   transform: translateZ(0);
 }
 
 .animate-slide-in-right {
-  animation: slideInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, opacity;
+  /* Disabled for performance */
+  /* animation: slideInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1); */
+  will-change: auto;
   transform: translateZ(0);
 }
 
 .animate-slide-in-left {
-  animation: slideInLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform, opacity;
+  /* Disabled for performance */
+  /* animation: slideInLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1); */
+  will-change: auto;
   transform: translateZ(0);
 }
 
@@ -335,8 +341,9 @@ img, video, iframe {
 }
 
 .animate-pulse-slow {
-  animation: pulse 3s ease-in-out infinite;
-  will-change: opacity;
+  /* Disabled for performance - was causing scroll stuttering */
+  /* animation: pulse 3s ease-in-out infinite; */
+  will-change: auto;
 }
 
 .animate-glow-pulse {
@@ -350,27 +357,29 @@ img, video, iframe {
   transform: translateZ(0);
 }
 
-/* Glass Morphism Effect */
+/* Glass Morphism Effect - reduced blur for performance */
 .glass {
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  will-change: transform;
+  will-change: auto;
   transform: translateZ(0);
+  contain: layout style paint;
 }
 
 .glass-card {
   background: rgba(26, 26, 46, 0.7);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+  will-change: auto;
   transform: translateZ(0);
+  contain: layout style paint;
 }
 
 .glass-card:hover {
@@ -431,14 +440,14 @@ img, video, iframe {
 
 /* Hover Effects */
 .hover-lift {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  will-change: auto;
   transform: translateZ(0);
 }
 
 .hover-lift:hover {
-  transform: translateY(-8px) translateZ(0);
-  box-shadow: 0 15px 50px rgba(108, 99, 255, 0.3);
+  transform: translateY(-4px) translateZ(0);
+  box-shadow: 0 10px 30px rgba(108, 99, 255, 0.2);
 }
 
 .hover-glow {

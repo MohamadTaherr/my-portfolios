@@ -154,9 +154,19 @@ export default async function About() {
         </div>
       </div>
 
-      {/* Background decoration */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl -translate-y-1/2" />
-      <div className="film-grain absolute inset-0 pointer-events-none opacity-30" />
+      {/* Background decoration - fixed to prevent layout shifts */}
+      <div 
+        className="absolute top-1/2 left-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl -translate-y-1/2 pointer-events-none" 
+        style={{ 
+          contain: 'layout style paint',
+          willChange: 'auto',
+          transform: 'translateY(-50%) translateZ(0)'
+        }} 
+      />
+      <div 
+        className="film-grain absolute inset-0 pointer-events-none opacity-30" 
+        style={{ contain: 'layout style paint' }}
+      />
     </section>
   );
 }

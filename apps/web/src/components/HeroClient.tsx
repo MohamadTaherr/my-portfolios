@@ -35,14 +35,14 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
 
   return (
     <>
-      <section id="hero" className="relative py-16 md:py-24 flex items-center justify-center overflow-hidden">
+      <section id="hero" className="relative py-16 md:py-24 flex items-center justify-center overflow-hidden" style={{ contain: 'layout style paint', minHeight: '500px' }}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-7xl mx-auto">
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left Column - Text */}
-              <div className="space-y-6 text-center lg:text-left animate-slide-in-left">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] gradient-text leading-tight font-bold">
+              <div className="space-y-6 text-center lg:text-left">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-[family-name:var(--font-playfair)] gradient-text leading-tight font-bold" style={{ contain: 'layout style' }}>
                   {settings.name}
                 </h1>
 
@@ -98,9 +98,15 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
               {/* Right Column - Creative Visual */}
               <div className="relative animate-fade-in-up">
                 <div className="relative aspect-square max-w-sm sm:max-w-md lg:max-w-lg mx-auto">
-                  {/* Multiple animated gradient layers */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-red-500/20 rounded-[3rem] blur-3xl animate-pulse-slow" />
-                  <div className="absolute inset-0 bg-gradient-to-tl from-cyan-500/15 via-blue-500/15 to-purple-500/15 rounded-[3rem] blur-2xl animate-pulse-slow" style={{ animationDelay: '1s' }} />
+                  {/* Static gradient layers - animations disabled for performance */}
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-red-500/20 rounded-[3rem] blur-3xl" 
+                    style={{ contain: 'layout style paint', willChange: 'auto' }}
+                  />
+                  <div 
+                    className="absolute inset-0 bg-gradient-to-tl from-cyan-500/15 via-blue-500/15 to-purple-500/15 rounded-[3rem] blur-2xl" 
+                    style={{ contain: 'layout style paint', willChange: 'auto' }}
+                  />
 
                   {settings.showreelUrl ? (
                     <div className="relative z-10 group cursor-pointer" onClick={() => setIsVideoOpen(true)}>
@@ -210,11 +216,20 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
           </div>
         )}
 
-        {/* Modern floating orbs */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        {/* Static background orbs - animations disabled for performance */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none" style={{ contain: 'layout style paint' }}>
+          <div 
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" 
+            style={{ contain: 'layout style paint', willChange: 'auto', transform: 'translateZ(0)' }}
+          />
+          <div 
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" 
+            style={{ contain: 'layout style paint', willChange: 'auto', transform: 'translateZ(0)' }}
+          />
+          <div 
+            className="absolute top-1/2 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" 
+            style={{ contain: 'layout style paint', willChange: 'auto', transform: 'translateZ(0)' }}
+          />
         </div>
       </section>
     </>

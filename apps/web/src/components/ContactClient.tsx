@@ -86,7 +86,7 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
   ].filter(Boolean) as { name: string; icon: string; url: string }[];
 
   return (
-    <section id="contact" className="relative py-32 md:py-40 overflow-hidden bg-black">
+    <section id="contact" className="relative py-32 md:py-40 overflow-hidden bg-black" style={{ contain: 'layout style paint', minHeight: '600px' }}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           {/* Section Header */}
@@ -227,9 +227,19 @@ export default function ContactClient({ contactInfo }: ContactClientProps) {
         </div>
       </div>
 
-      {/* Background decorations */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-      <div className="film-grain absolute inset-0 opacity-20 pointer-events-none" />
+      {/* Background decorations - fixed position to prevent layout shifts */}
+      <div 
+        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gold/5 rounded-full blur-3xl pointer-events-none z-0" 
+        style={{ 
+          contain: 'layout style paint',
+          willChange: 'auto',
+          transform: 'translate(-50%, -50%) translateZ(0)'
+        }} 
+      />
+      <div 
+        className="film-grain absolute inset-0 opacity-10 pointer-events-none z-0" 
+        style={{ contain: 'layout style paint' }}
+      />
     </section>
   );
 }

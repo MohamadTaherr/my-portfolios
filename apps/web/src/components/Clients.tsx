@@ -252,9 +252,23 @@ export default function Clients() {
         </div>
       </div>
 
-      {/* Decorative background elements */}
-      <div className="absolute top-40 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-40 -right-20 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
+      {/* Decorative background elements - fixed to prevent layout shifts */}
+      <div 
+        className="absolute top-40 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" 
+        style={{ 
+          contain: 'layout style paint',
+          willChange: 'auto',
+          transform: 'translateZ(0)'
+        }} 
+      />
+      <div 
+        className="absolute bottom-40 -right-20 w-96 h-96 bg-secondary/5 rounded-full blur-3xl pointer-events-none" 
+        style={{ 
+          contain: 'layout style paint',
+          willChange: 'auto',
+          transform: 'translateZ(0)'
+        }} 
+      />
     </section>
   );
 }

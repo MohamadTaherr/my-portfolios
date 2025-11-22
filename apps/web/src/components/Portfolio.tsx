@@ -47,11 +47,22 @@ export default async function Portfolio() {
 
   return (
     <section id="portfolio" className="relative py-32 md:py-40 overflow-hidden bg-gradient-to-b from-background via-background/80 to-background">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-32 -right-10 w-[32rem] h-[32rem] bg-primary/10 blur-3xl rounded-full animate-float" />
+      <div className="absolute inset-0 pointer-events-none" style={{ contain: 'layout style paint' }}>
+        <div 
+          className="absolute -top-32 -right-10 w-[32rem] h-[32rem] bg-primary/10 blur-3xl rounded-full" 
+          style={{ 
+            contain: 'layout style paint',
+            willChange: 'auto',
+            transform: 'translateZ(0)'
+          }} 
+        />
         <div
-          className="absolute bottom-0 -left-20 w-[32rem] h-[32rem] bg-secondary/10 blur-3xl rounded-full animate-float"
-          style={{ animationDelay: '1.2s' }}
+          className="absolute bottom-0 -left-20 w-[32rem] h-[32rem] bg-secondary/10 blur-3xl rounded-full"
+          style={{ 
+            contain: 'layout style paint',
+            willChange: 'auto',
+            transform: 'translateZ(0)'
+          }}
         />
       </div>
 

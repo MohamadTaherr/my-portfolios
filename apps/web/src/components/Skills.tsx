@@ -59,7 +59,7 @@ export default async function Skills() {
   const skillsSubtitle = pageContent?.skillsSubtitle || 'Expertise';
 
   return (
-    <section id="skills" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-b from-background via-background/95 to-background">
+    <section id="skills" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-b from-background via-background/95 to-background" style={{ contain: 'layout style paint' }}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16 animate-fade-in">
@@ -83,8 +83,8 @@ export default async function Skills() {
           {cinematicStats.map((stat: Stat, index: number) => (
             <div
               key={stat.id || index}
-              className="group relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] backdrop-blur-xl p-8 text-center transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(108,99,255,0.3)] hover:border-primary/50 animate-fade-in-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="group relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] backdrop-blur-sm p-8 text-center transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(108,99,255,0.2)] hover:border-primary/50"
+              style={{ minHeight: '200px', contain: 'layout style paint' }}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/0 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
               <div className="relative">
@@ -111,8 +111,7 @@ export default async function Skills() {
             {expertise.map((skill: string, index: number) => (
               <div
                 key={skill}
-                className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-foreground/90 hover:border-primary/60 hover:bg-gradient-to-r hover:from-purple-500/10 hover:via-pink-500/10 hover:to-red-500/10 hover:text-white transition-all duration-300 cursor-default animate-fade-in backdrop-blur-sm"
-                style={{ animationDelay: `${index * 0.05}s` }}
+                className="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 text-foreground/90 hover:border-primary/60 hover:bg-gradient-to-r hover:from-purple-500/10 hover:via-pink-500/10 hover:to-red-500/10 hover:text-white transition-colors duration-200 cursor-default"
               >
                 <span className="tracking-wide text-sm font-medium">{skill}</span>
               </div>
@@ -121,9 +120,23 @@ export default async function Skills() {
         </div>
       </div>
 
-      {/* Background decorations */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+      {/* Background decorations - static to prevent layout shifts */}
+      <div 
+        className="absolute top-1/4 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" 
+        style={{ 
+          contain: 'layout style paint',
+          willChange: 'auto',
+          transform: 'translateZ(0)'
+        }} 
+      />
+      <div 
+        className="absolute bottom-1/4 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl pointer-events-none" 
+        style={{ 
+          contain: 'layout style paint',
+          willChange: 'auto',
+          transform: 'translateZ(0)'
+        }} 
+      />
     </section>
   );
 }
