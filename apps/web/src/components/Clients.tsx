@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { fetchAPI } from '@/lib/api';
+import { getImageProps } from '@/lib/image-utils';
 
 interface Client {
   id: string;
@@ -153,6 +154,7 @@ export default function Clients() {
                           sizes="80px"
                           className="object-contain"
                           loading="lazy"
+                          {...getImageProps(client.logoUrl)}
                         />
                       ) : (
                         <span className="text-2xl font-bold text-primary font-[family-name:var(--font-playfair)]">

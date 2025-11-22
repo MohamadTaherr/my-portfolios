@@ -27,7 +27,11 @@ const upload = multer({
 });
 
 // Helper function to handle file upload - BACKBLAZE ONLY
-async function handleFileUpload(file: Express.Multer.File): Promise<{
+async function handleFileUpload(file: Express.Multer.File, context?: {
+  fileType?: string;
+  portfolioId?: string;
+  clientId?: string;
+}): Promise<{
   url: string;
   filename: string;
   size: number;
@@ -42,8 +46,8 @@ async function handleFileUpload(file: Express.Multer.File): Promise<{
   }
 
   // Upload to Backblaze B2 - THIS IS THE ONLY STORAGE
-  console.log('📤 Uploading to Backblaze B2...');
-  const result = await uploadToBackblaze(file);
+  console.log('📤 Uploading to Backblaze B2...', context ? `Context: ${JSON.stringify(context)}` : '');
+  const result = await uploadToBackblaze(file, context);
   console.log('✅ Backblaze upload successful:', result.url);
   return result;
 }
@@ -55,7 +59,14 @@ router.post('/single', checkAuth, upload.single('file'), async (req: Request, re
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const result = await handleFileUpload(req.file);
+    // Extract context from query parameters or body
+    const context = {
+      fileType: (req.query.fileType || req.body.fileType) as string | undefined,
+      portfolioId: (req.query.portfolioId || req.body.portfolioId) as string | undefined,
+      clientId: (req.query.clientId || req.body.clientId) as string | undefined,
+    };
+
+    const result = await handleFileUpload(req.file, context);
     
     res.json({
       success: true,
@@ -77,8 +88,15 @@ router.post('/multiple', checkAuth, upload.array('files', 10), async (req: Reque
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
+    // Extract context from query parameters or body
+    const context = {
+      fileType: (req.query.fileType || req.body.fileType) as string | undefined,
+      portfolioId: (req.query.portfolioId || req.body.portfolioId) as string | undefined,
+      clientId: (req.query.clientId || req.body.clientId) as string | undefined,
+    };
+
     const files = await Promise.all(
-      req.files.map((file) => handleFileUpload(file))
+      req.files.map((file) => handleFileUpload(file, context))
     );
 
     res.json({

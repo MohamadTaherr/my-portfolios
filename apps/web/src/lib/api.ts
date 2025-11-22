@@ -23,10 +23,24 @@ export async function fetchAdminAPI(endpoint: string, options?: RequestInit) {
   return fetchAPI(`/admin${endpoint}`, options);
 }
 
-export async function uploadFile(file: File): Promise<{ url: string; filename: string }> {
+export async function uploadFile(
+  file: File,
+  context?: {
+    fileType?: 'logo' | 'profile' | 'client-logo' | 'portfolio-media' | 'portfolio-thumbnail' | 'portfolio-gallery' | 'portfolio-document';
+    portfolioId?: string;
+    clientId?: string;
+  }
+): Promise<{ url: string; filename: string }> {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000';
   const formData = new FormData();
   formData.append('file', file);
+  
+  // Add context to form data
+  if (context) {
+    if (context.fileType) formData.append('fileType', context.fileType);
+    if (context.portfolioId) formData.append('portfolioId', context.portfolioId);
+    if (context.clientId) formData.append('clientId', context.clientId);
+  }
 
   const response = await fetch(`${API_URL}/api/admin/upload/single`, {
     method: 'POST',
@@ -50,10 +64,24 @@ export async function uploadFile(file: File): Promise<{ url: string; filename: s
   return result;
 }
 
-export async function uploadMultipleFiles(files: File[]): Promise<{ files: Array<{ url: string; filename: string }> }> {
+export async function uploadMultipleFiles(
+  files: File[],
+  context?: {
+    fileType?: 'logo' | 'profile' | 'client-logo' | 'portfolio-media' | 'portfolio-thumbnail' | 'portfolio-gallery' | 'portfolio-document';
+    portfolioId?: string;
+    clientId?: string;
+  }
+): Promise<{ files: Array<{ url: string; filename: string }> }> {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000';
   const formData = new FormData();
   files.forEach((file) => formData.append('files', file));
+  
+  // Add context to form data
+  if (context) {
+    if (context.fileType) formData.append('fileType', context.fileType);
+    if (context.portfolioId) formData.append('portfolioId', context.portfolioId);
+    if (context.clientId) formData.append('clientId', context.clientId);
+  }
 
   const response = await fetch(`${API_URL}/api/admin/upload/multiple`, {
     method: 'POST',

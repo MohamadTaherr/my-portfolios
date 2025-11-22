@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import VideoPlayer from './VideoPlayer';
+import { getImageProps } from '@/lib/image-utils';
 
 interface SiteSettings {
   name: string;
@@ -120,6 +121,7 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
                               height={800}
                               className="rounded-[2rem]"
                               priority
+                              {...getImageProps(settings.profileImageUrl)}
                             />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-[2rem]">
                               <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-xl border-2 border-white/40 flex items-center justify-center">
@@ -175,6 +177,7 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
                           height={800}
                           className="rounded-[2rem]"
                           priority
+                          {...getImageProps(settings.profileImageUrl)}
                         />
                       </div>
                       <div className="absolute inset-0 rounded-[2.5rem] border-2 border-primary/20 pointer-events-none group-hover:border-primary/60 transition-colors" />

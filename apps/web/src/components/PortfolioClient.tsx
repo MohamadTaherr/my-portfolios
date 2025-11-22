@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import VideoPlayer from './VideoPlayer';
 import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
+import { getImageProps } from '@/lib/image-utils';
 
 interface PortfolioClientProps {
   items: PortfolioItem[];
@@ -133,6 +134,7 @@ export default function PortfolioClient({ items, categories }: PortfolioClientPr
                 sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 100vw"
                 className="object-cover"
                 loading="lazy"
+                {...getImageProps(src)}
               />
             </div>
           ))}
@@ -181,6 +183,7 @@ export default function PortfolioClient({ items, categories }: PortfolioClientPr
             sizes="(min-width: 1280px) 50vw, 100vw"
             className="object-cover"
             loading="lazy"
+            {...getImageProps(item.thumbnailUrl)}
           />
         </div>
       );
@@ -244,6 +247,7 @@ export default function PortfolioClient({ items, categories }: PortfolioClientPr
                     sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, 100vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                     loading="lazy"
+                    {...getImageProps(item.thumbnailUrl)}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 </div>

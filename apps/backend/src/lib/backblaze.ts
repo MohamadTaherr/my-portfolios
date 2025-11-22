@@ -42,6 +42,12 @@ export interface UploadResult {
   mimetype: string;
 }
 
+export interface UploadContext {
+  fileType?: 'logo' | 'profile' | 'client-logo' | 'portfolio-media' | 'portfolio-thumbnail' | 'portfolio-gallery' | 'portfolio-document';
+  portfolioId?: string;
+  clientId?: string;
+}
+
 let authData: { authorizationToken: string; downloadUrl: string; apiUrl: string } | null = null;
 
 const authorizeB2 = async (): Promise<void> => {
@@ -62,7 +68,8 @@ const authorizeB2 = async (): Promise<void> => {
 };
 
 export const uploadToBackblaze = async (
-  file: Express.Multer.File
+  file: Express.Multer.File,
+  context?: UploadContext
 ): Promise<UploadResult> => {
   if (!isBackblazeConfigured()) {
     throw new Error('Backblaze B2 is not configured');
@@ -76,7 +83,61 @@ export const uploadToBackblaze = async (
   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
   const ext = file.originalname.split('.').pop() || '';
   const baseName = file.originalname.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9]/g, '-');
-  const fileName = `portfolio-uploads/${baseName}-${uniqueSuffix}.${ext}`;
+  
+  // Organize files by type and context
+  // File structure in Backblaze B2:
+  // - site/logo-{timestamp}.{ext} - Site/navigation logos
+  // - site/profile-{timestamp}.{ext} - Profile images
+  // - clients/{clientId}/logo-{timestamp}.{ext} - Client logos
+  // - portfolios/{portfolioId}/media/{filename} - Portfolio media files
+  // - portfolios/{portfolioId}/thumbnails/{filename} - Portfolio thumbnails
+  // - portfolios/{portfolioId}/gallery/{filename} - Portfolio gallery images
+  // - portfolios/{portfolioId}/documents/{filename} - Portfolio documents
+  //
+  // HOW RETRIEVAL WORKS:
+  // 1. Upload: File → Backblaze → Full URL returned → Stored in form state
+  // 2. Save: Form submitted → URLs sent to backend → Saved to database (Prisma)
+  // 3. Read: Frontend calls API → Backend reads from database → Returns records with URLs
+  // 4. Display: Frontend uses URLs from database → Next.js Image loads from Backblaze
+  //
+  // IMPORTANT: The database stores the FULL Backblaze URLs. The folder structure
+  // is just for organization - retrieval uses the URLs stored in the database, not paths.
+  
+  if (!context?.fileType) {
+    throw new Error('File type context is required. Please specify fileType in upload request.');
+  }
+  
+  let fileName: string;
+  
+  if (context.fileType === 'logo') {
+    // Site/navigation logo
+    fileName = `site/logo-${uniqueSuffix}.${ext}`;
+  } else if (context.fileType === 'profile') {
+    // Profile image
+    fileName = `site/profile-${uniqueSuffix}.${ext}`;
+  } else if (context.fileType === 'client-logo') {
+    // Client logo - organized by client ID (use 'new' for new clients, actual ID for existing)
+    const clientId = context.clientId || 'new';
+    fileName = `clients/${clientId}/logo-${uniqueSuffix}.${ext}`;
+  } else if (context.fileType === 'portfolio-media') {
+    // Portfolio media - organized by portfolio ID (use 'new' for new portfolios, actual ID for existing)
+    const portfolioId = context.portfolioId || 'new';
+    fileName = `portfolios/${portfolioId}/media/${baseName}-${uniqueSuffix}.${ext}`;
+  } else if (context.fileType === 'portfolio-thumbnail') {
+    // Portfolio thumbnail - organized by portfolio ID
+    const portfolioId = context.portfolioId || 'new';
+    fileName = `portfolios/${portfolioId}/thumbnails/${baseName}-${uniqueSuffix}.${ext}`;
+  } else if (context.fileType === 'portfolio-gallery') {
+    // Portfolio gallery - organized by portfolio ID
+    const portfolioId = context.portfolioId || 'new';
+    fileName = `portfolios/${portfolioId}/gallery/${baseName}-${uniqueSuffix}.${ext}`;
+  } else if (context.fileType === 'portfolio-document') {
+    // Portfolio document - organized by portfolio ID
+    const portfolioId = context.portfolioId || 'new';
+    fileName = `portfolios/${portfolioId}/documents/${baseName}-${uniqueSuffix}.${ext}`;
+  } else {
+    throw new Error(`Unknown file type: ${context.fileType}`);
+  }
 
   try {
     // Get upload URL

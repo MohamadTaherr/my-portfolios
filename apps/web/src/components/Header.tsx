@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { getImageProps } from '@/lib/image-utils';
 
 interface NavItem {
   label: string;
@@ -78,6 +79,7 @@ export default function Header() {
                 height={48}
                 priority
                 className="h-12 w-auto object-contain"
+                {...getImageProps(logoUrl)}
               />
             ) : (
               <span className="text-2xl font-[family-name:var(--font-playfair)] text-gold tracking-wider">

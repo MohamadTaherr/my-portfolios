@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState, useRef } from 'react';
 import { fetchAdminAPI, uploadFile, uploadMultipleFiles } from '@/lib/api';
 import type { PortfolioItem, PortfolioMediaType } from '@/types/portfolio';
 import Image from 'next/image';
+import { getImageProps } from '@/lib/image-utils';
 
 type Panel = 'portfolio' | 'categories' | 'site' | 'page' | 'structure' | 'skills' | 'clients' | 'analytics';
 
@@ -341,7 +342,34 @@ export default function AdminDashboard() {
   const handleFileUpload = async (file: File, field: 'mediaUrl' | 'thumbnailUrl' | 'documentUrl' | 'logoUrl' | 'navLogoUrl' | 'profileImageUrl') => {
     try {
       setUploadingFile(true);
-      const result = await uploadFile(file);
+      
+      // Determine context based on field type
+      let context: { fileType?: string; portfolioId?: string; clientId?: string } | undefined;
+      
+      if (field === 'navLogoUrl') {
+        context = { fileType: 'logo' };
+      } else if (field === 'profileImageUrl') {
+        context = { fileType: 'profile' };
+      } else if (field === 'logoUrl') {
+        // Client logo - use client ID if editing, or 'new' for new clients
+        const clientId = editingClientId || 'new';
+        context = { fileType: 'client-logo', clientId };
+      } else if (field === 'mediaUrl') {
+        // Portfolio media - use portfolio ID if editing, or generate temp ID for new portfolios
+        const portfolioId = editingPortfolioId || 'new';
+        context = { fileType: 'portfolio-media', portfolioId };
+      } else if (field === 'thumbnailUrl') {
+        // Portfolio thumbnail
+        const portfolioId = editingPortfolioId || 'new';
+        context = { fileType: 'portfolio-thumbnail', portfolioId };
+      } else if (field === 'documentUrl') {
+        // Portfolio document
+        const portfolioId = editingPortfolioId || 'new';
+        context = { fileType: 'portfolio-document', portfolioId };
+      }
+      
+      const result = await uploadFile(file, context);
+      
       if (field === 'logoUrl') {
         setClientDraft((prev) => ({ ...prev, logoUrl: result.url }));
       } else if (field === 'navLogoUrl') {
@@ -364,7 +392,15 @@ export default function AdminDashboard() {
     try {
       setUploadingFile(true);
       const fileArray = Array.from(files);
-      const result = await uploadMultipleFiles(fileArray);
+      
+      // Gallery images are always for portfolios
+      const portfolioId = editingPortfolioId || 'new';
+      const context = {
+        fileType: 'portfolio-gallery' as const,
+        portfolioId,
+      };
+      
+      const result = await uploadMultipleFiles(fileArray, context);
       const urls = result.files.map((f) => f.url);
       setPortfolioDraft((prev) => ({
         ...prev,
@@ -921,6 +957,7 @@ export default function AdminDashboard() {
                   fill
                   sizes="128px"
                   className="object-cover rounded"
+                  {...getImageProps(siteSettings.profileImageUrl)}
                 />
               </div>
             </div>
@@ -1064,6 +1101,7 @@ export default function AdminDashboard() {
                       fill
                       sizes="128px"
                       className="object-contain"
+                      {...getImageProps(navigation.logoUrl)}
                     />
                   </div>
                 </div>
