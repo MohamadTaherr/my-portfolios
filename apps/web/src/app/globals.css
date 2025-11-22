@@ -69,9 +69,8 @@
   --font-courier: var(--font-courier);
 }
 
-* {
-  scroll-behavior: smooth;
-}
+/* Smooth scrolling only on html, not all elements */
+/* Removed global smooth scroll to prevent conflicts */
 
 /* Performance optimizations */
 html {
@@ -119,20 +118,35 @@ section[id],
 }
 
 
-html, body {
+html {
   overflow-x: hidden;
+  overflow-y: auto;
   max-width: 100vw;
   width: 100%;
+  height: 100%;
   position: relative;
+  /* Smooth scrolling only on html/body */
+  scroll-behavior: smooth;
+  /* Prevent overscroll bounce effects */
+  overscroll-behavior-y: none;
 }
 
 body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 100vw;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
   background: linear-gradient(135deg, #0a0a0f 0%, #12141a 50%, #0a0a0f 100%);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  position: relative;
   contain: layout style paint;
+  /* Ensure body is the ONLY scroll container */
+  overscroll-behavior: none;
+  /* Smooth scrolling */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Static Cinematic Gradient Background - animations disabled for performance */
@@ -190,15 +204,28 @@ main, header, footer {
 }
 
 /* Prevent horizontal overflow from any element */
-section, div, article, aside, header, footer, main, nav {
+section, article, aside, header, footer, main, nav {
   max-width: 100%;
   overflow-x: hidden;
+  /* Prevent nested scroll containers - only body should scroll */
+  overflow-y: visible;
 }
 
 /* Prevent layout shifts from sections */
 section {
   contain: layout style;
+  /* Ensure sections don't create scroll contexts */
+  position: relative;
 }
+
+/* Ensure main content doesn't create scroll containers */
+main {
+  overflow-y: visible;
+  overflow-x: hidden;
+}
+
+/* Only specific elements should have scroll (modals, dropdowns, etc.) */
+/* These are handled individually in components */
 
 /* Ensure images don't cause overflow */
 img, video, iframe {

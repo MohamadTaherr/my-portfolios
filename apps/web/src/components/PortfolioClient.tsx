@@ -164,7 +164,7 @@ export default function PortfolioClient({ items, categories }: PortfolioClientPr
 
     if (item.mediaType === 'ARTICLE' || item.mediaType === 'TEXT') {
       return (
-        <div className="rounded-3xl border border-white/10 p-6 bg-black/40 backdrop-blur-sm text-left space-y-4 max-h-[400px] overflow-y-auto">
+        <div className="rounded-3xl border border-white/10 p-6 bg-black/40 backdrop-blur-sm text-left space-y-4">
           <p className="text-sm uppercase tracking-[0.3em] text-white/60">Excerpt</p>
           <p className="text-lg leading-relaxed text-white/80 whitespace-pre-wrap">{formatBody(item)}</p>
         </div>

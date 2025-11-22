@@ -189,7 +189,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             Skip to content
           </a>
           <Header />
-          <main id="main-content" className="min-h-screen w-full max-w-full overflow-x-hidden">{children}</main>
+          <main id="main-content" className="w-full max-w-full overflow-x-hidden">{children}</main>
           <Footer />
         </ThemeProvider>
         <ConditionalAnalytics enableVercelAnalytics={analyticsSettings?.enableVercelAnalytics || false} />

@@ -20,14 +20,12 @@ export default async function Home() {
   return (
     <>
       {enableCinematicIntro && <CinematicIntro name={name} tagline={tagline} />}
-      <div className="flex flex-col">
-        <Hero />
-        <About />
-        <Portfolio />
-        <Clients />
-        <Skills />
-        <Contact />
-      </div>
+      <Hero />
+      <About />
+      <Portfolio />
+      <Clients />
+      <Skills />
+      <Contact />
     </>
   );
 }
