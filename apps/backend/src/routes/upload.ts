@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from 'express';
 import multer from 'multer';
 import { checkAuth } from '../middleware/auth.js';
-import { isBackblazeConfigured, uploadToBackblaze, deleteFromBackblaze } from '../lib/backblaze.js';
+import { isBackblazeConfigured, uploadToBackblaze, deleteFromBackblaze, type UploadContext } from '../lib/backblaze.js';
 
 const router: Router = Router();
 
@@ -27,11 +27,7 @@ const upload = multer({
 });
 
 // Helper function to handle file upload - BACKBLAZE ONLY
-async function handleFileUpload(file: Express.Multer.File, context?: {
-  fileType?: string;
-  portfolioId?: string;
-  clientId?: string;
-}): Promise<{
+async function handleFileUpload(file: Express.Multer.File, context?: UploadContext): Promise<{
   url: string;
   filename: string;
   size: number;
@@ -60,11 +56,16 @@ router.post('/single', checkAuth, upload.single('file'), async (req: Request, re
     }
 
     // Extract context from query parameters or body
-    const context = {
-      fileType: (req.query.fileType || req.body.fileType) as string | undefined,
+    const fileType = req.query.fileType || req.body.fileType;
+    const context: UploadContext | undefined = fileType ? {
+      fileType: fileType as UploadContext['fileType'],
       portfolioId: (req.query.portfolioId || req.body.portfolioId) as string | undefined,
       clientId: (req.query.clientId || req.body.clientId) as string | undefined,
-    };
+    } : undefined;
+
+    if (!context || !context.fileType) {
+      return res.status(400).json({ error: 'fileType is required in the request body or query parameters.' });
+    }
 
     const result = await handleFileUpload(req.file, context);
     
@@ -89,11 +90,16 @@ router.post('/multiple', checkAuth, upload.array('files', 10), async (req: Reque
     }
 
     // Extract context from query parameters or body
-    const context = {
-      fileType: (req.query.fileType || req.body.fileType) as string | undefined,
+    const fileType = req.query.fileType || req.body.fileType;
+    const context: UploadContext | undefined = fileType ? {
+      fileType: fileType as UploadContext['fileType'],
       portfolioId: (req.query.portfolioId || req.body.portfolioId) as string | undefined,
       clientId: (req.query.clientId || req.body.clientId) as string | undefined,
-    };
+    } : undefined;
+
+    if (!context || !context.fileType) {
+      return res.status(400).json({ error: 'fileType is required in the request body or query parameters.' });
+    }
 
     const files = await Promise.all(
       req.files.map((file) => handleFileUpload(file, context))

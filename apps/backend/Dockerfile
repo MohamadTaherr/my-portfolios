@@ -14,11 +14,16 @@ RUN NODE_ENV=development pnpm install --frozen-lockfile
 FROM base AS builder
 WORKDIR /app
 
+# Copy Prisma schema first (needed for generation)
+COPY apps/backend/prisma ./apps/backend/prisma
+
 # Copy source
 COPY apps/backend ./apps/backend
 
-# Generate Prisma and build
+# Generate Prisma client (must be before TypeScript build)
 RUN pnpm --filter backend run db:generate
+
+# Build TypeScript
 RUN pnpm --filter backend run build
 
 # Production stage
