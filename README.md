@@ -1,6 +1,31 @@
 # Portfolio Website
 
-Monorepo portfolio with Express backend and Next.js frontend, deployed on Coolify.
+A modern, full-stack portfolio website built with Next.js and Express.js, deployed on Coolify.
+
+## Quick Start
+
+### Local Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development servers
+pnpm dev
+```
+
+- Frontend: http://localhost:3000
+- Backend: http://localhost:10000
+- Admin: http://localhost:3000/admin
+
+### Deployment
+
+1. Connect GitHub repo to Coolify
+2. Set Docker Compose location: `/docker-compose.yml`
+3. Add environment variables (see below)
+4. Deploy
+
+Database migrations run automatically on backend startup.
 
 ## Tech Stack
 
@@ -9,7 +34,7 @@ Monorepo portfolio with Express backend and Next.js frontend, deployed on Coolif
 | Frontend | Next.js 15, React 19, Tailwind CSS 4 |
 | Backend | Express.js 4, Prisma 5 |
 | Database | PostgreSQL 16 |
-| Storage | Backblaze B2 (optional) |
+| Storage | Backblaze B2 |
 | Deployment | Docker Compose on Coolify |
 
 ## Project Structure
@@ -19,52 +44,56 @@ my-portfolios/
 ├── apps/
 │   ├── backend/        # Express API (port 10000)
 │   └── web/            # Next.js frontend (port 3000)
-├── docker-compose.yml
-└── pnpm-workspace.yaml
+├── documents/          # Architecture and documentation
+├── docker-compose.yml   # Docker orchestration
+└── pnpm-workspace.yaml # Monorepo configuration
 ```
 
-## Environment Variables (Coolify)
+## Environment Variables
 
-Copy-paste into Coolify's **Bulk Edit**:
+Required environment variables for Coolify deployment:
 
 ```env
 # Database
-DATABASE_URL=postgresql://portfolio:portfolio_password@postgres:5432/portfolio_db
-POSTGRES_USER=portfolio
-POSTGRES_PASSWORD=portfolio_password
-POSTGRES_DB=portfolio_db
+DATABASE_URL=postgresql://user:password@host:5432/database
 
-# App
+# App Configuration
 NODE_ENV=production
 PORT=10000
 ADMIN_PASSWORD=your-secure-password
+FRONTEND_URL=https://your-frontend-domain
 
-# URLs (use your Coolify domains)
+# Frontend URLs (build-time)
 NEXT_PUBLIC_API_URL=https://your-backend-domain
 NEXT_PUBLIC_SITE_URL=https://your-frontend-domain
 
-# Backblaze B2 (optional)
-BACKBLAZE_KEY_ID=
-BACKBLAZE_APPLICATION_KEY=
-BACKBLAZE_BUCKET_ID=
-BACKBLAZE_BUCKET_NAME=
+# Backblaze B2 Storage
+BACKBLAZE_KEY_ID=your-key-id
+BACKBLAZE_APPLICATION_KEY=your-application-key
+BACKBLAZE_BUCKET_ID=your-bucket-id
+BACKBLAZE_BUCKET_NAME=your-bucket-name
 
 # Analytics (optional)
-NEXT_PUBLIC_GA_MEASUREMENT_ID=
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 ```
 
-## Deployment
+## Documentation
 
-1. Connect GitHub repo to Coolify
-2. Set Docker Compose location: `/docker-compose.yml`
-3. Add environment variables
-4. Deploy
+- **[Architecture Documentation](./documents/ARCHITECTURE.md)** - Complete system architecture, Docker setup, and design decisions
+- **[Backblaze B2 Integration](./documents/BACKBLAZE_FLOW.md)** - File upload and retrieval flow
 
-Database migrations run automatically on backend startup.
+## Features
 
-## Local Development
+- ✅ Modern, responsive portfolio design
+- ✅ Admin dashboard for content management
+- ✅ File uploads to Backblaze B2
+- ✅ Portfolio projects with media galleries
+- ✅ Client testimonials and logos
+- ✅ SEO optimized with structured data
+- ✅ Analytics integration (Google Analytics)
+- ✅ Docker containerization
+- ✅ Automated database migrations
 
-```bash
-pnpm install
-pnpm dev
-```
+## License
+
+Private project - All rights reserved

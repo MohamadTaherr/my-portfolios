@@ -70,7 +70,7 @@ export default function Header() {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center max-w-[200px] overflow-hidden">
             {logoUrl ? (
               <Image
                 src={logoUrl}
@@ -78,8 +78,7 @@ export default function Header() {
                 width={160}
                 height={48}
                 priority
-                className="h-12 w-auto object-contain"
-                {...getImageProps(logoUrl)}
+                className="h-12 w-auto max-w-full object-contain"
               />
             ) : (
               <span className="text-2xl font-[family-name:var(--font-playfair)] text-gold tracking-wider">

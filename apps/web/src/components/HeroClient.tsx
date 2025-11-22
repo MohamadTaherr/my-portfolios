@@ -178,6 +178,7 @@ export default function HeroClient({ settings, pageContent }: HeroClientProps) {
                           className="rounded-[2rem]"
                           priority
                           {...getImageProps(settings.profileImageUrl)}
+                          {...getImageProps(settings.profileImageUrl)}
                         />
                       </div>
                       <div className="absolute inset-0 rounded-[2.5rem] border-2 border-primary/20 pointer-events-none group-hover:border-primary/60 transition-colors" />

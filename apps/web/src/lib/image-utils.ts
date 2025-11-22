@@ -8,17 +8,16 @@ export function isBackblazeUrl(url: string | null | undefined): boolean {
 
 /**
  * Get props for Next.js Image component based on URL source
- * Backblaze URLs need unoptimized=true if bucket is private
+ * Since Backblaze bucket is public, Next.js Image Optimization works fine
+ * This function is kept for future use if bucket privacy changes
  */
-export function getImageProps(url: string | null | undefined) {
+export function getImageProps(url: string | null | undefined): { unoptimized: boolean } {
   if (!url) return { unoptimized: false };
   
-  // If it's a Backblaze URL, use unoptimized to bypass Next.js Image Optimization
-  // This is needed if the bucket is private (401 errors)
-  // If you make the bucket public, you can remove unoptimized
-  if (isBackblazeUrl(url)) {
-    return { unoptimized: true };
-  }
+  // Backblaze bucket is public, so Next.js Image Optimization works
+  // No need to set unoptimized=true
+  // If you make the bucket private in the future, uncomment the line below:
+  // if (isBackblazeUrl(url)) return { unoptimized: true };
   
   return { unoptimized: false };
 }
