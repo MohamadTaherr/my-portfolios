@@ -49,7 +49,7 @@
   --glow: rgba(212, 175, 55, 0.4);
 }
 
-@theme inline {
+:root[data-theme="inline"] {
   --color-background: var(--background-light);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
