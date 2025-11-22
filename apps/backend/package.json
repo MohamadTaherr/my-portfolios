@@ -9,11 +9,8 @@
     "start": "node dist/server.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "db:test": "tsx scripts/test-db-connection.ts",
-    "type-check": "tsc --noEmit",
-    "cleanup": "tsx scripts/cleanup-data.ts"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",
