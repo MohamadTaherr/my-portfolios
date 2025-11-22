@@ -93,13 +93,13 @@ export default function Clients() {
         <div className="space-y-16">
           {/* Section Header */}
           <div className="text-center space-y-6 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-playfair)]">
+            <h2 className="text-4xl md:text-5xl font-bold font-[family-name:var(--font-playfair)] text-white">
               {pageContent.clientsTitle ? (
                 <span dangerouslySetInnerHTML={{ __html: pageContent.clientsTitle }} />
               ) : (
                 <>
                   Trusted by{' '}
-                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  <span className="text-white font-bold">
                     World-Class Brands
                   </span>
                 </>
