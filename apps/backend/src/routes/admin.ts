@@ -18,11 +18,25 @@ router.post('/login', async (req: Request, res: Response) => {
 
     if (verifyPassword(password)) {
       const sessionToken = createSession();
-      const isProduction = process.env.NODE_ENV === 'production';
+      const frontendUrl = process.env.FRONTEND_URL || '';
+      const useSecureCookies = frontendUrl.startsWith('https://');
+
+      // Extract parent domain for cookie sharing (e.g., .37.27.181.201.sslip.io)
+      let cookieDomain: string | undefined;
+      try {
+        const url = new URL(frontendUrl);
+        const hostParts = url.hostname.split('.');
+        // For sslip.io: get last 5 parts (x.x.x.x.sslip.io)
+        if (url.hostname.includes('.sslip.io') && hostParts.length > 5) {
+          cookieDomain = '.' + hostParts.slice(-5).join('.');
+        }
+      } catch {}
+
       res.cookie('admin-session', sessionToken, {
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax',
+        secure: useSecureCookies,
+        sameSite: useSecureCookies ? 'none' : 'lax',
+        domain: cookieDomain,
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
       });
       return res.json({ success: true });
