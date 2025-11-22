@@ -15,6 +15,9 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.coolify.io' },
       { protocol: 'https', hostname: '**.hetzner.cloud' },
       { protocol: 'https', hostname: '**.hetzner.com' },
+      // Backblaze B2 storage
+      { protocol: 'https', hostname: 'f*.backblazeb2.com' },
+      { protocol: 'https', hostname: '**.backblazeb2.com' },
       // Allow any HTTPS hostname for flexibility with custom domains
       { protocol: 'https', hostname: '**' },
     ],

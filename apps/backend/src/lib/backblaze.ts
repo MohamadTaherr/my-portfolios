@@ -87,11 +87,32 @@ export const uploadToBackblaze = async (
 
     // Construct public URL
     // Backblaze B2 URL format: https://f{downloadUrl}/file/{bucketName}/{fileName}
+    // The downloadUrl from authorize() is typically like "f000.backblazeb2.com" or "000.backblazeb2.com"
     // For private buckets, you may need to make the bucket public or use signed URLs
     const downloadUrl = authData!.downloadUrl;
-    // Remove 'f' prefix if present, then add it back
-    const cleanDownloadUrl = downloadUrl.replace(/^f/, '');
+    
+    // Normalize the download URL
+    // Remove protocol if present, remove leading 'f' if present (we'll add it back)
+    let cleanDownloadUrl = downloadUrl
+      .replace(/^https?:\/\//, '') // Remove http:// or https://
+      .replace(/^f/, ''); // Remove leading 'f' if present
+    
+    // Ensure we have a valid domain (should be like 000.backblazeb2.com or similar)
+    if (!cleanDownloadUrl.includes('.')) {
+      console.error('Invalid Backblaze download URL format:', downloadUrl);
+      throw new Error(`Invalid Backblaze download URL format: ${downloadUrl}`);
+    }
+    
+    // Construct the public URL
+    // Format: https://f{downloadUrl}/file/{bucketName}/{fileName}
     const publicUrl = `https://f${cleanDownloadUrl}/file/${bucketName}/${fileName}`;
+    
+    console.log('Backblaze upload successful:', {
+      fileName,
+      publicUrl,
+      bucketName,
+      size: file.size,
+    });
 
     return {
       url: publicUrl,
