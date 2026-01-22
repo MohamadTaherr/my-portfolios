@@ -18,18 +18,18 @@ export default async function Contact() {
   const settings = await fetchAPI('/site-settings').catch(() => null);
 
   const fallbackContact: ContactInfo = {
-    email: 'contact@example.com',
-    phone: '+1 (234) 567-8900',
+    email: 'edmond@edmondhaddad.com',
+    phone: '+1 (310) 555-0100',
     location: 'Los Angeles, CA',
   };
 
   const dynamicContact: ContactInfo | null = settings
     ? {
-        email: settings.email,
-        phone: settings.phone,
-        location: settings.location,
-        socialLinks: settings.socialLinks,
-      }
+      email: settings.email,
+      phone: settings.phone,
+      location: settings.location,
+      socialLinks: settings.socialLinks,
+    }
     : null;
 
   const contactInfo: ContactInfo =
